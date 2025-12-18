@@ -261,116 +261,25 @@
     .send:hover{ background:#f7f8fb; }
 
     /* ===== 하단 플레이어 바 ===== */
-    /* ===== 하단 플레이어 바 (조립형) ===== */
-.playerbar{
-  position:fixed;
-  left:0; right:0; bottom:0;
-  height: var(--playerH);
-  background:#0b0f14;
-  z-index:50;
-  border-top:1px solid rgba(255,255,255,.08);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.pb-inner{
-  width: 100%;
-  max-width: 1320px;          /* 위 레이아웃 느낌 유지 */
-  height: 100%;
-  padding: 0 18px;
-  display:grid;
-  grid-template-columns: 260px 1fr 260px;  /* 좌/중/우 */
-  align-items:center;
-  gap: 12px;
-}
-
-/* 왼쪽 */
-.pb-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color:#fff;
-  background:transparent;
-  border:none;
-  cursor:pointer;
-  padding: 10px 10px;
-  border-radius: 10px;
-  justify-self:start;
-}
-.pb-left:hover{ background: rgba(255,255,255,.06); }
-
-.pb-left-text{
-  font-weight:800;
-  font-size:14px;
-  letter-spacing:-0.02em;
-  opacity:.95;
-}
-
-/* 가운데 버튼들 */
-.pb-center{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap: 18px;
-}
-
-.pb-btn{
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: transparent;
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-}
-.pb-btn:hover{ background: rgba(255,255,255,.06); }
-.pb-btn:active{ transform: translateY(1px); }
-
-.pb-btn img{
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-}
-
-/* 재생 버튼만 살짝 강조 */
-.pb-play{
-  width: 52px;
-  height: 52px;
-  border-radius: 999px;
-  border-color: rgba(255,255,255,.16);
-}
-.pb-play img{
-  width: 26px;
-  height: 26px;
-}
-
-/* 오른쪽 */
-.pb-right{
-  display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  gap: 10px;
-}
-.pb-icon{
-  width: 18px;
-  height: 18px;
-  object-fit:contain;
-}
-
-/* 반응형: 좁아지면 좌/우 폭 줄이기 */
-@media (max-width: 980px){
-  .pb-inner{
-    grid-template-columns: 200px 1fr 200px;
-  }
-}
-@media (max-width: 640px){
-  .pb-inner{
-    grid-template-columns: 150px 1fr 90px;
-  }
-  .pb-left-text{ display:none; } /* 폰에서 글자 숨김 */
-}
+    .playerbar{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      height: var(--playerH);
+      background:#0b0f14;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .playerbar img{
+      justify-content: center;
+      align-items: center;
+      height:100%;
+      width:70%;
+      margin-top: 20px;
+       /* 피그마처럼 한 장 이미지로 꽉 */
+    }
 
     /* 반응형: 좁아지면 사이드 내려가게 */
     @media (max-width: 980px){
@@ -497,7 +406,11 @@
 
     <!-- 오른쪽: (피그마 캡처에 맞춰 아이콘만 자리 확보)
          img1 원형 아이콘을 “더보기/설정” 같은 자리로 쓰는 용도 -->
-   
+    <div class="pb-right" aria-label="추가 메뉴">
+      <button class="pb-btn" type="button" aria-label="메뉴">
+        <img src="./assets/img1.png" alt="" />
+      </button>
+    </div>
   </div>
 </div>
 
