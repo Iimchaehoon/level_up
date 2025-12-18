@@ -359,7 +359,8 @@
       display:inline-flex;
       align-items:center;
       gap:6px;
-      padding:6px 10px;
+      padding:6px 18px;
+      padding-right: 23px;
       border-radius:12px;
       background:rgba(0,0,0,.35);
       border:1px solid rgba(255,255,255,.2);
@@ -369,7 +370,7 @@
       backdrop-filter: blur(6px);
     }
     .hero-right .hero-badge img{
-      width:18px;height:18px;
+      width:28px;height:28px;
       object-fit:contain;
       filter:none;
     }
@@ -1019,7 +1020,7 @@
 
         <div class="hero-right">
           <div class="hero-badge">
-            <img id="badgeIcon" src="./lec_part/lec2.png" alt="" />
+            <img id="badgeIcon" src="./assets/gpt2.png" alt="" />
             <span id="badgeTool">ChatGPT</span>
           </div>
           <img id="heroThumb" src="./lec_part/lec7.png" alt="강의 썸네일" />
@@ -1322,7 +1323,7 @@
         title: "프롬프트 기본 문법",
         thumb: "./lec_part/lec7.png",
         banner: "./lec_part/lec9.png",
-        toolBadgeIcon: "./lec_part/lec2.png",
+        toolBadgeIcon: "./assets/gpt2.png",
         tool: "ChatGPT",
         teacher: "김강사",
         level: "입문",
@@ -1338,7 +1339,7 @@
         title: "AI 모델 비교 (ChatGPT · Claude · Gemini)",
         thumb: "./lec_part/lec7.png",
         banner: "./lec_part/lec9.png",
-        toolBadgeIcon: "./lec_part/lec2.png",
+        toolBadgeIcon: "./assets/gpt2.png",
         tool: "ChatGPT",
         teacher: "이강사",
         level: "입문",
@@ -1354,7 +1355,7 @@
         title: "텍스트/이미지/음성 AI 구분 및 특성 이해",
         thumb: "./lec_part/lec7.png",
         banner: "./lec_part/lec9.png",
-        toolBadgeIcon: "./lec_part/lec2.png",
+        toolBadgeIcon: "./assets/gpt2.png",
         tool: "ChatGPT",
         teacher: "최강사",
         level: "입문",
@@ -1370,7 +1371,7 @@
         title: "프롬프트 기본 문법 (심화)",
         thumb: "./lec_part/lec7.png",
         banner: "./lec_part/lec9.png",
-        toolBadgeIcon: "./lec_part/lec2.png",
+        toolBadgeIcon: "./assets/gpt2.png",
         tool: "ChatGPT",
         teacher: "김강사",
         level: "초급",
@@ -1386,7 +1387,7 @@
         title: "AI 모델 비교 (업무형 케이스)",
         thumb: "./lec_part/lec7.png",
         banner: "./lec_part/lec9.png",
-        toolBadgeIcon: "./lec_part/lec2.png",
+        toolBadgeIcon: "./assets/gpt2.png",
         tool: "ChatGPT",
         teacher: "이강사",
         level: "초급",
@@ -1402,7 +1403,7 @@
         title: "멀티모달 AI 기초",
         thumb: "./lec_part/lec7.png",
         banner: "./lec_part/lec9.png",
-        toolBadgeIcon: "./lec_part/lec2.png",
+        toolBadgeIcon: "./assets/gpt2.png",
         tool: "ChatGPT",
         teacher: "최강사",
         level: "입문",
@@ -1451,7 +1452,7 @@
           desc: d.desc || d.description || "",
           thumb: d.thumb || "./lec_part/lec7.png",
           banner: d.banner || "./lec_part/lec9.png",
-          toolBadgeIcon: d.toolBadgeIcon || "./lec_part/lec2.png",
+          toolBadgeIcon: d.toolBadgeIcon || "./assets/gpt2.png",
           tool: d.tool || "ChatGPT",
           teacher: d.teacher || "김강사",
           level: d.level || "입문",
@@ -1482,7 +1483,7 @@
       document.getElementById("heroThumb").src = data.thumb || "./lec_part/lec7.png";
       document.getElementById("bigBanner").src = data.banner || "./lec_part/lec9.png";
 
-      document.getElementById("badgeIcon").src = data.toolBadgeIcon || "./lec_part/lec2.png";
+      document.getElementById("badgeIcon").src = data.toolBadgeIcon || "./assets/gpt2.png";
       document.getElementById("badgeTool").textContent = data.tool || "ChatGPT";
 
       // 썸네일 하단 제목 (GPT-5 문구 있으면 제거해서 깔끔하게)
