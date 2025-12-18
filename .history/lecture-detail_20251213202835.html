@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>강의 상세 | LEVEL-UP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --black:#111827;
+      --gray-50:#f9fafb;
+      --gray-100:#f3f4f6;
+      --gray-200:#e5e7eb;
+      --gray-300:#d1d5db;
+      --gray-400:#9ca3af;
+      --gray-500:#6b7280;
+      --gray-600:#4b5563;
+      --gray-700:#374151;
+      --primary:#2563eb;
+      --primary-soft:#eff6ff;
+      --white:#fff;
+      --shadow: 0 10px 26px rgba(15,23,42,.08);
+      --shadow2: 0 22px 44px rgba(15,23,42,.12);
+      --radius: 16px;
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:"Noto Sans KR", system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background: var(--gray-100);
+      color:var(--black);
+    }
+    a{color:inherit;text-decoration:none;}
+    img{max-width:100%;display:block;}
+    button{font-family:inherit;}
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+      clip:rect(0,0,0,0); border:0;
+    }
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar{
+      background:#0c0c0c;
+      color:#e5e7eb;
+      font-size:12px;
+      text-align:center;
+      padding:7px 16px;
+    }
+    .topbar strong{color:#60a5fa;font-weight:700;}
+    .topbar a{color:#93c5fd;text-decoration:underline;}
+
+    /* ───────── 헤더 ───────── */
+    .header{
+      background:#fff;
+      border-bottom:1px solid var(--gray-200);
+      position:sticky; top:0; z-index:50;
+    }
+    .header-top{
+      max-width:1200px;
+      margin:0 auto;
+      padding:10px 16px 6px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      font-size:22px;
+      font-weight:900;
+      cursor:pointer;
+      letter-spacing:-0.06em;
+      user-select:none;
+    }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+
+    .header-top__right{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      font-size:13px;
+      color:var(--gray-600);
+      white-space:nowrap;
+    }
+    .header-top__right .nav-util{
+      cursor:pointer;
+      color:var(--gray-600);
+    }
+    .btn-mypage{
+      border-radius:999px;
+      border:1px solid #000;
+      background:#000;
+      color:#fff;
+      padding:7px 18px;
+      font-size:13px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .profile{
+      width:22px; height:22px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid var(--gray-200);
+    }
+
+    .header-bottom{
+      border-top:1px solid rgba(229,231,235,.9);
+    }
+    .header-bottom__inner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:8px 16px 10px;
+      display:grid;
+      grid-template-columns:auto minmax(320px, 1fr) auto;
+      align-items:center;
+      gap:16px;
+    }
+    .nav-left{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      white-space:nowrap;
+    }
+    .nav-wrapper{position:relative;}
+    .menu-title{
+      cursor:pointer;
+      background:none;
+      border:none;
+      padding:6px 0;
+      font:inherit;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      color:#111827;
+    }
+    .menu-toggle-icon{
+      width:16px;height:16px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain;
+      background-repeat:no-repeat;
+      background-position:center;
+      transition:transform .18s ease;
+    }
+    .menu-toggle-icon.open{transform:rotate(90deg);}
+
+    .menu-link{
+      color:var(--gray-700);
+      font-weight:600;
+    }
+    .menu-link.active{
+      color:#111827;
+      font-weight:800;
+      position:relative;
+    }
+
+    .nav__search{
+      position:relative;
+      max-width:680px;
+      width:100%;
+      margin:0 auto;
+    }
+    .nav__search input{
+      width:100%;
+      padding:10px 42px 10px 42px;
+      border-radius:999px;
+      border:1px solid var(--gray-300);
+      font-size:14px;
+      background:var(--gray-50);
+      outline:none;
+    }
+    .icon-search{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:16px;
+      color:var(--gray-500);
+      pointer-events:none;
+    }
+
+    .header-bottom__right{
+      text-align:right;
+      font-size:13px;
+      color:var(--gray-500);
+      white-space:nowrap;
+    }
+
+    /* 드롭다운 */
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      top:34px; left:0;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 18px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:30;
+    }
+    .nav-dropdown__list{list-style:none;margin:0;padding:0;}
+    .nav-dropdown__item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 16px;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{border-top:1px solid var(--gray-200);}
+    .nav-dropdown__item:hover{background:var(--gray-50);}
+    .nav-dropdown__icon{width:22px;height:22px;object-fit:contain;}
+
+    /* ───────── 페이지 ───────── */
+    .page{
+      max-width:1200px;
+      margin:16px auto 70px;
+      padding:0 16px;
+    }
+
+    /* ───────── HERO ───────── */
+    .hero{
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow: var(--shadow2);
+      background:
+        radial-gradient(1000px 300px at 20% 20%, rgba(255,255,255,.18), transparent 60%),
+        radial-gradient(700px 300px at 90% 20%, rgba(255,255,255,.18), transparent 60%),
+        linear-gradient(90deg, rgba(43,160,180,.95), rgba(168,105,208,.85));
+      position:relative;
+    }
+    .hero-inner{
+      display:grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+      gap:16px;
+      padding:22px 22px;
+      align-items:stretch;
+      min-height:190px;
+    }
+    .hero-left{
+      color:#fff;
+      padding:8px 10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .hero-topline{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .pill-best{
+      font-size:11px;
+      font-weight:800;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+    }
+    .pill-cat{
+      font-size:11px;
+      font-weight:700;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.2);
+    }
+    .hero-title{
+      margin:0;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:-0.02em;
+      line-height:1.25;
+    }
+    .hero-desc{
+      margin:0;
+      font-size:12px;
+      line-height:1.55;
+      opacity:.95;
+      max-width:560px;
+    }
+    .hero-meta{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:2px;
+      font-size:12px;
+      opacity:.95;
+    }
+    .star{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-weight:700;
+    }
+    .star b{font-weight:900;}
+    .hero-tags{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:2px;
+    }
+    .tag{
+      font-size:11px;
+      padding:5px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+      font-weight:700;
+    }
+
+    .hero-right{
+      width: 500px;
+      height: 250px;
+      max-width: 100%;
+      border-radius:14px;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-right img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .hero-right .hero-badge{
+      position:absolute;
+      left:12px;
+      top:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:12px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.2);
+      color:#fff;
+      font-size:11px;
+      font-weight:800;
+      backdrop-filter: blur(6px);
+    }
+    .hero-right .hero-badge img{
+      width:18px;height:18px;
+      object-fit:contain;
+      filter:none;
+    }
+    .hero-right .hero-thumb-title{
+      position:absolute;
+      left:12px;
+      bottom:12px;
+      right:12px;
+      font-weight:900;
+      font-size:14px;
+      color:#fff;
+      text-shadow:0 6px 16px rgba(0,0,0,.45);
+    }
+
+    /* ───────── 탭 ───────── */
+    .tabs{
+      margin-top:14px;
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      position:sticky;
+      top:84px;
+      z-index:40;
+    }
+    .tabs-inner{
+      display:flex;
+      gap:18px;
+      padding:12px 16px;
+      align-items:center;
+      overflow:auto;
+    }
+    .tab{
+      font-size:13px;
+      font-weight:800;
+      color:var(--gray-500);
+      padding:8px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .tab.active{
+      color:#111827;
+      background: var(--primary-soft);
+      border:1px solid rgba(37,99,235,.18);
+    }
+
+    /* ───────── 섹션 공통 ───────── */
+    .section{
+      margin-top:16px;
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+    .section-title{
+      margin:0 0 10px;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:-0.01em;
+    }
+
+    /* ───────── 강의 소개 + 사이드 구매 카드 ───────── */
+    .intro-grid{
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap:16px;
+      align-items:start;
+    }
+    .intro-card{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      padding:14px;
+      background: #fff;
+    }
+    .intro-card p{
+      margin:0;
+      font-size:12px;
+      line-height:1.75;
+      color:var(--gray-700);
+    }
+    .intro-card p + p{margin-top:10px;}
+
+    .buy-card{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      padding:14px;
+      background:#fff;
+      position:sticky;
+      top:152px;
+    }
+    .buy-top{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .teacher-dot{
+      width:30px;height:30px;border-radius:50%;
+      background: var(--gray-200);
+    }
+    .buy-name{
+      font-size:12px;
+      font-weight:900;
+      margin:0;
+    }
+    .buy-meta{
+      margin:10px 0 0;
+      font-size:11px;
+      color:var(--gray-600);
+      display:grid;
+      gap:6px;
+    }
+    .buy-meta div{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .buy-price{
+      margin:10px 0 0;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .buy-price .old{
+      font-size:11px;
+      color:#ef4444;
+      font-weight:800;
+    }
+    .buy-price .new{
+      font-size:16px;
+      font-weight:900;
+      color:#111827;
+    }
+    .btn-buy{
+      margin-top:10px;
+      width:100%;
+      border:none;
+      border-radius:10px;
+      background:#111827;
+      color:#fff;
+      font-weight:900;
+      padding:12px 0;
+      font-size:14px;
+      cursor:pointer;
+    }
+
+    /* ───────── 미리보기 ───────── */
+    .preview-wrap{
+      margin-top:14px;
+      background: linear-gradient(180deg, rgba(124,58,237,.18), rgba(59,130,246,.08));
+      border:1px solid rgba(124,58,237,.18);
+      border-radius:14px;
+      padding:14px;
+    }
+    .preview-label{
+      margin:0 0 8px;
+      font-size:12px;
+      font-weight:800;
+      color:var(--gray-700);
+    }
+    .preview-box{
+      border-radius:14px;
+      background: rgba(255,255,255,.6);
+      border:1px solid rgba(255,255,255,.9);
+      height:260px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .preview-box::before{
+      content:"";
+      position:absolute; inset:0;
+      background: rgba(17,24,39,.04);
+    }
+    .play{
+      width:64px;height:64px;
+      border-radius:50%;
+      background: rgba(255,255,255,.9);
+      border:1px solid rgba(17,24,39,.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 18px 40px rgba(15,23,42,.12);
+      position:relative;
+      z-index:2;
+    }
+    .play::after{
+      content:"";
+      width:0;height:0;
+      border-left:16px solid #111827;
+      border-top:10px solid transparent;
+      border-bottom:10px solid transparent;
+      margin-left:4px;
+    }
+    .preview-text{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      font-weight:900;
+      color: rgba(17,24,39,.55);
+      z-index:1;
+      letter-spacing:-0.02em;
+    }
+
+    /* ───────── 추천 박스 + 대표 이미지 ───────── */
+    .recommend{
+      display:grid;
+      grid-template-columns: 64px minmax(0,1fr);
+      gap:14px;
+      align-items:start;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      margin-top:14px;
+      background:#fff;
+    }
+    .recommend .icon{
+      width:64px;height:64px;border-radius:14px;
+      background: #fff;
+      border:1px solid var(--gray-200);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .recommend .icon img{width:40px;height:40px;object-fit:contain;}
+    .recommend ul{
+      margin:0;
+      padding-left:16px;
+      font-size:12px;
+      color:var(--gray-700);
+      line-height:1.7;
+    }
+
+    .big-banner{
+      margin-top:14px;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid var(--gray-200);
+      background:#0b1220;
+    }
+    .big-banner img{
+      width:100%;
+      height:auto;
+      display:block;
+      object-fit:cover;
+    }
+
+    /* ───────── 배우는 것 ───────── */
+    .learn-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .learn-nav{display:flex; gap:8px;}
+    .nav-btn{
+      width:32px;height:32px;
+      border-radius:50%;
+      border:1px solid var(--gray-200);
+      background:#fff;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      color:var(--gray-600);
+    }
+    .learn-cards{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:12px;
+      background: rgba(124,58,237,.06);
+      border-radius:14px;
+      padding:12px;
+    }
+    .learn-card{
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      padding:12px;
+      min-height:86px;
+    }
+    .learn-card h4{
+      margin:0 0 6px;
+      font-size:12px;
+      font-weight:900;
+      color:#111827;
+    }
+    .learn-card ul{
+      margin:0;
+      padding-left:14px;
+      font-size:11px;
+      color:var(--gray-700);
+      line-height:1.7;
+    }
+
+    /* ───────── 커리큘럼 ───────── */
+    .curr-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .curr-meta{
+      font-size:11px;
+      color:var(--gray-500);
+    }
+    .curr-box{
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:12px;
+      background:#fff;
+    }
+    .curr-section{
+      border-radius:12px;
+      border:1px solid var(--gray-200);
+      overflow:hidden;
+      margin-bottom:10px;
+    }
+    .curr-header{
+      background: var(--gray-50);
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      cursor:pointer;
+      user-select:none;
+    }
+    .curr-header b{
+      font-size:12px;
+      font-weight:900;
+      color:#111827;
+    }
+    .curr-header span{
+      font-size:11px;
+      color:var(--gray-600);
+      font-weight:800;
+    }
+    .curr-list{
+      list-style:none;
+      margin:0;
+      padding:0;
+      display:none;
+    }
+    .curr-item{
+      display:grid;
+      grid-template-columns: 18px minmax(0,1fr) 60px;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border-top:1px solid var(--gray-200);
+      font-size:12px;
+    }
+    .curr-item .dot{
+      width:8px;height:8px;border-radius:50%;
+      background:#111827;
+      opacity:.25;
+      justify-self:center;
+    }
+    .curr-item .t{color:var(--gray-700);line-height:1.5;}
+    .curr-item .time{
+      color:var(--gray-500);
+      font-size:11px;
+      text-align:right;
+      font-weight:800;
+    }
+    .curr-section.open .curr-list{display:block;}
+    .curr-footer{
+      margin-top:10px;
+      border-radius:10px;
+      background:#dbeafe;
+      border:1px solid rgba(37,99,235,.15);
+      padding:10px 12px;
+      text-align:center;
+      font-size:11px;
+      color:var(--gray-700);
+      font-weight:800;
+    }
+    .curr-footer a{color:#2563eb;text-decoration:underline;}
+
+    /* ───────── 강의 후에는 / 강사 소개 / 실습환경 ───────── */
+    .after-box{
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      display:grid;
+      grid-template-columns: minmax(0,1fr) 150px;
+      gap:14px;
+      align-items:center;
+    }
+    .after-box ul{
+      margin:0;
+      padding-left:16px;
+      font-size:12px;
+      color:var(--gray-700);
+      line-height:1.7;
+    }
+    .after-box .mascot{
+      display:flex;
+      justify-content:center;
+    }
+    .after-box .mascot img{
+      width:84px;height:84px;object-fit:contain;
+    }
+
+    .teacher-box{
+      margin-top:12px;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      display:grid;
+      grid-template-columns: minmax(0,1fr) 260px;
+      gap:16px;
+      align-items:center;
+    }
+    .teacher-box h3{
+      margin:0 0 8px;
+      font-size:13px;
+      font-weight:900;
+    }
+    .teacher-box p{
+      margin:0;
+      font-size:12px;
+      line-height:1.75;
+      color:var(--gray-700);
+    }
+    .teacher-box p + p{margin-top:10px;}
+    .teacher-img{
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      overflow:hidden;
+      border-radius:14px;
+      background: radial-gradient(200px 200px at 55% 45%, rgba(59,130,246,.18), transparent 60%),
+                  radial-gradient(220px 220px at 45% 55%, rgba(168,105,208,.18), transparent 60%),
+                  #fff;
+      border:1px solid var(--gray-200);
+      min-height:220px;
+    }
+    .teacher-img img{
+      width:210px;
+      height:auto;
+      object-fit:contain;
+      padding-top:10px;
+    }
+
+    .env-grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .env-card{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      padding:12px;
+      background: var(--gray-50);
+    }
+    .env-card h4{
+      margin:0 0 8px;
+      font-size:12px;
+      font-weight:900;
+    }
+    .env-card p{
+      margin:0;
+      font-size:11px;
+      color:var(--gray-700);
+      line-height:1.7;
+    }
+
+    /* ───────── 후기 ───────── */
+    .review-wrap{
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      display:grid;
+      grid-template-columns: 160px minmax(0,1fr) 120px;
+      gap:14px;
+      align-items:center;
+      background:#fff;
+    }
+    .review-score{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:6px;
+    }
+    .score-circle{
+      width:120px;height:120px;
+      border-radius:50%;
+      background:#f3f4f6;
+      border:1px solid var(--gray-200);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:6px;
+    }
+    .score-circle .n{
+      font-size:26px;
+      font-weight:900;
+      line-height:1;
+    }
+    .score-circle .stars{
+      font-size:12px;
+      color:#f59e0b;
+      letter-spacing:2px;
+      font-weight:900;
+    }
+    .review-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+    }
+    .review-pill{
+      font-size:11px;
+      font-weight:800;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#f3f4f6;
+      border:1px solid var(--gray-200);
+      color:var(--gray-700);
+      white-space:nowrap;
+    }
+    .review-mascot{
+      display:flex;
+      justify-content:center;
+    }
+    .review-mascot img{
+      width:88px;height:88px;object-fit:contain;
+    }
+    .review-cards{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    .review-card{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      padding:12px;
+      background:#fff;
+    }
+    .review-card .name{
+      font-size:11px;
+      color:var(--gray-500);
+      font-weight:900;
+      margin-bottom:6px;
+    }
+    .review-card .stars{
+      font-size:12px;
+      color:#f59e0b;
+      letter-spacing:2px;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .review-card p{
+      margin:0;
+      font-size:12px;
+      color:var(--gray-700);
+      line-height:1.65;
+    }
+
+    /* ───────── 푸터 ───────── */
+    .footer{
+      background:#111827;
+      color:#e5e7f0;
+      padding:32px 24px 46px;
+      font-size:13px;
+      margin-top:28px;
+    }
+    .footer-inner{max-width:1200px;margin:0 auto;}
+    .footer-links{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:16px;
+      margin-bottom:18px;
+      border-bottom:1px solid rgba(148,163,184,.45);
+      padding-bottom:14px;
+    }
+    .footer h4{margin:0 0 8px;font-size:14px;color:#fff;}
+    .footer a{display:block;margin:3px 0;color:#cbd5f5;text-decoration:none;}
+    .footer-copy{font-size:12px;color:#9ca3c4;margin:0;}
+
+    /* ───────── 반응형 ───────── */
+    @media (max-width: 1024px){
+      .hero-inner{grid-template-columns:1fr;min-height:auto;}
+      .intro-grid{grid-template-columns:1fr;}
+      .buy-card{position:relative;top:auto;}
+      .teacher-box{grid-template-columns:1fr;}
+      .env-grid{grid-template-columns:1fr;}
+      .review-wrap{grid-template-columns:1fr;}
+      .review-cards{grid-template-columns:1fr;}
+      .learn-cards{grid-template-columns:1fr;}
+      .tabs{top:128px;}
+      .header-bottom__inner{grid-template-columns:1fr;row-gap:8px;}
+      .header-bottom__right{text-align:left;}
+      .footer-links{grid-template-columns:repeat(2, minmax(0,1fr));}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 <a href="#">다운로드</a></strong> 하기 &gt;
+  </div>
+
+  <header class="header">
+    <div class="header-top">
+      <div class="brand" id="brandLogo">LEV<span class="brand__e">E</span>L-UP</div>
+      <div class="header-top__right">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util" id="logoutBtn">로그아웃</span>
+        <img class="profile" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__inner">
+        <div class="nav-left">
+          <div class="nav-wrapper">
+            <button class="menu-title" id="allLecturesBtn" type="button">
+              모든 강의
+              <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+            </button>
+
+            <div class="nav-dropdown" id="navDropdown">
+              <ul class="nav-dropdown__list">
+                <li class="nav-dropdown__item js-go-ai-basic">
+                  <img src="./assets/9342101 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>AI 기초 이해 · 리터러시</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>업무 효율 향상</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>교육 자료 제작</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9731562 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>원생 관리</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/10316159 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>상담 업무</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>강의 기획 · 교육 설계</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>강의 홍보 · 피드백</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>자료 · 로고 디자인</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/11591525 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>창업 · 수익화</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <a href="course.html" class="menu-link active">자료실</a>
+        </div>
+
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+
+        <button class="btn-mypage" type="button">마이페이지</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- HERO -->
+    <section class="hero" aria-label="강의 상단 배너">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <div class="hero-topline">
+            <span class="pill-best">BEST</span>
+            <span class="pill-cat" id="heroCategory">AI 기초 이해 · 리터러시</span>
+          </div>
+
+          <h1 class="hero-title" id="heroTitle">강의 제목</h1>
+          <p class="hero-desc" id="heroDesc">강의 설명</p>
+
+          <div class="hero-meta">
+            <span class="star">⭐ <b id="heroRating">4.7</b> (4,598) · 조회수 <b id="heroViews">79만</b></span>
+          </div>
+
+          <div class="hero-tags" id="heroTags"></div>
+        </div>
+
+        <div class="hero-right">
+          <div class="hero-badge">
+            <img id="badgeIcon" src="./lec_part/lec2.png" alt="" />
+            <span id="badgeTool">ChatGPT</span>
+          </div>
+          <img id="heroThumb" src="./lec_part/lec7.png" alt="강의 썸네일" />
+          <div class="hero-thumb-title" id="heroThumbTitle">강의 제목</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABS -->
+    <nav class="tabs" aria-label="강의 상세 탭">
+      <div class="tabs-inner">
+        <div class="tab active" data-target="#secIntro">강의소개</div>
+        <div class="tab" data-target="#secTeacher">강사소개</div>
+        <div class="tab" data-target="#secCurr">커리큘럼</div>
+        <div class="tab" data-target="#secReview">후기</div>
+      </div>
+    </nav>
+
+    <!-- 강의소개 -->
+    <section class="section" id="secIntro">
+      <div class="intro-grid">
+        <div>
+          <h2 class="section-title">강의 소개</h2>
+
+          <div class="intro-card">
+            <p id="introP1">
+              AI 시대에 필요한 기본 소양(리터러시)을 쉽고 명확하게 이해할 수 있도록, 실제 사례 중심으로 구성된 입문 강의입니다.
+            </p>
+            <p id="introP2">
+              최신 생성형 AI의 작동 원리부터 활용 방식, 안전하고 현명한 사용까지! 누구나 “왜 이렇게 결과가 나오는지” 이해하고
+              업무/교육 현장에 바로 적용할 수 있도록 설계했습니다.
+            </p>
+          </div>
+
+          <div class="preview-wrap">
+            <p class="preview-label">나에게 맞는 강의인지 미리 들어보세요</p>
+            <div class="preview-box" role="img" aria-label="강의 미리보기(추후 영상 연결)">
+              <div class="preview-text" id="previewText">생성형 AI는 무엇일까?</div>
+              <div class="play" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="recommend">
+            <div class="icon">
+              <img src="./lec_part/lec5.png" alt="추천 아이콘" />
+            </div>
+            <ul id="recommendList">
+              <li>AI가 무엇인지 기본부터 이해하고 싶은 분</li>
+              <li>ChatGPT 등 생성형 AI를 실무/교육에 편하게 적용하고 싶은 분</li>
+              <li>프롬프트/활용법/주의사항까지 한 번에 정리하고 싶은 분</li>
+              <li>학생/현장에 적용 가능한 예시 중심 학습을 원하시는 분</li>
+            </ul>
+          </div>
+
+          <div class="big-banner">
+            <img id="bigBanner" src="./lec_part/lec9.png" alt="강의 대표 이미지" />
+          </div>
+
+          <div class="section" style="margin-top:14px;">
+            <div class="learn-head">
+              <h2 class="section-title" style="margin:0;">강의에서 배우는 것</h2>
+              <div class="learn-nav" aria-label="배우는 것 이동 버튼(디자인용)">
+                <button class="nav-btn" type="button" aria-label="이전">‹</button>
+                <button class="nav-btn" type="button" aria-label="다음">›</button>
+              </div>
+            </div>
+
+            <div class="learn-cards">
+              <div class="learn-card">
+                <h4>AI와 머신러닝의 기본 개념 이해</h4>
+                <ul>
+                  <li>AI/머신러닝/딥러닝 차이</li>
+                  <li>도움이 된다는 의미</li>
+                </ul>
+              </div>
+              <div class="learn-card">
+                <h4>생성형 AI의 핵심 원리 이해</h4>
+                <ul>
+                  <li>대규모 언어모델(LLM) 동작</li>
+                  <li>텍스트/이미지 생성 흐름</li>
+                </ul>
+              </div>
+              <div class="learn-card">
+                <h4>생성형 AI 활용 사례 및 안전한 활용</h4>
+                <ul>
+                  <li>문서/코딩/디자인 적용</li>
+                  <li>개인정보/저작권 주의</li>
+                </ul>
+              </div>
+              <div class="learn-card">
+                <h4>AI 시대의 필수 리터러시</h4>
+                <ul>
+                  <li>프롬프트 작성 기초</li>
+                  <li>신뢰/편향 체크</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 구매 카드 -->
+        <aside class="buy-card" aria-label="수강 정보 카드">
+          <div class="buy-top">
+            <div class="teacher-dot" aria-hidden="true"></div>
+            <div>
+              <p class="buy-name" id="buyTeacher">김강사</p>
+              <div style="font-size:11px;color:var(--gray-500);font-weight:800;">강사</div>
+            </div>
+          </div>
+
+          <div class="buy-meta">
+            <div><span>가격</span><b id="buyPriceOld" style="color:#ef4444;">정가 25%</b></div>
+            <div><span>커리큘럼</span><b id="buyCount">20개</b></div>
+            <div><span>난이도</span><b id="buyLevel">입문</b></div>
+            <div><span>사용 AI</span><b id="buyTool">ChatGPT</b></div>
+          </div>
+
+          <div class="buy-price">
+            <span class="old" id="buyOldText">정가 25%</span>
+            <span class="new" id="buyPrice">₩25,000</span>
+          </div>
+
+          <button class="btn-buy" id="enrollBtn" type="button">수강하기</button>
+          <p style="margin:10px 0 0;font-size:11px;color:var(--gray-500);line-height:1.6;">
+            * 수강하기 클릭 시 결제/신청 페이지는 추후 개발 예정
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 강사소개 -->
+    <section class="section" id="secTeacher">
+      <h2 class="section-title">강사 소개</h2>
+
+      <div class="after-box">
+        <ul>
+          <li>AI 개념과 활용을 자신 있게 이해하는 리터러시 획득</li>
+          <li>현업/교육 현장에 바로 적용 가능한 구체적인 아이디어 확보</li>
+          <li>ChatGPT 등 생성형 AI 활용법으로 문서/수업/자료 제작 생산성 향상</li>
+          <li>AI 결과물 검증(편향/신뢰도) 체크 습관 형성</li>
+        </ul>
+        <div class="mascot">
+          <img src="./lec_part/lec6.png" alt="축하 마스코트" />
+        </div>
+      </div>
+
+      <div class="teacher-box">
+        <div>
+          <h3 id="teacherTitle">AI 시대에 수업 혁신을 연구하는 교육자 김강사</h3>
+          <p id="teacherP1">
+            안녕하세요. 저는 AI 교육을 전문으로 합니다. 현장 교사/강사 분들이 “바로 적용”할 수 있는 예시와 워크플로우를 중심으로
+            쉬운 설명을 지향합니다.
+          </p>
+          <p id="teacherP2">
+            최신 기술을 “어렵지 않게” 풀어내며, 교육/업무 현장에서 활용할 때 필요한 가이드(윤리, 개인정보, 저작권)까지 함께 제공합니다.
+          </p>
+          <p style="margin-top:10px;font-size:11px;color:var(--gray-500);font-weight:800;">
+            * 강사 이미지/소개는 피그마 시안 기준으로 배치 (이미지: lec4.png)
+          </p>
+        </div>
+        <div class="teacher-img">
+          <img src="./lec_part/lec4.png" alt="강사 이미지" />
+        </div>
+      </div>
+
+      <div class="env-grid">
+        <div class="env-card">
+          <h4>실습 환경</h4>
+          <p>사용 도구: ChatGPT / (GPT-5 버전으로 예시) / Visual Studio Code</p>
+          <p>운영 체제 및 브라우저: Windows / Chrome 권장</p>
+        </div>
+        <div class="env-card">
+          <h4>학습 자료</h4>
+          <p>보고/과제 템플릿 + 실습 자료(PDF)</p>
+          <p>강의에서 사용한 예시 프롬프트/코드/소스 제공</p>
+        </div>
+        <div class="env-card" style="grid-column: 1 / -1;">
+          <h4>실습 시 주의 및 활용 팁</h4>
+          <p>개인정보/민감정보는 프롬프트에 포함하지 않기, 결과 검증(근거 확인) 습관 만들기</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 커리큘럼 -->
+    <section class="section" id="secCurr">
+      <div class="curr-top">
+        <h2 class="section-title" style="margin:0;">커리큘럼</h2>
+        <div class="curr-meta" id="currMeta">총 25개 · (3시간 18분)</div>
+      </div>
+
+      <div class="curr-box">
+        <div class="curr-section open">
+          <div class="curr-header">
+            <b>섹션 1. 생성형 AI란?</b>
+            <span>4개 · (30분)</span>
+          </div>
+          <ul class="curr-list">
+            <li class="curr-item"><span class="dot"></span><span class="t">1. 생성형 AI(LLM) 개요와 시대 변화</span><span class="time">09:12</span></li>
+            <li class="curr-item"><span class="dot"></span><span class="t">2. 생성형 AI가 가능한 이유(데이터/학습)</span><span class="time">04:32</span></li>
+            <li class="curr-item"><span class="dot"></span><span class="t">3. 생성형 AI의 장점과 한계(환각/편향)</span><span class="time">06:10</span></li>
+            <li class="curr-item"><span class="dot"></span><span class="t">4. (실습) 간단한 프롬프트로 결과 체감하기</span><span class="time">10:48</span></li>
+          </ul>
+        </div>
+
+        <div class="curr-section">
+          <div class="curr-header">
+            <b>섹션 2. ChatGPT 핵심 기능 자동 생성</b>
+            <span>3개 · (30분)</span>
+          </div>
+          <ul class="curr-list">
+            <li class="curr-item"><span class="dot"></span><span class="t">1. 시스템/유저/어시스턴트 메시지 구조</span><span class="time">08:20</span></li>
+            <li class="curr-item"><span class="dot"></span><span class="t">2. 프롬프트 패턴(역할/제약/예시)</span><span class="time">12:05</span></li>
+            <li class="curr-item"><span class="dot"></span><span class="t">3. (실습) 수업자료/문서 자동화</span><span class="time">09:35</span></li>
+          </ul>
+        </div>
+
+        <div class="curr-section">
+          <div class="curr-header">
+            <b>섹션 3. AI 결과 검증/활용(리터러시)</b>
+            <span>4개 · (30분)</span>
+          </div>
+          <ul class="curr-list">
+            <li class="curr-item"><span class="dot"></span><span class="t">1. 사실성 검증 체크리스트</span><span class="time">07:20</span></li>
+            <li class="curr-item"><span class="dot"></span><span class="t">2. 근거 요청/출처 요청 프롬프트</span><span class="time">08:15</span></li>
+            <li class="curr-item"><span class="dot"></span><span class="t">3. 개인정보/저작권/윤리 가이드</span><span class="time">06:40</span></li>
+            <li class="curr-item"><span class="dot"></span><span class="t">4. (실습) 안전한 워크플로우 만들기</span><span class="time">07:45</span></li>
+          </ul>
+        </div>
+
+        <div class="curr-footer">
+          업데이트 일정: 2025.09.01. <br/>
+          마지막 업데이트일: 2025.09.01.
+        </div>
+      </div>
+    </section>
+
+    <!-- 후기 -->
+    <section class="section" id="secReview">
+      <h2 class="section-title">수강생들의 후기</h2>
+
+      <div class="review-wrap">
+        <div class="review-score">
+          <div class="score-circle">
+            <div style="font-size:11px;font-weight:900;color:var(--gray-600);">평균 평점</div>
+            <div class="n" id="reviewAvg">4.7</div>
+            <div class="stars">★★★★☆</div>
+          </div>
+        </div>
+
+        <div class="review-tags">
+          <span class="review-pill">강의가 깔끔하게 쉬워요</span>
+          <span class="review-pill">현업 적용이 바로 돼요</span>
+          <span class="review-pill">이해하기 쉽게 설명해줘요</span>
+          <span class="review-pill">예시가 정말 알찼어요</span>
+          <span class="review-pill">수업 준비가 빨라졌어요</span>
+          <span class="review-pill">리터러시 감이 잡혀요</span>
+        </div>
+
+        <div class="review-mascot">
+          <img src="./lec_part/lec3.png" alt="마스코트" />
+        </div>
+      </div>
+
+      <div class="review-cards">
+        <div class="review-card">
+          <div class="name">Mankyum Kim · 수강평 5.0</div>
+          <div class="stars">★★★★★</div>
+          <p>너무 쉽게 정리해주셔서 바로 수업/문서에 적용했어요. 프롬프트 구조가 잡히니까 시간이 확 줄었습니다!</p>
+        </div>
+        <div class="review-card">
+          <div class="name">Denny · 수강평 5.0</div>
+          <div class="stars">★★★★★</div>
+          <p>정말 유익했어요. 결과 검증 체크리스트가 특히 좋았습니다. 다음 강의도 기대돼요.</p>
+        </div>
+        <div class="review-card">
+          <div class="name">익명 · 수강평 4.8</div>
+          <div class="stars">★★★★★</div>
+          <p>현업에서 바로 쓰는 예시가 많아서 좋았어요. 윤리/저작권까지 같이 다뤄줘서 안심됩니다.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <div>
+          <h4>레벨업 소개</h4>
+          <a href="#">레벨업 소개</a>
+          <a href="#">레벨업 미션</a>
+          <a href="#">수강생 이야기</a>
+          <a href="#">블로그</a>
+        </div>
+        <div>
+          <h4>신청하기</h4>
+          <a href="#">지원중인 강의</a>
+          <a href="#">레벨업 소개</a>
+          <a href="#">레벨업 비즈니스</a>
+          <a href="#">레벨업 파트너</a>
+        </div>
+        <div>
+          <h4>코드 등록</h4>
+          <a href="#">수강코드 등록</a>
+          <a href="#">포인트코드 등록</a>
+        </div>
+        <div>
+          <h4>고객센터</h4>
+          <a href="#">공지사항</a>
+          <a href="#">자주 묻는 질문</a>
+          <a href="#">1:1 문의</a>
+          <a href="#">강의 · 기능요청</a>
+        </div>
+      </div>
+
+      <p class="footer-copy">© LEVEL-UP. ALL RIGHTS RESERVED.</p>
+    </div>
+  </footer>
+
+  <!-- ✅ 중요: courseData.js/app.js는 있어도 되고 없어도 됨.
+       - 있으면 1001~ 같은 큰 id에서 window.COURSE_DATA를 읽어옴
+       - 없어도 1~6(COURSE_SMALL)로 상세페이지는 정상 출력됨 -->
+  <script src="courseData.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    // ==========================
+    // 0) 메뉴 AI 카드(1~6) 상세 데이터
+    // ==========================
+    const COURSE_SMALL = {
+      "1": {
+        title: "프롬프트 기본 문법",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "김강사",
+        level: "입문",
+        price: "₩25,000",
+        rating: "4.7",
+        views: "79만",
+        desc: "3년차 교수님의 실전형 강의! GPT-5 기본으로부터 업데이트 및 활용까지. 현업에서 바로 쓰는 개념을 탄탄하게 잡아드립니다.",
+        tags: ["생성형 AI","프롬프트","ChatGPT"],
+        count: "25개",
+        currMeta: "총 25개 · (3시간 18분)"
+      },
+      "2": {
+        title: "AI 모델 비교 (ChatGPT · Claude · Gemini)",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "이강사",
+        level: "입문",
+        price: "₩25,000",
+        rating: "4.6",
+        views: "52만",
+        desc: "대표 AI 모델들의 특징/강점/주의점을 비교하고, 상황에 맞는 선택 기준을 빠르게 정리합니다.",
+        tags: ["모델 비교","업무 적용","리터러시"],
+        count: "25개",
+        currMeta: "총 25개 · (3시간 18분)"
+      },
+      "3": {
+        title: "텍스트/이미지/음성 AI 구분 및 특성 이해",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "최강사",
+        level: "입문",
+        price: "₩25,000",
+        rating: "4.7",
+        views: "61만",
+        desc: "텍스트/이미지/음성 AI가 어떤 차이를 갖는지, 실무에서 어떤 식으로 활용되는지 핵심만 학습합니다.",
+        tags: ["멀티모달","기초","활용"],
+        count: "25개",
+        currMeta: "총 25개 · (3시간 18분)"
+      },
+      "4": {
+        title: "프롬프트 기본 문법 (심화)",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "김강사",
+        level: "초급",
+        price: "₩29,000",
+        rating: "4.8",
+        views: "41만",
+        desc: "프롬프트 패턴을 더 깊게 익히고, 재사용 가능한 템플릿을 만들어봅니다.",
+        tags: ["프롬프트","템플릿","심화"],
+        count: "25개",
+        currMeta: "총 25개 · (3시간 18분)"
+      },
+      "5": {
+        title: "AI 모델 비교 (업무형 케이스)",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "이강사",
+        level: "초급",
+        price: "₩29,000",
+        rating: "4.6",
+        views: "35만",
+        desc: "업무 상황별 모델 선택 기준과 프롬프트 운용 방법을 케이스로 정리합니다.",
+        tags: ["케이스","업무 적용","모델 선택"],
+        count: "25개",
+        currMeta: "총 25개 · (3시간 18분)"
+      },
+      "6": {
+        title: "멀티모달 AI 기초",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "최강사",
+        level: "입문",
+        price: "₩25,000",
+        rating: "4.7",
+        views: "61만",
+        desc: "텍스트/이미지/음성 멀티모달 흐름을 기초부터 잡아드립니다.",
+        tags: ["멀티모달","기초","활용"],
+        count: "25개",
+        currMeta: "총 25개 · (3시간 18분)"
+      }
+    };
+
+    // ==========================
+    // 1) 공통 헤더 동작
+    // ==========================
+    document.getElementById("brandLogo").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let dropdownOpen = false;
+
+    allLecturesBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dropdownOpen = !dropdownOpen;
+      navDropdown.style.display = dropdownOpen ? "block" : "none";
+      menuToggleIcon.classList.toggle("open", dropdownOpen);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!dropdownOpen) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) {
+        dropdownOpen = false;
+        navDropdown.style.display = "none";
+        menuToggleIcon.classList.remove("open");
+      }
+    });
+
+    document.querySelectorAll(".js-go-ai-basic").forEach(el => {
+      el.addEventListener("click", () => {
+        window.location.href = "course.html";
+      });
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      alert("로그아웃 처리(추후 연동)");
+    });
+
+    // 탭 스크롤
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        const target = document.querySelector(tab.dataset.target);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    // 커리큘럼 토글
+    document.querySelectorAll(".curr-section .curr-header").forEach(h => {
+      h.addEventListener("click", () => {
+        const wrap = h.closest(".curr-section");
+        wrap.classList.toggle("open");
+      });
+    });
+
+    // ==========================
+    // 2) id에 따라 데이터 소스 선택
+    //    - courseData.js가 window.COURSE_DATA 제공하면 우선 사용
+    //    - 아니면 COURSE_SMALL(1~6) 사용
+    // ==========================
+    function resolveCourseData(courseId) {
+      // (A) 큰 ID: courseData.js (있으면)
+      if (window.COURSE_DATA && window.COURSE_DATA[courseId]) {
+        const d = window.COURSE_DATA[courseId];
+        // courseData.js의 필드가 다를 수 있으니 안전하게 매핑
+        return {
+          title: d.title || "강의 제목",
+          desc: d.desc || d.description || "",
+          thumb: d.thumb || "./lec_part/lec7.png",
+          banner: d.banner || "./lec_part/lec9.png",
+          toolBadgeIcon: d.toolBadgeIcon || "./lec_part/lec2.png",
+          tool: d.tool || "ChatGPT",
+          teacher: d.teacher || "김강사",
+          level: d.level || "입문",
+          price: d.price || "₩25,000",
+          rating: d.rating || "4.7",
+          views: d.views || "79만",
+          tags: d.tags || ["생성형 AI","프롬프트","ChatGPT"],
+          count: d.count || "25개",
+          currMeta: d.currMeta || "총 25개 · (3시간 18분)"
+        };
+      }
+
+      // (B) 메뉴 AI 카드: 1~6
+      if (COURSE_SMALL[courseId]) return COURSE_SMALL[courseId];
+
+      return null;
+    }
+
+    function bindCourseToUI(data) {
+      document.title = data.title + " | LEVEL-UP";
+
+      // HERO
+      document.getElementById("heroTitle").textContent = data.title;
+      document.getElementById("heroDesc").textContent = data.desc || "";
+      document.getElementById("heroRating").textContent = data.rating || "-";
+      document.getElementById("heroViews").textContent = data.views || "-";
+
+      document.getElementById("heroThumb").src = data.thumb || "./lec_part/lec7.png";
+      document.getElementById("bigBanner").src = data.banner || "./lec_part/lec9.png";
+
+      document.getElementById("badgeIcon").src = data.toolBadgeIcon || "./lec_part/lec2.png";
+      document.getElementById("badgeTool").textContent = data.tool || "ChatGPT";
+
+      // 썸네일 하단 제목 (GPT-5 문구 있으면 제거해서 깔끔하게)
+      const cleanTitle = (data.title || "").replace("(GPT-5) ", "");
+      document.getElementById("heroThumbTitle").textContent = cleanTitle || data.title;
+
+      // TAGS
+      const tagsEl = document.getElementById("heroTags");
+      tagsEl.innerHTML = "";
+      (data.tags || []).forEach(t => {
+        const s = document.createElement("span");
+        s.className = "tag";
+        s.textContent = t;
+        tagsEl.appendChild(s);
+      });
+
+      // BUY CARD
+      document.getElementById("buyTeacher").textContent = data.teacher || "-";
+      document.getElementById("buyLevel").textContent = data.level || "-";
+      document.getElementById("buyTool").textContent = data.tool || "-";
+      document.getElementById("buyPrice").textContent = data.price || "₩25,000";
+      document.getElementById("buyCount").textContent = data.count || "25개";
+
+      // CURR META
+      document.getElementById("currMeta").textContent = data.currMeta || "총 25개 · (3시간 18분)";
+
+      // 소개문(상단 intro 카드)도 강의별로 바꾸고 싶으면 여기서 data.introP1/2로 확장 가능
+    }
+
+    // ==========================
+    // 3) 실행
+    // ==========================
+    const params = new URLSearchParams(location.search);
+    const courseId = params.get("id") || "1";
+    const data = resolveCourseData(courseId);
+
+    if (!data) {
+      alert("강의 정보를 찾을 수 없습니다. id=" + courseId);
+      location.href = "course.html";
+    } else {
+      bindCourseToUI(data);
+    }
+
+    // 수강하기 버튼(일단 유지)
+    document.getElementById("enrollBtn").addEventListener("click", () => {
+      alert("수강하기/결제 페이지는 추후 연동 예정입니다.");
+    });
+  </script>
+</body>
+</html>

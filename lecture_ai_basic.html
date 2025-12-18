@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI 기초 이해 · 리터러시 | LEVEL-UP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <link rel="stylesheet" href="styles.css" />
+   
+  <style>
+    :root {
+      --black: #111827;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2933;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --accent: #3b82f6;
+      --badge-blue: #2563eb;
+      --badge-blue-bg: #ebf2ff;
+      --white: #ffffff;
+      --bookmark-yellow: #facc15;
+      --bookmark-yellow-stroke: #d4a50e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: var(--black);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { font-family: inherit; }
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar {
+      background: #111827;
+      color: #e5e7eb;
+      font-size: 12px;
+      text-align: center;
+      padding: 6px 16px;
+    }
+    .topbar strong { color: #facc15; font-weight: 600; }
+
+    /* ───────── 헤더 (공통) ───────── */
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-top {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 10px 16px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: -0.06em;
+    }
+
+    .brand__e {
+      display: inline-block;
+      background: linear-gradient(120deg, #7b5cff, #ff4bff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .header-top__right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .nav-util { color: var(--gray-600); cursor: pointer; }
+
+    .btn-mypage {
+      border-radius: 999px;
+      border: 1px solid #000;
+      background: #000;
+      color: #fff;
+      padding: 7px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn.mypage-btn {
+  border-radius: 999px;
+  background: #000000;
+  color: #ffffff;
+  padding: 9px 22px;
+  font-size: 14px;
+}
+/* ✅ 마이페이지 버튼: 은은한 입체감 + 자연스러운 hover/active */
+.btn.mypage-btn{
+  box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+  transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.btn.mypage-btn:hover{
+  background: rgba(0,0,0,0.86);          /* 너무 밝게 안 바뀌게 */
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  transform: translateY(-1px);           /* 아주 살짝만 */
+}
+
+.btn.mypage-btn:active{
+  background: rgba(0,0,0,0.78);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+  transform: translateY(1px);            /* 눌림 느낌 */
+}
+/* 마이페이지 버튼: 마우스 오버 시 포인터 */
+.btn.mypage-btn{
+  cursor: pointer;
+}
+
+    .header-bottom { border-top: 1px solid rgba(229, 231, 235, 0.9); }
+
+    .header-bottom__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 8px 16px 10px;
+      display: grid;
+      grid-template-columns: auto minmax(320px, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 20px; }
+    .nav-wrapper { position: relative; }
+
+    .menu-title {
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 6px 0;
+      font: inherit;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .menu-toggle-icon {
+      width: 16px;
+      height: 16px;
+      background-image: url("./assets/Button_1.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      transition: transform 0.18s ease;
+    }
+    .menu-toggle-icon.open { transform: rotate(90deg); }
+
+    .menu-link { color: var(--gray-700); font-weight: 500; }
+    .menu-link.active { color: #111827; font-weight: 700; position: relative; }
+
+    .nav__search {
+      position: relative;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .nav__search input {
+      width: 100%;
+      padding: 10px 40px;
+      border-radius: 999px;
+      border: 1px solid var(--gray-300);
+      font-size: 14px;
+      background: var(--gray-50);
+      outline: none;
+    }
+
+    .nav__search input::placeholder { color: var(--gray-400); }
+
+    .icon-search {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+
+    .header-bottom__right {
+      text-align: right;
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    /* 드롭다운 */
+    .nav-dropdown {
+      display: none;
+      position: absolute;
+      top: 34px;
+      left: 0;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+      padding: 10px 0;
+      min-width: 260px;
+      z-index: 30;
+    }
+
+    .nav-dropdown__list { list-style: none; margin: 0; padding: 0; }
+
+    .nav-dropdown__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .nav-dropdown__item + .nav-dropdown__item { border-top: 1px solid var(--gray-200); }
+    .nav-dropdown__item:hover { background: var(--gray-50); }
+
+    .nav-dropdown__icon { width: 22px; height: 22px; object-fit: contain; }
+
+    /* ───────── 페이지 레이아웃 ───────── */
+    .page {
+      max-width: 1200px;
+      margin: 20px auto 60px;
+      padding: 0 16px 40px;
+      background: #ffffff;
+      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+      border-radius: 8px;
+    }
+
+    .page-layout {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* ───────── 좌측 사이드바 ───────── */
+    .sidebar {
+      border-right: 1px solid var(--gray-200);
+      padding: 24px 16px 24px 0;
+    }
+
+    .sidebar-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+
+    .sidebar-nav {
+      border-top: 1px solid var(--gray-200);
+      padding-top: 10px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-nav a {
+      display: block;
+      padding: 6px 8px;
+      font-size: 13px;
+      color: var(--gray-600);
+      border-radius: 4px;
+    }
+
+    .sidebar-nav a + a { margin-top: 2px; }
+
+    .sidebar-nav a.current {
+      background: #111827;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .sidebar-nav a.depth { padding-left: 18px; font-size: 12px; }
+
+    .sidebar-events {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-events img {
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* ───────── 메인 영역 ───────── */
+    .main { padding: 24px 0 24px 4px; }
+
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .main-title { font-size: 20px; font-weight: 700; }
+    .breadcrumb { font-size: 12px; color: var(--gray-500); }
+
+    /* 필터 영역 */
+    .filters {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 16px 18px 12px;
+      background: #f9fafb;
+      margin-bottom: 20px;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr);
+      align-items: flex-start;
+      gap: 4px 10px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .filter-label { padding-top: 1px; color: var(--gray-600); font-weight: 500; }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    
+    .chip {
+      border-radius: 999px;
+      border: 1px solid #d1e7ff;
+      padding: 4px 11px;
+      font-size: 11px;
+      background: #ffffff;
+      cursor: pointer;
+      color: var(--gray-700);
+      transition: all 0.15s ease;
+    }
+
+    .chip:hover { background: #eff6ff; }
+
+    .chip.is-active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .filter-search-row {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      gap: 6px 10px;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+  
+
+    .filter-search-row input {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+      border-radius: 4px;
+      border: 1px solid var(--gray-300);
+      padding: 6px 8px;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .filter-search-row .btn-filter--primary {
+      grid-column: 3 / 4;
+      grid-row: 1 / 2;
+      justify-self: end;
+    }
+
+    .filter-search-row .btn-filter:last-child {
+      grid-column: 3 / 3;
+      grid-row: 2 / 3;
+      justify-self: flex-end;
+      font-size: 11px;
+      padding: 4px 10px;
+      transform: translateX(10px);
+    }
+
+    .btn-filter {
+      border-radius: 4px;
+      border: 1px solid var(--gray-300);
+      background: #ffffff;
+      padding: 6px 18px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-filter--primary {
+      background: #111827;
+      border-color: #111827;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* 정렬 */
+    .sort-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .sort-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--gray-500);
+    }
+
+    .sort-input { accent-color: #111827; }
+
+    /* 강의 카드 그리드 */
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .course-card {
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid var(--gray-200);
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .course-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 25px rgba(15, 23, 42, 0.12);
+    }
+
+    .course-thumb { background: #111827; overflow: hidden; }
+
+    .course-thumb img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      background: #111827;
+      display: block;
+    }
+
+    .course-body {
+      padding: 10px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .course-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .badge-level {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--badge-blue-bg);
+      color: var(--badge-blue);
+      font-weight: 600;
+    }
+
+    /* ✅ 북마크 버튼(아이콘) */
+    .bookmark-btn {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      border-radius: 8px;
+    }
+
+    .bookmark-btn:focus-visible {
+      outline: 2px solid rgba(37, 99, 235, 0.35);
+      outline-offset: 2px;
+    }
+
+    .bookmark-icon {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    /* 기본(비활성): stroke 회색, fill 없음 */
+    .bookmark-btn .bookmark-path {
+      fill: transparent;
+      stroke: var(--gray-400);
+      stroke-width: 2;
+      transition: fill 0.15s ease, stroke 0.15s ease;
+    }
+
+    /* 활성(노란색) */
+    .bookmark-btn.is-active .bookmark-path {
+      fill: var(--bookmark-yellow);
+      stroke: var(--bookmark-yellow-stroke);
+    }
+
+    /* 살짝 hover */
+    .bookmark-btn:hover .bookmark-path {
+      stroke: var(--gray-600);
+    }
+
+    .bookmark-btn.is-active:hover .bookmark-path {
+      stroke: var(--bookmark-yellow-stroke);
+    }
+
+    .course-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .course-sub { font-size: 11px; color: var(--gray-600); }
+
+    .course-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .course-price { font-size: 13px; font-weight: 700; color: #111827; }
+
+    /* ───────── 푸터 ───────── */
+    .footer {
+      background: #111827;
+      color: #e5e7f0;
+      padding: 32px 24px 46px;
+      font-size: 13px;
+    }
+
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+
+    .footer-links {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+      padding-bottom: 14px;
+    }
+
+    .footer h4 { margin: 0 0 8px; font-size: 14px; color: #ffffff; }
+
+    .footer a {
+      display: block;
+      margin: 3px 0;
+      color: #cbd5f5;
+      text-decoration: none;
+    }
+
+    .footer-copy { font-size: 12px; color: #9ca3c4; }
+
+    /* ───────── 반응형 ───────── */
+    @media (max-width: 1024px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--gray-200);
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+      }
+      .sidebar-events { flex-direction: row; flex-wrap: wrap; }
+      .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 768px) {
+      .header-bottom__inner { grid-template-columns: 1fr; row-gap: 8px; }
+      .nav-left { gap: 12px; }
+      .page { margin-top: 12px; }
+      .course-grid { grid-template-columns: 1fr; }
+      .footer-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    /* 로그인 상태 헤더 오른쪽 */
+.header-top__right--authed {
+  gap: 14px;
+}
+
+.profile-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;     /* 동그라미 원하면 999px */
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+  </style>
+</head>
+<script src="/js/nav.js"></script>
+
+<body>
+  <!-- 상단 공지 -->
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <!-- 헤더 (공통) -->
+  <div id="siteHeader"></div>
+
+  <!-- 메인 페이지 -->
+  <main class="page">
+    <div class="page-layout">
+      <!-- 왼쪽 사이드바 -->
+      <aside class="sidebar">
+        <div class="sidebar-title">AI 강의</div>
+
+        <nav class="sidebar-nav">
+          <a href="#" class="current">AI 기초 이해 · 리터러시</a>
+          <a href="#" class="depth">· 업무 효율 향상</a>
+          <a href="#" class="depth">· 교육 자료 제작</a>
+          <a href="#" class="depth">· 원생 관리</a>
+          <a href="#" class="depth">· 상담 업무</a>
+          <a href="#" class="depth">· 강의 기획 · 교육 설계</a>
+          <a href="#" class="depth">· 강의 홍보 · 피드백</a>
+          <a href="#" class="depth">· 자료 · 로고 디자인</a>
+          <a href="#" class="depth">· 창업 · 수익화</a>
+        </nav>
+
+        <!-- 왼쪽 이벤트 배너 -->
+        <div class="sidebar-events">
+          <img src="./lecture/img1.png" alt="이벤트 1" />
+          <img src="./lecture/img5.png" alt="이벤트 5" />
+          <img src="./lecture/img6.png" alt="이벤트 6" />
+          <img src="./lecture/img7.png" alt="이벤트 7" />
+          <img src="./lecture/img8.png" alt="이벤트 8" />
+        </div>
+      </aside>
+
+      <!-- 오른쪽 메인 영역 -->
+      <section class="main">
+        <div class="main-header">
+          <h1 class="main-title">AI 기초 이해 · 리터러시</h1>
+          <div class="breadcrumb">홈 &gt; AI 강의실 &gt; AI 기초 이해 · 리터러시</div>
+        </div>
+
+        <!-- 필터 영역 -->
+        <section class="filters">
+          <div class="filter-row">
+            <div class="filter-label">난이도</div>
+            <div class="chip-row" data-filter-group="level">
+              <button class="chip is-active" type="button">전체</button>
+              <button class="chip" type="button">입문</button>
+              <button class="chip" type="button">기초</button>
+              <button class="chip" type="button">중급</button>
+              <button class="chip" type="button">고급</button>
+            </div>
+          </div>
+
+          <div class="filter-row">
+            <div class="filter-label">가격</div>
+            <div class="chip-row" data-filter-group="price">
+              <button class="chip is-active" type="button">전체</button>
+              <button class="chip" type="button">~1만원</button>
+              <button class="chip" type="button">1~2만원</button>
+              <button class="chip" type="button">2~3만원</button>
+              <button class="chip" type="button">3~4만원</button>
+              <button class="chip" type="button">4~5만원</button>
+              <button class="chip" type="button">5만원~</button>
+            </div>
+          </div>
+
+          <div class="filter-row">
+            <div class="filter-label">분야</div>
+            <div class="chip-row" data-filter-group="field">
+              <button class="chip is-active" type="button">전체</button>
+              <button class="chip" type="button">입시</button>
+              <button class="chip" type="button">테크</button>
+              <button class="chip" type="button">직업훈련</button>
+              <button class="chip" type="button">기업교육</button>
+              <button class="chip" type="button">기타</button>
+            </div>
+          </div>
+
+          <div class="filter-row">
+            <div class="filter-label">툴</div>
+            <div class="chip-row" data-filter-group="tool">
+              <button class="chip is-active" type="button">전체</button>
+              <button class="chip" type="button">ChatGPT</button>
+              <button class="chip" type="button">Notion</button>
+              <button class="chip" type="button">Claude</button>
+              <button class="chip" type="button">Gemini</button>
+              <button class="chip" type="button">Copilot</button>
+              <button class="chip" type="button">WimiCanvas</button>
+              <button class="chip" type="button">Canva</button>
+              <button class="chip" type="button">Excel</button>
+            </div>
+          </div>
+
+          <div class="filter-row filter-search-row">
+            <div class="filter-label">강사/과정명</div>
+            <input id="courseSearchInput" type="text" placeholder="강사 또는 과정명을 입력해주세요." />
+            <button type="button" class="btn-filter btn-filter--primary" id="courseSearchBtn">검색</button>
+            <button type="button" class="btn-filter" id="courseResetBtn">선택해제 ⓧ</button>
+          </div>
+        </section>
+
+        <!-- 정렬 -->
+        <div class="sort-row">
+          <label class="sort-label">
+            <input type="radio" name="sort" class="sort-input" checked />
+            조회수 순
+          </label>
+          <label class="sort-label">
+            <input type="radio" name="sort" class="sort-input" />
+            최신 순
+          </label>
+          <label class="sort-label">
+            <input type="radio" name="sort" class="sort-input" />
+            별점 순
+          </label>
+        </div>
+
+        <!-- 강의 카드 그리드 -->
+        <section class="course-grid">
+          <!-- 카드 1 -->
+          <article class="course-card" data-course-id="1">
+            <div class="course-thumb">
+              <img src="./lecture/img2.png" alt="프롬프트 기본 문법" />
+            </div>
+            <div class="course-body">
+              <div class="course-badge-row">
+                <span class="badge-level">입문</span>
+                <button class="bookmark-btn" type="button" aria-label="북마크">
+                  <svg class="bookmark-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="bookmark-path" d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+                  </svg>
+                </button>
+              </div>
+              <p class="course-sub">ChatGPT</p>
+              <p class="course-title">프롬프트 기본 문법</p>
+              <div class="course-meta">
+                <span>김강사</span>
+                <span class="course-price">25,000원</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 카드 2 -->
+          <article class="course-card" data-course-id="2">
+            <div class="course-thumb">
+              <img src="./lecture/img3.png" alt="AI 모델 비교" />
+            </div>
+            <div class="course-body">
+              <div class="course-badge-row">
+                <span class="badge-level">입문</span>
+                <button class="bookmark-btn" type="button" aria-label="북마크">
+                  <svg class="bookmark-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="bookmark-path" d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+                  </svg>
+                </button>
+              </div>
+              <p class="course-sub">ChatGPT, Claude, Gemini</p>
+              <p class="course-title">AI 모델 비교</p>
+              <div class="course-meta">
+                <span>이강사</span>
+                <span class="course-price">25,000원</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 카드 3 -->
+          <article class="course-card" data-course-id="3">
+            <div class="course-thumb">
+              <img src="./lecture/img4.png" alt="텍스트/이미지/음성 AI 구분 및 특성 이해" />
+            </div>
+            <div class="course-body">
+              <div class="course-badge-row">
+                <span class="badge-level">입문</span>
+                <button class="bookmark-btn" type="button" aria-label="북마크">
+                  <svg class="bookmark-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="bookmark-path" d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+                  </svg>
+                </button>
+              </div>
+              <p class="course-sub">ChatGPT</p>
+              <p class="course-title">텍스트/이미지/음성 AI 구분 및 특성 이해</p>
+              <div class="course-meta">
+                <span>최강사</span>
+                <span class="course-price">25,000원</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 카드 4 -->
+          <article class="course-card" data-course-id="4">
+            <div class="course-thumb">
+              <img src="./lecture/img2.png" alt="프롬프트 기본 문법" />
+            </div>
+            <div class="course-body">
+              <div class="course-badge-row">
+                <span class="badge-level">입문</span>
+                <button class="bookmark-btn" type="button" aria-label="북마크">
+                  <svg class="bookmark-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="bookmark-path" d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+                  </svg>
+                </button>
+              </div>
+              <p class="course-sub">ChatGPT</p>
+              <p class="course-title">프롬프트 기본 문법</p>
+              <div class="course-meta">
+                <span>김강사</span>
+                <span class="course-price">25,000원</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 카드 5 -->
+          <article class="course-card" data-course-id="5">
+            <div class="course-thumb">
+              <img src="./lecture/img3.png" alt="AI 모델 비교" />
+            </div>
+            <div class="course-body">
+              <div class="course-badge-row">
+                <span class="badge-level">입문</span>
+                <button class="bookmark-btn" type="button" aria-label="북마크">
+                  <svg class="bookmark-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="bookmark-path" d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+                  </svg>
+                </button>
+              </div>
+              <p class="course-sub">ChatGPT, Claude, Gemini</p>
+              <p class="course-title">AI 모델 비교</p>
+              <div class="course-meta">
+                <span>이강사</span>
+                <span class="course-price">25,000원</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 카드 6 -->
+          <article class="course-card" data-course-id="6">
+            <div class="course-thumb">
+              <img src="./lecture/img4.png" alt="텍스트/이미지/음성 AI 구분 및 특성 이해" />
+            </div>
+            <div class="course-body">
+              <div class="course-badge-row">
+                <span class="badge-level">입문</span>
+                <button class="bookmark-btn" type="button" aria-label="북마크">
+                  <svg class="bookmark-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="bookmark-path" d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+                  </svg>
+                </button>
+              </div>
+              <p class="course-sub">ChatGPT</p>
+              <p class="course-title">텍스트/이미지/음성 AI 구분 및 특성 이해</p>
+              <div class="course-meta">
+                <span>최강사</span>
+                <span class="course-price">25,000원</span>
+              </div>
+            </div>
+          </article>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <!-- 푸터 -->
+  <div id="siteFooter"></div>
+<script src="./js/layout.js" defer></script>
+
+
+  <script>
+   
+
+    
+
+    // 필터 칩 단일 선택 그룹
+    document.querySelectorAll("[data-filter-group]").forEach(group => {
+      const chips = group.querySelectorAll(".chip");
+      chips.forEach(chip => {
+        chip.addEventListener("click", () => {
+          chips.forEach(c => c.classList.remove("is-active"));
+          chip.classList.add("is-active");
+        });
+      });
+    });
+
+    // ✅ 북마크 클릭(카드 이동 막고 토글)
+    document.querySelectorAll(".bookmark-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // 카드 클릭 이동 방지
+        btn.classList.toggle("is-active");
+      });
+    });
+
+    // 강의 카드 클릭 → 상세 페이지로 이동
+    document.querySelectorAll(".course-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const id = card.getAttribute("data-course-id");
+        window.location.href = `lecture-detail.html?id=${id}`;
+      });
+    });
+
+    /* =========================
+       검색 기능 (유지)
+       ========================= */
+    const courseSearchInput = document.getElementById("courseSearchInput");
+    const courseSearchBtn   = document.getElementById("courseSearchBtn");
+    const courseResetBtn    = document.getElementById("courseResetBtn");
+    const courseCards       = document.querySelectorAll(".course-card");
+
+    function normalize(str) {
+      return str.replace(/\s+/g, "").toLowerCase();
+    }
+
+    function applyCourseSearch() {
+      const query = courseSearchInput.value.trim();
+
+      if (!query) {
+        courseCards.forEach(card => { card.style.display = ""; });
+        return;
+      }
+
+      const normalizedQuery = normalize(query);
+
+      courseCards.forEach(card => {
+        const titleEl = card.querySelector(".course-title");
+        const titleText = titleEl ? titleEl.textContent : "";
+        const normalizedTitle = normalize(titleText);
+
+        if (normalizedTitle.includes(normalizedQuery)) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    courseSearchBtn.addEventListener("click", applyCourseSearch);
+
+    courseSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        applyCourseSearch();
+      }
+    });
+
+    courseResetBtn.addEventListener("click", () => {
+      courseSearchInput.value = "";
+      courseCards.forEach(card => { card.style.display = ""; });
+    });
+  </script>
+</body>
+</html>

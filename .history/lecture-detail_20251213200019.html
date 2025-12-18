@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>강의 상세 | LEVEL-UP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* ====== (네 기존 스타일 그대로) ====== */
+    :root{
+      --black:#111827;
+      --gray-50:#f9fafb;
+      --gray-100:#f3f4f6;
+      --gray-200:#e5e7eb;
+      --gray-300:#d1d5db;
+      --gray-400:#9ca3af;
+      --gray-500:#6b7280;
+      --gray-600:#4b5563;
+      --gray-700:#374151;
+      --primary:#2563eb;
+      --primary-soft:#eff6ff;
+      --white:#fff;
+      --shadow: 0 10px 26px rgba(15,23,42,.08);
+      --shadow2: 0 22px 44px rgba(15,23,42,.12);
+      --radius: 16px;
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:"Noto Sans KR", system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background: var(--gray-100);
+      color:var(--black);
+    }
+    a{color:inherit;text-decoration:none;}
+    img{max-width:100%;display:block;}
+    button{font-family:inherit;}
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+      clip:rect(0,0,0,0); border:0;
+    }
+
+    .topbar{
+      background:#0c0c0c;
+      color:#e5e7eb;
+      font-size:12px;
+      text-align:center;
+      padding:7px 16px;
+    }
+    .topbar strong{color:#60a5fa;font-weight:700;}
+    .topbar a{color:#93c5fd;text-decoration:underline;}
+
+    .header{
+      background:#fff;
+      border-bottom:1px solid var(--gray-200);
+      position:sticky; top:0; z-index:50;
+    }
+    .header-top{
+      max-width:1200px;
+      margin:0 auto;
+      padding:10px 16px 6px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      font-size:22px;
+      font-weight:900;
+      cursor:pointer;
+      letter-spacing:-0.06em;
+      user-select:none;
+    }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+
+    .header-top__right{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      font-size:13px;
+      color:var(--gray-600);
+      white-space:nowrap;
+    }
+    .header-top__right .nav-util{
+      cursor:pointer;
+      color:var(--gray-600);
+    }
+    .btn-mypage{
+      border-radius:999px;
+      border:1px solid #000;
+      background:#000;
+      color:#fff;
+      padding:7px 18px;
+      font-size:13px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .profile{
+      width:22px; height:22px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid var(--gray-200);
+    }
+
+    .header-bottom{
+      border-top:1px solid rgba(229,231,235,.9);
+    }
+    .header-bottom__inner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:8px 16px 10px;
+      display:grid;
+      grid-template-columns:auto minmax(320px, 1fr) auto;
+      align-items:center;
+      gap:16px;
+    }
+    .nav-left{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      white-space:nowrap;
+    }
+    .nav-wrapper{position:relative;}
+    .menu-title{
+      cursor:pointer;
+      background:none;
+      border:none;
+      padding:6px 0;
+      font:inherit;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      color:#111827;
+    }
+    .menu-toggle-icon{
+      width:16px;height:16px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain;
+      background-repeat:no-repeat;
+      background-position:center;
+      transition:transform .18s ease;
+    }
+    .menu-toggle-icon.open{transform:rotate(90deg);}
+
+    .menu-link{
+      color:var(--gray-700);
+      font-weight:600;
+    }
+    .menu-link.active{
+      color:#111827;
+      font-weight:800;
+      position:relative;
+    }
+
+    .nav__search{
+      position:relative;
+      max-width:680px;
+      width:100%;
+      margin:0 auto;
+    }
+    .nav__search input{
+      width:100%;
+      padding:10px 42px 10px 42px;
+      border-radius:999px;
+      border:1px solid var(--gray-300);
+      font-size:14px;
+      background:var(--gray-50);
+      outline:none;
+    }
+    .icon-search{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:16px;
+      color:var(--gray-500);
+      pointer-events:none;
+    }
+
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      top:34px; left:0;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 18px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:30;
+    }
+    .nav-dropdown__list{list-style:none;margin:0;padding:0;}
+    .nav-dropdown__item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 16px;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{border-top:1px solid var(--gray-200);}
+    .nav-dropdown__item:hover{background:var(--gray-50);}
+    .nav-dropdown__icon{width:22px;height:22px;object-fit:contain;}
+
+    .page{
+      max-width:1200px;
+      margin:16px auto 70px;
+      padding:0 16px;
+    }
+
+    .hero{
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow: var(--shadow2);
+      background:
+        radial-gradient(1000px 300px at 20% 20%, rgba(255,255,255,.18), transparent 60%),
+        radial-gradient(700px 300px at 90% 20%, rgba(255,255,255,.18), transparent 60%),
+        linear-gradient(90deg, rgba(43,160,180,.95), rgba(168,105,208,.85));
+      position:relative;
+    }
+    .hero-inner{
+      display:grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+      gap:16px;
+      padding:22px 22px;
+      align-items:stretch;
+      min-height:190px;
+    }
+    .hero-left{
+      color:#fff;
+      padding:8px 10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .hero-topline{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .pill-best{
+      font-size:11px;
+      font-weight:800;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+    }
+    .pill-cat{
+      font-size:11px;
+      font-weight:700;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.2);
+    }
+    .hero-title{
+      margin:0;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:-0.02em;
+      line-height:1.25;
+    }
+    .hero-desc{
+      margin:0;
+      font-size:12px;
+      line-height:1.55;
+      opacity:.95;
+      max-width:560px;
+    }
+    .hero-meta{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:2px;
+      font-size:12px;
+      opacity:.95;
+    }
+    .star{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-weight:700;
+    }
+    .star b{font-weight:900;}
+    .hero-tags{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:2px;
+    }
+    .tag{
+      font-size:11px;
+      padding:5px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+      font-weight:700;
+    }
+
+    .hero-right{
+      width: 500px;
+      height: 250px;
+      max-width: 100%;
+      border-radius:14px;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-right img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .hero-right .hero-badge{
+      position:absolute;
+      left:12px;
+      top:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:12px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.2);
+      color:#fff;
+      font-size:11px;
+      font-weight:800;
+      backdrop-filter: blur(6px);
+    }
+    .hero-right .hero-badge img{
+      width:18px;height:18px;
+      object-fit:contain;
+      filter:none;
+    }
+    .hero-right .hero-thumb-title{
+      position:absolute;
+      left:12px;
+      bottom:12px;
+      right:12px;
+      font-weight:900;
+      font-size:14px;
+      color:#fff;
+      text-shadow:0 6px 16px rgba(0,0,0,.45);
+    }
+
+    .tabs{
+      margin-top:14px;
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      position:sticky;
+      top:84px;
+      z-index:40;
+    }
+    .tabs-inner{
+      display:flex;
+      gap:18px;
+      padding:12px 16px;
+      align-items:center;
+      overflow:auto;
+    }
+    .tab{
+      font-size:13px;
+      font-weight:800;
+      color:var(--gray-500);
+      padding:8px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .tab.active{
+      color:#111827;
+      background: var(--primary-soft);
+      border:1px solid rgba(37,99,235,.18);
+    }
+
+    .section{
+      margin-top:16px;
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+    .section-title{
+      margin:0 0 10px;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:-0.01em;
+    }
+
+    .intro-grid{
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap:16px;
+      align-items:start;
+    }
+    .intro-card{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      padding:14px;
+      background: #fff;
+    }
+    .intro-card p{
+      margin:0;
+      font-size:12px;
+      line-height:1.75;
+      color:var(--gray-700);
+    }
+    .intro-card p + p{margin-top:10px;}
+
+    .buy-card{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      padding:14px;
+      background:#fff;
+      position:sticky;
+      top:152px;
+    }
+    .buy-top{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .teacher-dot{
+      width:30px;height:30px;border-radius:50%;
+      background: var(--gray-200);
+    }
+    .buy-name{
+      font-size:12px;
+      font-weight:900;
+      margin:0;
+    }
+    .buy-meta{
+      margin:10px 0 0;
+      font-size:11px;
+      color:var(--gray-600);
+      display:grid;
+      gap:6px;
+    }
+    .buy-meta div{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .buy-price{
+      margin:10px 0 0;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .buy-price .old{
+      font-size:11px;
+      color:#ef4444;
+      font-weight:800;
+    }
+    .buy-price .new{
+      font-size:16px;
+      font-weight:900;
+      color:#111827;
+    }
+    .btn-buy{
+      margin-top:10px;
+      width:100%;
+      border:none;
+      border-radius:10px;
+      background:#111827;
+      color:#fff;
+      font-weight:900;
+      padding:12px 0;
+      font-size:14px;
+      cursor:pointer;
+    }
+
+    @media (max-width: 1024px){
+      .hero-inner{grid-template-columns:1fr;min-height:auto;}
+      .intro-grid{grid-template-columns:1fr;}
+      .buy-card{position:relative;top:auto;}
+      .tabs{top:128px;}
+      .header-bottom__inner{grid-template-columns:1fr;row-gap:8px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 <a href="#">다운로드</a></strong> 하기 &gt;
+  </div>
+
+  <header class="header">
+    <div class="header-top">
+      <div class="brand" id="brandLogo">LEV<span class="brand__e">E</span>L-UP</div>
+      <div class="header-top__right">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util" id="logoutBtn">로그아웃</span>
+        <img class="profile" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__inner">
+        <div class="nav-left">
+          <div class="nav-wrapper">
+            <button class="menu-title" id="allLecturesBtn" type="button">
+              모든 강의
+              <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+            </button>
+
+            <div class="nav-dropdown" id="navDropdown">
+              <ul class="nav-dropdown__list">
+                <li class="nav-dropdown__item js-go-ai-basic">
+                  <img src="./assets/9342101 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>AI 기초 이해 · 리터러시</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>업무 효율 향상</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>교육 자료 제작</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9731562 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>원생 관리</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/10316159 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>상담 업무</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>강의 기획 · 교육 설계</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>강의 홍보 · 피드백</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>자료 · 로고 디자인</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/11591525 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>창업 · 수익화</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <a href="course.html" class="menu-link active">자료실</a>
+        </div>
+
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+
+        <button class="btn-mypage" type="button">마이페이지</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-label="강의 상단 배너">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <div class="hero-topline">
+            <span class="pill-best">BEST</span>
+            <span class="pill-cat" id="heroCategory">AI 기초 이해 · 리터러시</span>
+          </div>
+
+          <h1 class="hero-title" id="heroTitle">강의 제목</h1>
+          <p class="hero-desc" id="heroDesc">강의 설명</p>
+
+          <div class="hero-meta">
+            <span class="star">⭐ <b id="heroRating">-</b> · 조회수 <b id="heroViews">-</b></span>
+          </div>
+
+          <div class="hero-tags" id="heroTags"></div>
+        </div>
+
+        <div class="hero-right">
+          <div class="hero-badge">
+            <img id="badgeIcon" src="./lec_part/lec2.png" alt="" />
+            <span id="badgeTool">ChatGPT</span>
+          </div>
+          <img id="heroThumb" src="./lec_part/lec7.png" alt="강의 썸네일" />
+          <div class="hero-thumb-title" id="heroThumbTitle">강의 제목</div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="강의 상세 탭">
+      <div class="tabs-inner">
+        <div class="tab active" data-target="#secIntro">강의소개</div>
+        <div class="tab" data-target="#secTeacher">강사소개</div>
+        <div class="tab" data-target="#secCurr">커리큘럼</div>
+        <div class="tab" data-target="#secReview">후기</div>
+      </div>
+    </nav>
+
+    <section class="section" id="secIntro">
+      <div class="intro-grid">
+        <div>
+          <h2 class="section-title">강의 소개</h2>
+
+          <div class="intro-card">
+            <p id="introP1">
+              AI 시대에 필요한 기본 소양(리터러시)을 쉽고 명확하게 이해할 수 있도록, 실제 사례 중심으로 구성된 입문 강의입니다.
+            </p>
+            <p id="introP2">
+              최신 생성형 AI의 작동 원리부터 활용 방식, 안전하고 현명한 사용까지! 누구나 “왜 이렇게 결과가 나오는지” 이해하고
+              업무/교육 현장에 바로 적용할 수 있도록 설계했습니다.
+            </p>
+          </div>
+        </div>
+
+        <aside class="buy-card" aria-label="수강 정보 카드">
+          <div class="buy-top">
+            <div class="teacher-dot" aria-hidden="true"></div>
+            <div>
+              <p class="buy-name" id="buyTeacher">-</p>
+              <div style="font-size:11px;color:var(--gray-500);font-weight:800;">강사</div>
+            </div>
+          </div>
+
+          <div class="buy-meta">
+            <div><span>난이도</span><b id="buyLevel">-</b></div>
+            <div><span>사용 AI</span><b id="buyTool">-</b></div>
+          </div>
+
+          <div class="buy-price">
+            <span class="old" id="buyOldText">정가 25%</span>
+            <span class="new" id="buyPrice">₩25,000</span>
+          </div>
+
+          <button class="btn-buy" id="enrollBtn" type="button">수강하기</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="secTeacher">
+      <h2 class="section-title">강사 소개</h2>
+      <p>※ 강사 소개 영역(디자인 유지)</p>
+    </section>
+
+    <section class="section" id="secCurr">
+      <h2 class="section-title">커리큘럼</h2>
+      <p>※ 커리큘럼 영역(디자인 유지)</p>
+    </section>
+
+    <section class="section" id="secReview">
+      <h2 class="section-title">후기</h2>
+      <p>※ 후기 영역(디자인 유지)</p>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#111827;color:#e5e7f0;padding:32px 24px 46px;font-size:13px;margin-top:28px;">
+    <p style="margin:0;text-align:center;">© LEVEL-UP. ALL RIGHTS RESERVED.</p>
+  </footer>
+
+  <!-- ✅ 중요: 데이터/공통 스크립트는 바인딩 스크립트보다 먼저 로드 -->
+  <script src="courseData.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    // ==========================
+    // 0) 상세용 소형 데이터 (메뉴 AI 강의실에서 쓰는 1~6)
+    // ==========================
+    const COURSE_SMALL = {
+      "1": {
+        title: "프롬프트 기본 문법",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "김강사",
+        level: "입문",
+        price: "₩25,000",
+        rating: "4.7",
+        views: "79만",
+        desc: "3년차 교수님의 실전형 강의! GPT-5 기본으로부터 업데이트 및 활용까지. 현업에서 바로 쓰는 개념을 탄탄하게 잡아드립니다.",
+        tags: ["생성형 AI","프롬프트","ChatGPT"]
+      },
+      "2": {
+        title: "AI 모델 비교 (ChatGPT · Claude · Gemini)",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "이강사",
+        level: "입문",
+        price: "₩25,000",
+        rating: "4.6",
+        views: "52만",
+        desc: "대표 AI 모델들의 특징/강점/주의점을 비교하고, 상황에 맞는 선택 기준을 빠르게 정리합니다.",
+        tags: ["모델 비교","업무 적용","리터러시"]
+      },
+      "3": {
+        title: "텍스트/이미지/음성 AI 구분 및 특성 이해",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "최강사",
+        level: "입문",
+        price: "₩25,000",
+        rating: "4.7",
+        views: "61만",
+        desc: "텍스트/이미지/음성 AI가 어떤 차이를 갖는지, 실무에서 어떤 식으로 활용되는지 핵심만 학습합니다.",
+        tags: ["멀티모달","기초","활용"]
+      },
+      "4": {
+        title: "프롬프트 기본 문법 (심화)",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "김강사",
+        level: "초급",
+        price: "₩29,000",
+        rating: "4.8",
+        views: "41만",
+        desc: "프롬프트 패턴을 더 깊게 익히고, 재사용 가능한 템플릿을 만들어봅니다.",
+        tags: ["프롬프트","템플릿","심화"]
+      },
+      "5": {
+        title: "AI 모델 비교 (업무형 케이스)",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "이강사",
+        level: "초급",
+        price: "₩29,000",
+        rating: "4.6",
+        views: "35만",
+        desc: "업무 상황별 모델 선택 기준과 프롬프트 운용 방법을 케이스로 정리합니다.",
+        tags: ["케이스","업무 적용","모델 선택"]
+      },
+      "6": {
+        title: "멀티모달 AI 기초",
+        thumb: "./lec_part/lec7.png",
+        banner: "./lec_part/lec9.png",
+        toolBadgeIcon: "./lec_part/lec2.png",
+        tool: "ChatGPT",
+        teacher: "최강사",
+        level: "입문",
+        price: "₩25,000",
+        rating: "4.7",
+        views: "61만",
+        desc: "텍스트/이미지/음성 멀티모달 흐름을 기초부터 잡아드립니다.",
+        tags: ["멀티모달","기초","활용"]
+      }
+    };
+
+    // ==========================
+    // 1) 공통 헤더/탭/토글
+    // ==========================
+    document.getElementById("brandLogo").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let dropdownOpen = false;
+
+    allLecturesBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dropdownOpen = !dropdownOpen;
+      navDropdown.style.display = dropdownOpen ? "block" : "none";
+      menuToggleIcon.classList.toggle("open", dropdownOpen);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!dropdownOpen) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) {
+        dropdownOpen = false;
+        navDropdown.style.display = "none";
+        menuToggleIcon.classList.remove("open");
+      }
+    });
+
+    document.querySelectorAll(".js-go-ai-basic").forEach(el => {
+      el.addEventListener("click", () => {
+        window.location.href = "course.html";
+      });
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      alert("로그아웃 처리(추후 연동)");
+    });
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        const target = document.querySelector(tab.dataset.target);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    // ==========================
+    // 2) 핵심: id에 따라 데이터 소스 선택
+    //    - 1001~4005 : courseData.js (window.COURSE_DATA)
+    //    - 1~6       : COURSE_SMALL
+    // ==========================
+    function resolveCourseData(courseId) {
+      // 1001~4005 같은 큰 id면 courseData 우선
+      if (window.COURSE_DATA && window.COURSE_DATA[courseId]) {
+        const d = window.COURSE_DATA[courseId];
+        return {
+          title: d.title,
+          desc: d.desc,
+          thumb: "./lec_part/lec7.png",
+          banner: "./lec_part/lec9.png",
+          toolBadgeIcon: "./lec_part/lec2.png",
+          tool: "ChatGPT",
+          teacher: "김강사",
+          level: "입문",
+          price: "₩25,000",
+          rating: "4.7",
+          views: "79만",
+          tags: ["생성형 AI","프롬프트","ChatGPT"]
+        };
+      }
+
+      // 1~6 같은 소형 id면 COURSE_SMALL
+      if (COURSE_SMALL[courseId]) return COURSE_SMALL[courseId];
+
+      // 아무것도 없으면 null
+      return null;
+    }
+
+    function bindCourseToUI(data) {
+      document.title = data.title + " | LEVEL-UP";
+
+      document.getElementById("heroTitle").textContent = data.title;
+      document.getElementById("heroThumbTitle").textContent = data.title;
+      document.getElementById("heroDesc").textContent = data.desc || "";
+
+      document.getElementById("heroRating").textContent = data.rating || "-";
+      document.getElementById("heroViews").textContent = data.views || "-";
+
+      document.getElementById("heroThumb").src = data.thumb || "./lec_part/lec7.png";
+      document.getElementById("badgeIcon").src = data.toolBadgeIcon || "./lec_part/lec2.png";
+      document.getElementById("badgeTool").textContent = data.tool || "ChatGPT";
+
+      // 태그 렌더
+      const tagsEl = document.getElementById("heroTags");
+      tagsEl.innerHTML = "";
+      (data.tags || []).forEach(t => {
+        const s = document.createElement("span");
+        s.className = "tag";
+        s.textContent = t;
+        tagsEl.appendChild(s);
+      });
+
+      // 구매 카드
+      document.getElementById("buyTeacher").textContent = data.teacher || "-";
+      document.getElementById("buyLevel").textContent = data.level || "-";
+      document.getElementById("buyTool").textContent = data.tool || "-";
+      document.getElementById("buyPrice").textContent = data.price || "₩25,000";
+    }
+
+    // 실행
+    const params = new URLSearchParams(location.search);
+    const courseId = params.get("id") || "1";
+
+    const data = resolveCourseData(courseId);
+
+    if (!data) {
+      alert("강의 정보를 찾을 수 없습니다. id=" + courseId);
+      location.href = "course.html";
+    } else {
+      bindCourseToUI(data);
+    }
+  </script>
+</body>
+</html>

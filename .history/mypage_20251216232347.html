@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>마이페이지 | LEVEL-UP</title>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root{
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --black:#111827; --primary:#2563eb;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; color:var(--black); }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    button{ font-family:inherit; }
+
+    /* ✅ 커서 */
+    .brand,.nav-util,.menu-title,.profile-avatar,.mypage-btn{ cursor:pointer; }
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar{ background:#111827; color:#e5e7eb; font-size:12px; text-align:center; padding:6px 16px; }
+    .topbar strong{ color:#facc15; font-weight:600; }
+
+    /* ───────── 헤더(네가 준 구조 그대로) ───────── */
+    .header{ background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:0; z-index:20; }
+    .header-top{
+      display:flex; align-items:center; justify-content:space-between;
+      max-width:1100px; margin:0 auto; padding:8px 16px 4px;
+    }
+    .brand{ font-size:22px; font-weight:800; letter-spacing:-0.06em; }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text; color:transparent;
+    }
+    .header-top__right{ display:flex; align-items:center; gap:14px; font-size:13px; }
+    .nav-util{ color:var(--gray-600); }
+    .profile-avatar{
+      width:28px; height:28px; border-radius:8px; object-fit:cover; border:1px solid var(--gray-200);
+    }
+
+    .header-bottom{
+      display:grid;
+      grid-template-columns:auto minmax(260px,1fr) auto;
+      align-items:center; gap:16px;
+      max-width:1100px; margin:0 auto;
+      padding:4px 16px 10px;
+      border-top:1px solid rgba(148,163,184,.35);
+    }
+    .header-bottom__left{ display:flex; align-items:center; gap:16px; }
+    .menu-title{
+      background:none; border:none; padding:6px 0; font:inherit;
+      font-weight:600; display:inline-flex; align-items:center; gap:4px;
+    }
+    .menu-title:hover{ color:var(--primary); }
+
+    .header-bottom__center{ display:flex; justify-content:center; }
+    .header-bottom__right{ display:flex; justify-content:flex-end; }
+
+    .nav__search{ position:relative; max-width:620px; width:100%; }
+    .nav__search input{
+      width:100%;
+      padding:11px 14px 11px 34px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+      font-size:14px;
+    }
+    .icon-search{
+      position:absolute; left:10px; top:50%; transform:translateY(-50%);
+      font-size:16px; color:var(--gray-600);
+      cursor:default;
+    }
+
+    .menu-toggle-icon{
+      width:18px; height:18px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain; background-repeat:no-repeat; background-position:center;
+      transform:rotate(0deg);
+      transform-origin:center;
+      transition:transform .15s ease;
+    }
+    .menu-toggle-icon.open{ transform:rotate(90deg); }
+
+    .btn{
+      border-radius:12px;
+      border:1px solid transparent;
+      padding:10px 16px;
+      font-weight:600;
+      cursor:pointer;
+      background:#fff;
+      color:var(--black);
+      transition:all .2s ease;
+    }
+    .btn.mypage-btn{
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      padding:9px 22px;
+      font-size:14px;
+      border:1px solid #000;
+    }
+/* ✅ 마이페이지 버튼: 은은한 입체감 + 자연스러운 hover/active */
+.btn.mypage-btn{
+  box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+  transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.btn.mypage-btn:hover{
+  background: rgba(0,0,0,0.86);          /* 너무 밝게 안 바뀌게 */
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  transform: translateY(-1px);           /* 아주 살짝만 */
+}
+
+.btn.mypage-btn:active{
+  background: rgba(0,0,0,0.78);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+  transform: translateY(1px);            /* 눌림 느낌 */
+}
+/* 마이페이지 버튼: 마우스 오버 시 포인터 */
+.btn.mypage-btn{
+  cursor: pointer;
+}
+
+    /* 드롭다운 */
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      top:0; left:0;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 20px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:30;
+    }
+    .nav-dropdown__list{ list-style:none; margin:0; padding:0; }
+    .nav-dropdown__item{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 16px; font-size:14px; white-space:nowrap;
+      cursor:pointer;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{ border-top:1px solid var(--gray-200); }
+    .nav-dropdown__item:hover{ background:var(--gray-50); }
+    .nav-dropdown__icon{ width:22px; height:22px; object-fit:contain; }
+
+    /* ───────── 마이페이지 레이아웃 ───────── */
+    .mypage-wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 80px;
+      display:grid;
+      grid-template-columns:220px 1fr;
+      gap:26px;
+    }
+    .side{ border-right:1px solid var(--gray-200); padding-right:18px; }
+    .side__title{ font-size:14px; font-weight:900; margin:6px 0 14px; }
+    .side__group{ margin-bottom:18px; }
+    .side__group h4{ margin:0 0 8px; font-size:12px; font-weight:900; color:var(--black); }
+    .side__links{ display:flex; flex-direction:column; gap:8px; font-size:12px; }
+    .side__links a{ color:var(--gray-700); }
+    .side__links a.active{ color:var(--primary); font-weight:900; }
+
+    /* ✅ 광고(lecture/img5~img8) — 꽉 차게 */
+    .side__cards    {
+      margin-top: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-events img {
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .evt{ border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; }
+    .evt__badge{
+      display:inline-block;
+      font-size:10px; font-weight:900;
+      background:#dbeafe; color:var(--primary);
+      border-radius:999px;
+      margin:10px 10px 0;
+    }
+    
+
+    .main__crumb{ font-size:11px; color:var(--gray-500); text-align:right; margin:0 0 8px; }
+    .main__title{ font-size:16px; font-weight:900; margin:6px 0 14px; }
+    .tab-title{
+      font-size:12px; font-weight:900;
+      margin:0 0 14px; padding-bottom:10px;
+      border-bottom:1px solid var(--gray-200);
+      width:fit-content;
+    }
+    .block{ border:1px solid var(--gray-200); border-radius:12px; padding:14px; background:#fff; }
+    .block__head{ display:flex; align-items:center; gap:8px; font-size:12px; font-weight:900; margin-bottom:12px; }
+
+    .course-list{ display:flex; flex-direction:column; gap:14px; }
+    .course-card{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      padding:14px;
+      display:grid;
+      grid-template-columns:150px 1fr 90px;
+      gap:14px;
+      align-items:center;
+      background:#fff;
+    }
+    .course-thumb{
+      width:150px; height:84px;
+      border-radius:10px; overflow:hidden;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+    }
+    .course-thumb img{ width:100%; height:100%; object-fit:cover; }
+    .course-info .course-name{ font-size:12px; font-weight:900; margin:0 0 6px; }
+    .course-info .teacher{ font-size:11px; color:var(--gray-500); margin:0 0 8px; }
+    .meta-row{ display:flex; align-items:center; gap:10px; font-size:11px; color:var(--gray-500); margin-bottom:8px; }
+    .stars{ color:var(--black); font-weight:900; }
+    .progress-row{ display:flex; align-items:center; gap:10px; }
+    .progress{ flex:1; height:6px; background:var(--gray-200); border-radius:999px; overflow:hidden; }
+    .progress > span{ display:block; height:100%; background:#7c3aed; }
+    .pct{ font-size:11px; color:var(--gray-500); width:40px; text-align:right; font-weight:900; }
+    .course-action{ display:flex; justify-content:flex-end; }
+    .btn-action{
+      width:78px; height:44px;
+      border-radius:999px; border:none;
+      cursor:pointer; font-size:12px; font-weight:900;
+    }
+    .btn-action.black{ background:#000; color:#fff; }
+    .btn-action.gray{ background:var(--gray-200); color:var(--gray-700); }
+    .pager{ margin-top:18px; text-align:center; font-size:12px; color:var(--gray-500); user-select:none; }
+
+    @media (max-width: 980px){
+      .mypage-wrap{ grid-template-columns:1fr; }
+      .side{ border-right:none; padding-right:0; }
+      .course-card{ grid-template-columns:120px 1fr; grid-template-rows:auto auto; }
+      .course-action{ grid-column:1 / -1; justify-content:flex-end; }
+      .course-thumb{ width:120px; height:72px; }
+    }
+    /* ✅ 구매한 강의 카드: hover/active 효과 + 클릭 커서 */
+.course-card{
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.course-card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(15,23,42,.08);
+  border-color: var(--gray-300);
+}
+.course-card:active{
+  transform: translateY(-1px);
+}
+
+/* 카드 안 버튼은 카드 클릭과 분리 */
+.course-card .btn-action{ cursor: pointer; }
+/* 구매한 강의 카드: 기본 */
+.course-card{
+  cursor: pointer;
+}
+
+/* hover는 기존 유지 */
+
+/* ✅ 클릭(active) 시 파란 아웃라인만 */
+.course-card:active{
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+.footer {
+  background: #0c1224;
+  color: #c7cee1;
+  padding: 32px 24px 50px;
+}
+
+.footer__links {
+  max-width: 1200px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.footer h4 {
+  margin: 0 0 8px;
+  color: #ffffff;
+}
+
+.footer a {
+  display: block;
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.footer__copy {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  color: #9ca6c7;
+}
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <!-- ✅ 헤더: 네가 준 구조 그대로 -->
+  <header class="header">
+    <div class="header-top">
+      <div class="header-top__left">
+         <a href="index.html" class="brand" id="brandLogo">
+  <img src="./assets/top_logo.png" alt="LEVEL-UP" width="130" height="40">
+</a>
+
+      </div>
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__left">
+        <button class="menu-title has-dropdown" id="allLecturesBtn" type="button">
+          <span>모든 강의</span>
+          <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+        </button>
+        <a class="menu-title" href="./board_free.html">자료실</a>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+
+    <div class="nav-dropdown" id="navDropdown">
+      <ul class="nav-dropdown__list">
+        <li class="nav-dropdown__item js-go-ai-basic">
+          <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+          <span>AI 기초 이해 · 리터러시</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" alt="" class="nav-dropdown__icon" />
+          <span>업무 효율 향상</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" alt="" class="nav-dropdown__icon" />
+          <span>교육 자료 제작</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/9731562 1.png" alt="" class="nav-dropdown__icon" />
+          <span>원생 관리</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/10316159 1.png" alt="" class="nav-dropdown__icon" />
+          <span>상담 업무</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" alt="" class="nav-dropdown__icon" />
+          <span>강의 기획 · 교육 설계</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" alt="" class="nav-dropdown__icon" />
+          <span>강의 홍보 · 피드백</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" alt="" class="nav-dropdown__icon" />
+          <span>자료 · 로고 디자인</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/11591525 1.png" alt="" class="nav-dropdown__icon" />
+          <span>창업 · 수익화</span>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="mypage-wrap">
+    <aside class="side">
+      <div class="side__title">마이페이지</div>
+
+      <div class="side__group"><h4>프로필 관리</h4></div>
+
+      <div class="side__group">
+        <h4>수강 강의</h4>
+        <div class="side__links">
+          <a href="#" class="active">· 나의 강의</a>
+          <a href="#">· 대시보드</a>
+        </div>
+      </div>
+
+      <div class="side__group">
+        <h4>자료</h4>
+        <div class="side__links">
+          <a href="#">· 다운로드 자료</a>
+          <a href="#">· 업로드 자료</a>
+        </div>
+      </div>
+
+      <div class="side__group"><h4>결제 관리</h4></div>
+
+      <!-- ✅ 광고: 네가 말한 lecture 폴더 기준(img5~img8) -->
+      <div class="side__cards">
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img5.png" alt="이벤트 1" /></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img6.png" alt="이벤트 2" /></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img7.png" alt="이벤트 3" /></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img8.png" alt="이벤트 4" /></div>
+      </div>
+    </aside>
+
+    <section class="main">
+      <div class="main__crumb">홈 &gt; 마이페이지 &gt; 수강 강의 &gt; 나의 강의</div>
+
+      <div class="main__title">마이페이지</div>
+      <div class="tab-title">나의 강의</div>
+
+      <div class="block">
+        <div class="block__head"><span aria-hidden="true">🧾</span> 구매한 강의</div>
+
+        <div class="course-list">
+          <div class="course-card">
+            <div class="course-thumb"><img src="./my/334312.gif.mp4.png" alt="강의 썸네일" /></div>
+            <div class="course-info">
+              <p class="course-name">AI 시대의 프로덕트 디자인 - Figma Meetup in Korea</p>
+              <p class="teacher">강사명</p>
+              <div class="meta-row"><span class="stars">★ 4.6</span><span>(45)</span><span>·</span><span>3,300+</span></div>
+              <div class="progress-row">
+                <div class="progress"><span style="width:77%"></span></div>
+                <div class="pct">77%</div>
+              </div>
+            </div>
+            <div class="course-action"><button class="btn-action black" type="button">이어<br/>보기</button></div>
+          </div>
+
+          <div class="course-card">
+            <div class="course-thumb"><img src="./my/생성형 AI 개념 이해.png" alt="강의 썸네일" /></div>
+            <div class="course-info">
+              <p class="course-name">생성형 AI 개념 이해</p>
+              <p class="teacher">강사명</p>
+              <div class="meta-row"><span class="stars">★ 4.5</span><span>(22)</span><span>·</span><span>1,000+</span></div>
+              <div class="progress-row">
+                <div class="progress"><span style="width:100%"></span></div>
+                <div class="pct">100%</div>
+              </div>
+            </div>
+            <div class="course-action"><button class="btn-action gray" type="button">수강<br/>완료</button></div>
+          </div>
+        </div>
+
+        <div class="pager">&lt; &nbsp; 1 &nbsp; &gt;</div>
+      </div>
+    </section>
+  </main>
+<footer class="footer">
+    <div class="footer__links">
+      <div>
+        <h4>회사</h4>
+        <a href="#">회사소개</a>
+        <a href="#">채용</a>
+        <a href="#">제휴 문의</a>
+      </div>
+      <div>
+        <h4>서비스</h4>
+        <a href="#">강의찾기</a>
+        <a href="#">커뮤니티</a>
+        <a href="#">이벤트</a>
+      </div>
+      <div>
+        <h4>정책</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+      </div>
+      <div>
+        <h4>고객센터</h4>
+        <a href="tel:1544-9044">1544-9044</a>
+        <a href="#">월-금 10:00~18:00</a>
+      </div>
+    </div>
+    <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+  </footer>
+
+  <script defer src="./js/nav.js"></script>
+  <script>
+    // ✅ 마이페이지 버튼 공통 이동
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest('[data-nav="mypage"]');
+      if (!btn) return;
+      window.location.href = "mypage.html";
+    });
+
+    // ✅ "모든 강의" 드롭다운
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let open = false;
+
+    allLecturesBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      open = !open;
+      navDropdown.style.display = open ? "block" : "none";
+      menuToggleIcon.classList.toggle("open", open);
+
+      // 헤더 아래줄 기준으로 드롭다운 위치 맞춤
+      const rect = allLecturesBtn.getBoundingClientRect();
+      navDropdown.style.top = (rect.bottom + window.scrollY + 6) + "px";
+      navDropdown.style.left = (rect.left + window.scrollX) + "px";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!open) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) {
+        open = false;
+        navDropdown.style.display = "none";
+        menuToggleIcon.classList.remove("open");
+      }
+    });
+    document.querySelector(".js-go-ai-basic")?.addEventListener("click", () => {
+  window.location.href = "lecture_ai_basic.html";
+});
+// ✅ 구매한 강의 카드 클릭 → 나의강의 페이지로 이동
+// (원하는 파일명으로 바꿔: my_lecture.html / mycourse.html 등)
+const MY_LECTURE_URL = "./my_lecture.html";
+
+document.querySelectorAll(".course-card").forEach((card) => {
+  card.addEventListener("click", () => {
+    window.location.href = MY_LECTURE_URL;
+  });
+});
+
+// ✅ 카드 안 버튼(이어보기/수강완료) 눌렀을 때도 동일 이동(원하면 제거 가능)
+document.querySelectorAll(".course-card .btn-action").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    window.location.href = MY_LECTURE_URL;
+  });
+});
+
+  </script>
+</body>
+</html>

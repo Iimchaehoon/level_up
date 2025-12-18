@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 강의 | LEVEL-UP</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<style>
+/* ===== 공통 ===== */
+body{
+  margin:0;
+  font-family:"Noto Sans KR", sans-serif;
+  background:#f8f9fb;
+  color:#111;
+}
+
+/* ===== 헤더 (고정) ===== */
+.header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+}
+
+/* ===== 레이아웃 ===== */
+.page{
+  max-width:1200px;
+  margin:0 auto;
+  padding:24px 16px 80px;
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:32px;
+}
+
+/* ===== 사이드 ===== */
+.side{
+  border-right:1px solid #e5e7eb;
+}
+.side h3{
+  font-size:14px;
+  margin-bottom:12px;
+}
+.side a{
+  display:block;
+  font-size:13px;
+  color:#374151;
+  margin:6px 0;
+}
+.side a.active{
+  color:#2563eb;
+  font-weight:700;
+}
+
+/* ===== 강의 상단 ===== */
+.lecture-hero{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#f3f4f6;
+  border-radius:16px;
+  padding:28px;
+}
+.lecture-hero h1{
+  margin:0 0 8px;
+}
+.lecture-hero img{
+  height:200px;
+}
+
+/* ===== 강사 ===== */
+.teacher{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:24px 0;
+}
+.teacher-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.teacher-left img{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+}
+.stars{
+  color:#facc15;
+}
+
+/* ===== 강의 리스트 ===== */
+.lecture-list{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.lecture-item{
+  display:flex;
+  gap:16px;
+  background:#fff;
+  padding:16px;
+  border-radius:14px;
+}
+.lecture-item img{
+  width:160px;
+  border-radius:10px;
+}
+.lecture-item h4{
+  margin:0 0 6px;
+}
+
+/* ===== 푸터 ===== */
+.footer {
+  background: #0c1224;
+  color: #c7cee1;
+  padding: 32px 24px 50px;
+}
+.footer__links {
+  max-width: 1200px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+.footer h4 { color:#fff; margin-bottom:8px; }
+.footer a { display:block; font-size:14px; }
+.footer__copy {
+  text-align:center;
+  font-size:13px;
+  color:#9ca6c7;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== 헤더 ===== -->
+ <header class="header">
+    <!-- 1줄: 로고 / 고객센터 / 로그인 / 회원가입 -->
+    <div class="header-top">
+      <div class="header-top__left">
+        <a href="#" class="brand">
+          LEV<span class="brand__e">E</span>L-UP
+        </a>
+      </div>
+      <div class="header-top__right header-top__right--authed">
+       
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+      
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+      
+    </div>
+
+    <!-- 2줄: 모든 강의 / 자료실 / 검색 / 마이페이지 -->
+    <div class="header-bottom">
+      <div class="header-bottom__left">
+        <button class="menu-title has-dropdown" type="button">
+          <span>모든 강의</span>
+          <span class="menu-toggle-icon" aria-hidden="true"></span>
+        </button>
+        <a class="menu-title" href="#">자료실</a>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+
+    <!-- 드롭다운 메뉴 (모든 강의) -->
+    <div class="nav-dropdown">
+      <ul class="nav-dropdown__list">
+        <li class="nav-dropdown__item js-go-ai-basic">
+          <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+          <span>AI 기초 이해 · 리터러시</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" alt="" class="nav-dropdown__icon" />
+          <span>업무 효율 향상</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" alt="" class="nav-dropdown__icon" />
+          <span>교육 자료 제작</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/9731562 1.png" alt="" class="nav-dropdown__icon" />
+          <span>원생 관리</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/10316159 1.png" alt="" class="nav-dropdown__icon" />
+          <span>상담 업무</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" alt="" class="nav-dropdown__icon" />
+          <span>강의 기획 · 교육 설계</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" alt="" class="nav-dropdown__icon" />
+          <span>강의 홍보 · 피드백</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" alt="" class="nav-dropdown__icon" />
+          <span>자료 · 로고 디자인</span>
+        </li>
+        <li class="nav-dropdown__item">
+          <img src="./assets/11591525 1.png" alt="" class="nav-dropdown__icon" />
+          <span>창업 · 수익화</span>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+<main class="page">
+
+  <!-- ===== 사이드 ===== -->
+  <aside class="side">
+    <h3>마이페이지</h3>
+    <a class="active">· 나의 강의</a>
+    <a>· 대시보드</a>
+  </aside>
+
+  <!-- ===== 메인 ===== -->
+  <section>
+
+    <!-- 상단 -->
+    <div class="lecture-hero">
+      <div>
+        <h1>AI 기초 이해 & 수업 설계</h1>
+        <p>1강. 오프닝 & AI 수업계획서 개념잡기</p>
+      </div>
+      <img src="./my_lec/mylect_my.png" alt="">
+    </div>
+
+    <!-- 강사 -->
+    <div class="teacher">
+      <div class="teacher-left">
+        <img src="./my_lec/Rectangle_3468940.png">
+        <strong>강사님 나의미 김강사</strong>
+      </div>
+      <div>
+        <span class="stars">★★★★★</span>
+        문의하기
+      </div>
+    </div>
+
+    <!-- 강의 목록 -->
+    <div class="lecture-list">
+
+      <div class="lecture-item">
+        <img src="./my_lec/Group_42732280.png">
+        <div>
+          <h4>1. 도입 (10분)</h4>
+          <p>AI 리터러시 개념</p>
+        </div>
+      </div>
+
+      <div class="lecture-item">
+        <img src="./my_lec/Group_427322371.png">
+        <div>
+          <h4>2. 생성형 AI 활용</h4>
+          <p>ChatGPT 활용</p>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</main>
+
+<!-- ===== 푸터 ===== -->
+<footer class="footer">
+  <div class="footer__links">
+    <div>
+      <h4>회사</h4>
+      <a>회사소개</a><a>채용</a><a>제휴 문의</a>
+    </div>
+    <div>
+      <h4>서비스</h4>
+      <a>강의찾기</a><a>커뮤니티</a><a>이벤트</a>
+    </div>
+    <div>
+      <h4>정책</h4>
+      <a>이용약관</a><a>개인정보처리방침</a>
+    </div>
+    <div>
+      <h4>고객센터</h4>
+      <a>1544-9044</a><a>월-금 10:00~18:00</a>
+    </div>
+  </div>
+  <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

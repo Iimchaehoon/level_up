@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LEVEL-UP | 입시 강사 코스 추천</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <script src="/js/nav.js"></script>
+
+  <body>
+    <!-- 상단 공지 -->
+    <header class="topbar">
+      <div class="noticebar">
+        <span class="noticebar__text">선생님! 지금 AI 활용 강의 오픈 자료집 무료 제공</span>
+        <button class="noticebar__link">바로 확인하기 &gt;</button>
+      </div>
+    </header>
+
+    <!-- 헤더 (두 줄) -->
+    <header class="header">
+      <!-- 1줄: 로고 / 고객센터 / 로그인 / 회원가입 -->
+      <div class="header-top">
+        <div class="header-top__left">
+          <!-- ★ 항상 메인(index.html)으로 이동 -->
+          <a href="index.html" class="brand">
+            LEV<span class="brand__e">E</span>L-UP
+          </a>
+        </div>
+        <div class="header-top__right header-top__right--authed">
+          
+          <span class="nav-util">고객센터</span>
+          <span class="nav-util">로그아웃</span>
+        
+          <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+        </div>
+        
+      </div>
+
+      <!-- 2줄: 모든 강의 / 자료실 / 검색 / 마이페이지 -->
+      <div class="header-bottom">
+        <div class="header-bottom__left">
+          <button class="menu-title has-dropdown" type="button">
+            <span>모든 강의</span>
+            <span class="menu-toggle-icon" aria-hidden="true"></span>
+          </button>
+          <a class="menu-title" href="#">자료실</a>
+        </div>
+
+        <div class="header-bottom__center">
+          <div class="nav__search">
+            <span class="icon-search">🔍</span>
+            <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+          </div>
+        </div>
+
+        <div class="header-bottom__right">
+          <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+        </div>
+      </div>
+
+      <!-- 드롭다운 메뉴 (모든 강의) -->
+      <div class="nav-dropdown">
+        <ul class="nav-dropdown__list">
+          <li class="nav-dropdown__item js-go-ai-basic">
+            <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+            <span>AI 기초 이해 · 리터러시</span>
+          </li>
+          <li class="nav-dropdown__item">
+            <img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" alt="" class="nav-dropdown__icon" />
+            <span>업무 효율 향상</span>
+          </li>
+          <li class="nav-dropdown__item">
+            <img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" alt="" class="nav-dropdown__icon" />
+            <span>교육 자료 제작</span>
+          </li>
+          <li class="nav-dropdown__item">
+            <img src="./assets/9731562 1.png" alt="" class="nav-dropdown__icon" />
+            <span>원생 관리</span>
+          </li>
+          <li class="nav-dropdown__item">
+            <img src="./assets/10316159 1.png" alt="" class="nav-dropdown__icon" />
+            <span>상담 업무</span>
+          </li>
+          <li class="nav-dropdown__item">
+            <img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" alt="" class="nav-dropdown__icon" />
+            <span>강의 기획 · 교육 설계</span>
+          </li>
+          <li class="nav-dropdown__item">
+            <img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" alt="" class="nav-dropdown__icon" />
+            <span>강의 홍보 · 피드백</span>
+          </li>
+          <li class="nav-dropdown__item">
+            <img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" alt="" class="nav-dropdown__icon" />
+            <span>자료 · 로고 디자인</span>
+          </li>
+          <li class="nav-dropdown__item">
+            <img src="./assets/11591525 1.png" alt="" class="nav-dropdown__icon" />
+            <span>창업 · 수익화</span>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- ================= 코스 페이지 본문 ================= -->
+    <main class="course-page">
+      <div class="course-container">
+        <!-- 1. 상단 메인 카드 (edu_ai 이미지 하나로 꽉 채우기) -->
+        <section class="course-hero">
+          <img
+            src="./edu_im/edu_ai.png"
+            alt="AI로 준비하는 입시 강의 A-Z"
+            class="course-hero__img"
+          />
+        </section>
+
+        <!-- 2. 수강신청 배너 (위 카드에 딱 붙게) -->
+        <section class="course-cta">
+          <div class="course-cta__inner">
+            <p>강의부터 운영까지, <span>20% 할인된 가격</span>으로 한 번에 끝장내기!</p>
+            <button class="course-cta__btn" type="button">수강신청</button>
+          </div>
+        </section>
+
+        <!-- 3. 강사에게 필요한 AI 툴 활용법 + 강의 리스트 타임라인 -->
+        <section class="course-tools">
+          <div class="course-tools__card">
+            <div class="course-tools__copy">
+              <p class="course-tools__eyebrow">
+                배우고 싶던 AI / 디지털 스킬,<br />
+                고민 중이라면 지금이 ‘기회’ 입니다!
+              </p>
+              <h2 class="course-tools__title">
+                강사에게 필요한<br />
+                AI 툴 활용법<br />
+                <span>완벽 정리!</span>
+              </h2>
+            </div>
+
+            <div class="course-tools__timeline">
+              <div class="course-tools__line"></div>
+
+              <article class="course-tools__item">
+                <div class="course-tools__dot"></div>
+                <h3>강의 1. 입시 강사를 위한 AI 기본 리터러시</h3>
+                <ul>
+                  <li>입시 현장에 바로 적용 가능한 AI 개념 정리</li>
+                  <li>ChatGPT/Claude 등 핵심 툴 이해</li>
+                  <li>실제 강의 콘텐츠에서 쓰게 되는 워크플로우 소개</li>
+                </ul>
+              </article>
+
+              <article class="course-tools__item">
+                <div class="course-tools__dot"></div>
+                <h3>강의 2. 학년·수준별 맞춤형 학습자료 자동 생성</h3>
+                <ul>
+                  <li>수준별 문제지·워크시트 자동 생성</li>
+                  <li>반별·학생별 맞춤 피드백 문장 뽑기</li>
+                </ul>
+              </article>
+
+              <article class="course-tools__item">
+                <div class="course-tools__dot"></div>
+                <h3>강의 3. 수업자료(교안·PPT·활동지) 자동 제작</h3>
+                <ul>
+                  <li>입시 설명용 PPT 템플릿 제작</li>
+                  <li>교안, 활동지, 안내문 등 수업자료 한번에 만들기</li>
+                </ul>
+              </article>
+
+              <article class="course-tools__item">
+                <div class="course-tools__dot"></div>
+                <h3>강의 4. 학원 상담 &amp; 학부모 응대 자동화</h3>
+                <ul>
+                  <li>상담 스크립트, 안내 메시지 자동 생성</li>
+                  <li>보고서/상담 기록 정리 자동화</li>
+                </ul>
+              </article>
+
+              <article class="course-tools__item">
+                <div class="course-tools__dot"></div>
+                <h3>강의 5. 입시 강의를 위한 콘텐츠 제작(마케팅·홍보)</h3>
+                <ul>
+                  <li>강의 홍보용 카드뉴스·SNS 콘텐츠 작성</li>
+                  <li>썸네일·배너 문구 초안 만들기</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. 이런 분들께 추천드립니다 + ai_rec 이미지 -->
+        <section class="course-target">
+          
+          <img
+            src="./edu_im/ai_rec.png"
+            alt="이런 분들께 추천드립니다"
+            class="course-target__img"
+          />
+        </section>
+
+        <!-- 5. 코스로 수강 시 터지는 혜택 + 아이콘 3개 -->
+        <section class="course-benefits">
+         
+
+          <div class="course-benefits__card">
+            <h2 class="course-benefits__title">
+              코스로 수강 시 <span>터지는 혜택!</span>
+            </h2>
+            <article class="benefit">
+              <div class="benefit__icon">
+                <img src="./edu_im/image 2042.png" alt="할인 아이콘" />
+              </div>
+              <p class="benefit__label">혜택 1. 수강료 20% 할인</p>
+              <p class="benefit__price">
+                <span class="benefit__price--old">최소 250,000원</span><br />
+                <span class="benefit__price--new">199,000원</span>
+              </p>
+            </article>
+
+            <article class="benefit">
+              <div class="benefit__icon">
+                <img src="./edu_im/image 2044.png" alt="자료 템플릿 아이콘" />
+              </div>
+              <p class="benefit__label">혜택 2. 과제·자료 템플릿</p>
+              <p class="benefit__desc">
+                실제 수업에 바로 쓸 수 있는<br />
+                과제 및 자료 템플릿 제공
+              </p>
+            </article>
+
+            <article class="benefit">
+              <div class="benefit__icon">
+                <img src="./edu_im/image 2046.png" alt="질문권 아이콘" />
+              </div>
+              <p class="benefit__label">혜택 3. 질문권 5개</p>
+              <p class="benefit__desc">
+                강의 내용을 적용하면서<br />
+                막히는 부분을 1:1로 질문
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <!-- 6. 맨 아래 수강신청 배너 (위와 동일 / 바로 붙게) -->
+        <section class="course-cta course-cta--bottom">
+          <div class="course-cta__inner">
+            <p>강의부터 운영까지, <span>20% 할인된 가격</span>으로 한 번에 끝장내기!</p>
+            <button class="course-cta__btn" type="button">수강신청</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__links">
+        <div>
+          <h4>회사</h4>
+          <a href="#">회사소개</a>
+          <a href="#">채용</a>
+          <a href="#">제휴 문의</a>
+        </div>
+        <div>
+          <h4>서비스</h4>
+          <a href="#">강의찾기</a>
+          <a href="#">커뮤니티</a>
+          <a href="#">이벤트</a>
+        </div>
+        <div>
+          <h4>정책</h4>
+          <a href="#">이용약관</a>
+          <a href="#">개인정보처리방침</a>
+        </div>
+        <div>
+          <h4>고객센터</h4>
+          <a href="tel:1544-9044">1544-9044</a>
+          <a href="#">월-금 10:00~18:00</a>
+        </div>
+      </div>
+      <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

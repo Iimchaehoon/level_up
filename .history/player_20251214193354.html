@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>강의 플레이어 | LEVEL-UP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg:#eef1f6;
+      --card:#ffffff;
+      --line:#d6dde8;
+      --text:#111827;
+      --muted:#6b7280;
+      --purple:#a855f7;
+      --shadow:0 10px 22px rgba(15,23,42,.08);
+      --radius:18px;
+      --sidebarW:360px;
+      --playerH:84px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      overflow:hidden; /* 피그마처럼 전체 스크롤 최소화 */
+    }
+    img{ max-width:100%; display:block; }
+    button,input{ font-family:inherit; }
+    a{ color:inherit; text-decoration:none; }
+
+    /* ===== 전체 레이아웃 ===== */
+    .app{
+      height:100vh;
+      display:grid;
+      grid-template-columns: 1fr var(--sidebarW);
+      padding-bottom: var(--playerH); /* 하단 플레이어바 자리 */
+    }
+
+    /* ===== 좌측 컨텐츠 ===== */
+    .stage{
+      position:relative;
+      padding:18px 18px 18px 18px;
+      overflow:auto;
+    }
+
+    .topline{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:4px 0 14px;
+      color:var(--purple);
+      font-weight:800;
+      font-size:18px;
+    }
+    .back{
+      width:28px; height:28px;
+      border-radius:999px;
+      display:grid; place-items:center;
+      cursor:pointer;
+      user-select:none;
+    }
+    .back:hover{ background:rgba(168,85,247,.12); }
+
+    .content-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:26px 28px;
+      min-height: 520px;
+      position:relative;
+    }
+
+    .h1{
+      margin:0 0 6px;
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:-0.02em;
+    }
+    .h2{
+      margin:0 0 18px;
+      font-size:14px;
+      font-weight:700;
+      color:var(--muted);
+    }
+
+    .sec{
+      margin-top:14px;
+    }
+    .sec-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:0 0 10px;
+      font-weight:900;
+      font-size:14px;
+    }
+    .sec-title .emoji{
+      width:20px;
+      display:inline-grid;
+      place-items:center;
+      font-size:14px;
+    }
+    .bullets{
+      margin:0;
+      padding-left:18px;
+      color:var(--text);
+      font-weight:600;
+      line-height:1.75;
+      font-size:14px;
+    }
+    .bullets li{ margin:6px 0; }
+
+    /* 우하단 강사 이미지(원형 배경) */
+    .teacher-badge{
+      position:absolute;
+      right:28px;
+      bottom:28px;
+      width:170px;
+      height:170px;
+      border-radius:999px;
+      background: #bff3ea;
+      display:grid;
+      place-items:center;
+    }
+    .teacher-badge img{
+      width:145px;
+      height:auto;
+      transform: translateY(6px);
+    }
+
+    /* ===== 우측 AI 어시스턴트 ===== */
+    .sidebar{
+      background:#e9edf4;
+      border-left:1px solid rgba(0,0,0,.05);
+      display:flex;
+      flex-direction:column;
+      padding:16px 14px 14px;
+      overflow:hidden;
+    }
+
+    .side-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 8px 12px;
+      font-weight:900;
+      font-size:18px;
+    }
+    .side-actions{
+      display:flex;
+      gap:10px;
+      color:#111;
+    }
+    .iconbtn{
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,.08);
+      background:#fff;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      font-size:16px;
+      user-select:none;
+    }
+    .iconbtn:hover{ background:#f7f8fb; }
+
+    .chat{
+      flex:1;
+      overflow:auto;
+      padding:8px 8px 10px;
+    }
+
+    .msg{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      margin:10px 0;
+    }
+    .avatar{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      background:#fff;
+      border:1px solid rgba(0,0,0,.06);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    .avatar img{ width:26px; height:26px; object-fit:contain; }
+
+    .bubble{
+      max-width: 92%;
+      background:#fff;
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:14px;
+      padding:10px 12px;
+      line-height:1.55;
+      font-size:13px;
+      font-weight:600;
+      color:#111;
+      box-shadow: 0 6px 14px rgba(15,23,42,.06);
+    }
+    .bubble .muted{
+      color:var(--muted);
+      font-weight:700;
+      font-size:12px;
+      margin-bottom:6px;
+      display:block;
+    }
+
+    .msg.user{
+      justify-content:flex-end;
+    }
+    .msg.user .bubble{
+      background:#111827;
+      color:#fff;
+      border-color:#111827;
+      box-shadow:none;
+    }
+
+    .composer{
+      padding:10px 6px 0;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .input{
+      flex:1;
+      height:44px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      padding:0 12px;
+      outline:none;
+      font-size:13px;
+      font-weight:600;
+    }
+    .send{
+      width:46px;
+      height:44px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      font-size:18px;
+      user-select:none;
+    }
+    .send:hover{ background:#f7f8fb; }
+
+    /* ===== 하단 플레이어 바 ===== */
+    .playerbar{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      height: var(--playerH);
+      background:#0b0f14;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .playerbar img{
+      height:150%;
+      width:100%;
+      object-fit:cover; /* 피그마처럼 한 장 이미지로 꽉 */
+    }
+
+    /* 반응형: 좁아지면 사이드 내려가게 */
+    @media (max-width: 980px){
+      body{ overflow:auto; }
+      .app{
+        height:auto;
+        grid-template-columns: 1fr;
+        padding-bottom: var(--playerH);
+      }
+      .sidebar{
+        height: 520px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- ===== 좌측 강의 화면 ===== -->
+    <section class="stage" aria-label="강의 화면">
+      <div class="topline">
+        <div class="back" id="backBtn" title="뒤로가기">←</div>
+        <div>1강. 오프닝 &amp; AI 수업계획서 개념잡기</div>
+      </div>
+
+      <div class="content-card">
+        <h1 class="h1">1강. 오프닝 &amp; AI 수업계획서 개념잡기</h1>
+        <p class="h2">2. AI로 만드는 PPT 자동화 - 시각자료 생산 공장 만들기</p>
+
+        <div class="sec">
+          <p class="sec-title"><span class="emoji">🎯</span> 목적</p>
+          <div class="bullets">
+            강사가 쓰는 PPT를 AI가 대신 구조화·디자인하도록 자동화.
+          </div>
+        </div>
+
+        <div class="sec">
+          <p class="sec-title"><span class="emoji">🛠️</span> 활용 AI 도구</p>
+          <ul class="bullets">
+            <li>ChatGPT Vision : PPT 구조 자동 생성</li>
+            <li>Canva Magic Design : AI 디자인 템플릿 자동 추천</li>
+            <li>Gamma AI : 한 문장 → 전체 프레젠테이션 생성</li>
+            <li>Beautiful.ai : 자동 레이아웃 최적화</li>
+          </ul>
+        </div>
+
+        <div class="sec">
+          <p class="sec-title"><span class="emoji">📚</span> 학습 내용</p>
+          <ul class="bullets">
+            <li>텍스트만 주면 PPT 자동 생성</li>
+            <li>이미지/아이콘 자동 배치</li>
+            <li>학생용 vs 교사용 PPT 자동 분리</li>
+            <li>실제 교육용 PPT 만들기 실습</li>
+          </ul>
+        </div>
+
+        <!-- 우하단 원형 강사 이미지 -->
+        <div class="teacher-badge" aria-hidden="true">
+          <img src="./player/image_1917.png" alt="강사" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 우측 AI 어시스턴트 ===== -->
+    <aside class="sidebar" aria-label="AI 어시스턴트">
+      <div class="side-head">
+        <div>AI 어시스턴트</div>
+        <div class="side-actions">
+          <div class="iconbtn" title="문서">📄</div>
+          <div class="iconbtn" title="더보기">⋮</div>
+        </div>
+      </div>
+
+      <div class="chat" id="chat">
+        <div class="msg bot">
+          <div class="avatar"><img src="./player/image_1864.png" alt="마스코트" /></div>
+          <div class="bubble">
+            <span class="muted">안녕하세요?</span>
+            수업 도중 궁금한 사항이 있다면 질문해보세요!
+          </div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <input id="chatInput" class="input" type="text" placeholder="강의를 보면서 궁금한 걸 물어보세요!" />
+        <button id="sendBtn" class="send" type="button" aria-label="전송">➜</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== 하단 플레이어(이미지 1:1) ===== -->
+  <div class="playerbar" aria-label="플레이어">
+    <img src="./player/plyer_icon.png" alt="플레이어 바" />
+  </div>
+
+  <script>
+    // ===== 뒤로가기(나의 강의로) =====
+    document.getElementById("backBtn").addEventListener("click", () => {
+      // 네 파일명이 my_lecture.html 이면 그대로, 다르면 수정
+      window.location.href = "my_lecture.html";
+    });
+
+    // ===== 간단 AI Q&A (수업/강의 관련 키워드 기반) =====
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    // "강의 내용" 기반으로만 답하도록 룰을 잡아줌 (원하는대로 문구 변경 가능)
+    function answer(text){
+      const t = (text || "").trim().toLowerCase();
+
+      // 빈값
+      if(!t) return "질문을 입력해줘! 예: “오늘 강의 목적이 뭐야?”";
+
+      // 범용
+      if (t.includes("목적") || t.includes("왜") || t.includes("무슨 목적")) {
+        return "이 파트의 목적은 **강사가 쓰는 PPT를 AI가 대신 구조화·디자인하도록 자동화**하는 거야.";
+      }
+      if (t.includes("도구") || t.includes("툴") || t.includes("사용") || t.includes("뭐로")) {
+        return "활용 도구는 **ChatGPT Vision / Canva Magic Design / Gamma AI / Beautiful.ai**야.";
+      }
+      if (t.includes("chatgpt")) {
+        return "ChatGPT Vision은 **PPT 구조(목차/슬라이드 흐름/핵심요약)**을 자동으로 잡아주는 데 좋아.";
+      }
+      if (t.includes("canva")) {
+        return "Canva Magic Design은 **템플릿/레이아웃 추천**으로 디자인 시간을 확 줄여줘.";
+      }
+      if (t.includes("gamma")) {
+        return "Gamma AI는 **한 문장만 줘도 전체 프레젠테이션**을 빠르게 만들어주는 쪽에 강해.";
+      }
+      if (t.includes("beautiful")) {
+        return "Beautiful.ai는 **자동 레이아웃 정렬/정돈**이 강점이라 발표자료 마감 직전에 특히 유용해.";
+      }
+      if (t.includes("학습") || t.includes("배우는") || t.includes("내용")) {
+        return "학습 내용은 **텍스트→PPT 자동 생성 / 이미지·아이콘 자동 배치 / 학생용·교사용 분리 / 교육용 PPT 만들기 실습**이야.";
+      }
+      if (t.includes("학생") || t.includes("교사용") || t.includes("분리")) {
+        return "학생용/교사용 분리는 **표현 난이도·설명량·정답/해설 포함 여부**를 기준으로 AI에게 역할을 나눠서 생성시키면 돼.";
+      }
+      if (t.includes("질문") || t.includes("프롬프트") || t.includes("예시")) {
+        return "예시 프롬프트: “중3 대상 45분 수업, 주제는 OOO. 학생용 10장/교사용 10장으로 나눠서 슬라이드 구조와 핵심 문장, 이미지 아이디어까지 제안해줘.”";
+      }
+
+      // 범위 밖 질문 필터(원하면 삭제 가능)
+      if (t.includes("정치") || t.includes("주식") || t.includes("날씨")) {
+        return "지금은 **수업/강의 관련 질문**에만 답변할 수 있어. 강의 내용으로 질문해줘!";
+      }
+
+      // 기본 응답
+      return "좋아. 질문을 조금만 더 구체적으로 말해줘! (예: “이번 파트에서 어떤 도구를 쓰는지”, “학습 내용 요약” 등)";
+    }
+
+    function addMsg(role, text){
+      const row = document.createElement("div");
+      row.className = "msg " + (role === "user" ? "user" : "bot");
+
+      if(role !== "user"){
+        const av = document.createElement("div");
+        av.className = "avatar";
+        const img = document.createElement("img");
+        img.src = "./player/image_1864.png";
+        img.alt = "마스코트";
+        av.appendChild(img);
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = text;
+
+        row.appendChild(av);
+        row.appendChild(bubble);
+      }else{
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+        row.appendChild(bubble);
+      }
+
+      chat.appendChild(row);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function send(){
+      const q = input.value.trim();
+      if(!q) return;
+
+      addMsg("user", q);
+      input.value = "";
+
+      // 살짝 딜레이로 자연스럽게
+      setTimeout(() => {
+        const a = answer(q);
+        addMsg("bot", a);
+      }, 250);
+    }
+
+    sendBtn.addEventListener("click", send);
+    input.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") send();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>마이페이지 | LEVEL-UP</title>
+
+  <!-- 기존 프로젝트 공통 CSS 그대로 사용 -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    /* 마이페이지 전용 (기존 디자인 건드리지 않고, 이 페이지에만 적용) */
+    body{
+      background:#ffffff;
+    }
+
+    .mypage-wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 22px 16px 80px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 26px;
+    }
+
+    /* 좌측 사이드 메뉴 */
+    .side{
+      border-right: 1px solid #e5e7eb;
+      padding-right: 18px;
+    }
+    .side__title{
+      font-size: 14px;
+      font-weight: 900;
+      margin: 6px 0 14px;
+    }
+
+    .side__group{
+      margin-bottom: 18px;
+    }
+    .side__group h4{
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 900;
+      color:#111827;
+    }
+    .side__links{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      font-size:12px;
+    }
+    .side__links a{
+      color:#374151;
+      text-decoration:none;
+    }
+    .side__links a.active{
+      color:#2563eb;
+      font-weight: 900;
+    }
+
+    /* 좌측 이벤트 카드 */
+    .side__cards{
+      margin-top: 14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .evt{
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .evt__badge{
+      display:inline-block;
+      font-size:10px;
+      font-weight:900;
+      padding:4px 8px;
+      background:#dbeafe;
+      color:#2563eb;
+      border-radius:999px;
+      margin:10px 10px 0;
+    }
+    .evt img{
+      width:100%;
+      display:block;
+    }
+
+    /* 메인 */
+    .main__crumb{
+      font-size: 11px;
+      color:#6b7280;
+      text-align: right;
+      margin: 0 0 8px;
+    }
+
+    .main__title{
+      font-size: 16px;
+      font-weight: 900;
+      margin: 6px 0 14px;
+    }
+
+    .tab-title{
+      font-size: 12px;
+      font-weight: 900;
+      margin: 0 0 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      width: fit-content;
+    }
+
+    .block{
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      background:#fff;
+    }
+
+    .block__head{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      font-weight:900;
+      margin-bottom: 12px;
+    }
+    .block__head .mini-ico{
+      width:16px;height:16px;
+      display:inline-block;
+    }
+
+    /* 수강 카드 리스트 */
+    .course-list{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .course-card{
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      display:grid;
+      grid-template-columns: 150px 1fr 90px;
+      gap: 14px;
+      align-items:center;
+      background:#fff;
+    }
+    .course-thumb{
+      width:150px;
+      height:84px;
+      border-radius: 10px;
+      overflow:hidden;
+      border:1px solid #e5e7eb;
+      background:#f3f4f6;
+    }
+    .course-thumb img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+
+    .course-info .course-name{
+      font-size: 12px;
+      font-weight: 900;
+      margin: 0 0 6px;
+      color:#111827;
+    }
+    .course-info .teacher{
+      font-size: 11px;
+      color:#6b7280;
+      margin: 0 0 8px;
+    }
+
+    .meta-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:11px;
+      color:#6b7280;
+      margin-bottom: 8px;
+    }
+    .stars{
+      color:#111827;
+      font-weight:900;
+    }
+
+    .progress-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .progress{
+      flex:1;
+      height:6px;
+      background:#e5e7eb;
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .progress > span{
+      display:block;
+      height:100%;
+      background:#7c3aed; /* 캡쳐처럼 보라색 */
+      width: 70%;
+    }
+    .pct{
+      font-size: 11px;
+      color:#6b7280;
+      width:40px;
+      text-align:right;
+      font-weight:900;
+    }
+
+    .course-action{
+      display:flex;
+      justify-content:flex-end;
+    }
+    .btn-action{
+      width: 78px;
+      height: 44px;
+      border-radius: 999px;
+      border: none;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:900;
+    }
+    .btn-action.black{
+      background:#000;
+      color:#fff;
+    }
+    .btn-action.gray{
+      background:#e5e7eb;
+      color:#374151;
+    }
+
+    /* 하단 페이징(캡쳐: < 1 > 느낌) */
+    .pager{
+      margin-top: 18px;
+      text-align:center;
+      font-size:12px;
+      color:#6b7280;
+      user-select:none;
+    }
+
+    @media (max-width: 980px){
+      .mypage-wrap{
+        grid-template-columns: 1fr;
+      }
+      .side{
+        border-right:none;
+        padding-right:0;
+      }
+      .course-card{
+        grid-template-columns: 120px 1fr;
+        grid-template-rows: auto auto;
+      }
+      .course-action{
+        grid-column: 1 / -1;
+        justify-content:flex-end;
+      }
+      .course-thumb{
+        width:120px;
+        height:72px;
+      }
+    }
+  </style>
+</head>
+<script src="/js/nav.js"></script>
+
+<body>
+  <!-- ✅ 헤더/메뉴는 기존 다른 HTML의 컴포넌트 그대로 사용(lecture-detail.html에서 사용하던 header 구조) -->
+  <header class="header">
+    <div class="header-top">
+      <div class="brand" id="brandLogo">LEV<span class="brand__e">E</span>L-UP</div>
+
+      <div class="nav">
+        <a class="menu-title" href="index.html">모든 강의</a>
+        <a class="menu-title" href="#">자료실</a>
+
+        <div class="nav__search">
+          <span class="icon-search" aria-hidden="true"></span>
+          <input class="nav__search-input" type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-top__right header-top__right--authed">
+        <a class="header-top__link" href="#">고객센터</a>
+        <a class="header-top__link" href="#">로그아웃</a>
+        <img class="header-top__profile" src="./assets/ddd_thumbnail.png" alt="프로필" />
+        <!-- ✅ 검은색 마이페이지 버튼 -->
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mypage-wrap">
+    <!-- 좌측 메뉴 -->
+    <aside class="side">
+      <div class="side__title">마이페이지</div>
+
+      <div class="side__group">
+        <h4>프로필 관리</h4>
+      </div>
+
+      <div class="side__group">
+        <h4>수강 강의</h4>
+        <div class="side__links">
+          <a href="#" class="active">· 나의 강의</a>
+          <a href="#">· 대시보드</a>
+        </div>
+      </div>
+
+      <div class="side__group">
+        <h4>자료</h4>
+        <div class="side__links">
+          <a href="#">· 다운로드 자료</a>
+          <a href="#">· 업로드 자료</a>
+        </div>
+      </div>
+
+      <div class="side__group">
+        <h4>결제 관리</h4>
+      </div>
+
+      <!-- 이벤트 카드(피그마 캡쳐에 있는 세로 카드들) -->
+      <div class="side__cards">
+        <div class="evt">
+          <span class="evt__badge">이벤트</span>
+          <img src="./my/image 16.png" alt="이벤트 카드 1" />
+        </div>
+        <div class="evt">
+          <span class="evt__badge">이벤트</span>
+          <img src="./my/image 1810_1.png" alt="이벤트 카드 2" />
+        </div>
+        <div class="evt">
+          <span class="evt__badge">베스트</span>
+          <img src="./my/image 1810.png" alt="이벤트 카드 3" />
+        </div>
+        <div class="evt">
+          <span class="evt__badge">이벤트</span>
+          <img src="./my/생성형 AI 개념 이해.png" alt="이벤트 카드 4" />
+        </div>
+      </div>
+    </aside>
+
+    <!-- 메인 콘텐츠 -->
+    <section class="main">
+      <div class="main__crumb">홈 &gt; 마이페이지 &gt; 수강 강의 &gt; 나의 강의</div>
+
+      <div class="main__title">마이페이지</div>
+      <div class="tab-title">나의 강의</div>
+
+      <div class="block">
+        <div class="block__head">
+          <span class="mini-ico" aria-hidden="true">🧾</span>
+          구매한 강의
+        </div>
+
+        <div class="course-list">
+          <!-- 카드 1 -->
+          <div class="course-card">
+            <div class="course-thumb">
+              <img src="./my/334312.gif.mp4.png" alt="강의 썸네일" />
+            </div>
+
+            <div class="course-info">
+              <p class="course-name">AI 시대의 프로덕트 디자인 - Figma Meetup in Korea</p>
+              <p class="teacher">강사명</p>
+
+              <div class="meta-row">
+                <span class="stars">★ 4.6</span>
+                <span>(45)</span>
+                <span>·</span>
+                <span>3,300+</span>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress"><span style="width:77%"></span></div>
+                <div class="pct">77%</div>
+              </div>
+            </div>
+
+            <div class="course-action">
+              <button class="btn-action black" type="button">이어<br/>보기</button>
+            </div>
+          </div>
+
+          <!-- 카드 2 -->
+          <div class="course-card">
+            <div class="course-thumb">
+              <img src="./my/생성형 AI 개념 이해.png" alt="강의 썸네일" />
+            </div>
+
+            <div class="course-info">
+              <p class="course-name">생성형 AI 개념 이해</p>
+              <p class="teacher">강사명</p>
+
+              <div class="meta-row">
+                <span class="stars">★ 4.5</span>
+                <span>(22)</span>
+                <span>·</span>
+                <span>1,000+</span>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress"><span style="width:100%"></span></div>
+                <div class="pct">100%</div>
+              </div>
+            </div>
+
+            <div class="course-action">
+              <button class="btn-action gray" type="button">수강<br/>완료</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pager">&lt; &nbsp; 1 &nbsp; &gt;</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ✅ 푸터도 기존 다른 HTML의 footer 컴포넌트 그대로 사용(index.html footer 구조) -->
+  <footer class="footer">
+    <div class="footer__links">
+      <div class="footer__col">
+        <h4>LEVELUP</h4>
+        <a href="#">서비스 소개</a>
+        <a href="#">브랜드 소개</a>
+      </div>
+
+      <div class="footer__col">
+        <h4>연락처</h4>
+        <a href="#">고객센터</a>
+        <a href="#">문의하기</a>
+      </div>
+
+      <div class="footer__col">
+        <h4>정책</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보 처리방침</a>
+      </div>
+
+      <div class="footer__col">
+        <h4>채널</h4>
+        <a href="#">Instagram</a>
+        <a href="#">YouTube</a>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <div class="footer__brand">LEVELUP</div>
+      <div class="footer__copy">© LEVELUP. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // 로고 → 메인
+    document.getElementById("brandLogo")?.addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    // ✅ 마이페이지 버튼은 어떤 페이지든 mypage.html로 이동(이 페이지에서도 동일)
+    document.getElementById("goMypageBtn")?.addEventListener("click", () => {
+      window.location.href = "mypage.html";
+    });
+  </script>
+</body>
+</html>

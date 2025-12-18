@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>나의 강의 | LEVEL-UP</title>
+
+<link rel="stylesheet" href="styles.css" />
+
+<style>
+/* ===== 기본 ===== */
+body{
+  margin:0;
+  font-family:"Noto Sans KR",sans-serif;
+  background:#fff;
+  color:#111827;
+}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* ===== 헤더 ===== */
+.header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+}
+.header-top, .header-bottom{
+  max-width:1100px;
+  margin:0 auto;
+  padding:10px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.menu-title{background:none;border:none;font-weight:700;cursor:pointer}
+.nav-dropdown{
+  display:none;
+  position:absolute;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
+  padding:10px 0;
+}
+.nav-dropdown__item{
+  padding:10px 18px;
+  cursor:pointer;
+}
+.nav-dropdown__item:hover{background:#f3f4f6}
+
+/* ===== 레이아웃 ===== */
+.page{
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px 16px 80px;
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:28px;
+}
+
+/* ===== 사이드 ===== */
+.side{
+  border-right:1px solid #e5e7eb;
+}
+.side a{
+  display:block;
+  margin:6px 0;
+  font-size:14px;
+}
+.side a.active{
+  color:#2563eb;
+  font-weight:700;
+}
+
+/* ===== 상단 강의 카드 ===== */
+.hero{
+  background:#f3f4f6;
+  border-radius:18px;
+  padding:24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.hero img{height:180px}
+
+/* ===== 강사 ===== */
+.teacher{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:16px 0;
+}
+.teacher-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.teacher-left img{
+  width:32px;height:32px;border-radius:50%;
+}
+.stars{color:#facc15}
+
+/* ===== 강의 카드 ===== */
+.unit{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:16px;
+  margin-top:12px;
+  display:flex;
+  gap:16px;
+  cursor:pointer;
+}
+.thumb{
+  width:180px;
+  height:100px;
+  position:relative;
+  border-radius:10px;
+  overflow:hidden;
+}
+.thumb .bg{position:absolute;inset:0;object-fit:cover}
+.thumb .film{
+  position:absolute;
+  right:-8px;
+  bottom:-8px;
+  width:55%;
+}
+.thumb .player{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  width:60%;
+}
+
+/* ===== 아코디언 ===== */
+.acc-btn{
+  background:none;
+  border:none;
+  width:100%;
+  padding:12px 0;
+  font-weight:700;
+  text-align:left;
+  cursor:pointer;
+}
+.acc-panel{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .25s ease;
+  padding-left:20px;
+}
+
+/* ===== 푸터 ===== */
+.footer {
+  background:#0c1224;
+  color:#c7cee1;
+  padding:32px 24px 50px;
+}
+.footer__links{
+  max-width:1200px;
+  margin:0 auto 18px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+}
+.footer h4{color:#fff}
+.footer__copy{text-align:center;font-size:13px}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <strong>LEVEL-UP</strong>
+    <button id="allBtn" class="menu-title">모든 강의</button>
+  </div>
+  <div id="dropdown" class="nav-dropdown">
+    <div class="nav-dropdown__item" onclick="goPlayer()">AI 기초 이해 · 리터러시</div>
+  </div>
+</header>
+
+<main class="page">
+
+<aside class="side">
+  <a class="active">· 나의 강의</a>
+  <a>· 대시보드</a>
+</aside>
+
+<section>
+  <div class="hero" onclick="goPlayer()">
+    <div>
+      <h1>AI 기초 이해 & 수업 설계</h1>
+      <p>1강. 오프닝 & AI 수업계획서 개념잡기</p>
+    </div>
+    <img src="./my_lec/mylect_my.png">
+  </div>
+
+  <div class="teacher">
+    <div class="teacher-left">
+      <img src="./my_lec/Rectangle_3468940.png">
+      강사님 나의미 김강사
+    </div>
+    <div><span class="stars">★★★★★</span> 문의하기</div>
+  </div>
+
+  <!-- 도입 -->
+  <div class="unit" onclick="goPlayer()">
+    <div class="thumb">
+      <img class="bg" src="./my_lec/Group_427322280.png">
+      <img class="player" src="./my_lec/Group_427322371.png">
+      <img class="film" src="./my_lec/Rectangle_3468940.png">
+    </div>
+    <div>
+      <strong>1. 도입 (10분)</strong>
+      <ul>
+        <li>AI 리터러시 개념</li>
+        <li>AI 활용 사례</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 아코디언 -->
+  <div>
+    <button class="acc-btn">▶ 2주차 ChatGPT 수업 개요 자동 생성</button>
+    <div class="acc-panel">
+      - 수업 목표 자동화<br>- 차시 구성
+    </div>
+  </div>
+
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer__links">
+    <div><h4>회사</h4><a>회사소개</a></div>
+    <div><h4>서비스</h4><a>강의찾기</a></div>
+    <div><h4>정책</h4><a>이용약관</a></div>
+    <div><h4>고객센터</h4><a>1544-9044</a></div>
+  </div>
+  <p class="footer__copy">© 2025 LEVEL-UP</p>
+</footer>
+
+<script>
+const dropdown=document.getElementById("dropdown");
+document.getElementById("allBtn").onclick=e=>{
+  dropdown.style.display=dropdown.style.display==="block"?"none":"block";
+};
+function goPlayer(){
+  location.href="lecture-detail.html";
+}
+document.querySelectorAll(".acc-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    const panel=btn.nextElementSibling;
+    panel.style.maxHeight=panel.style.maxHeight?null:panel.scrollHeight+"px";
+  };
+});
+</script>
+
+</body>
+</html>

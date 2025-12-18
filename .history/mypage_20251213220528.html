@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI 기초 이해 · 리터러시 | LEVEL-UP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --black: #111827;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2933;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --accent: #3b82f6;
+      --badge-blue: #2563eb;
+      --badge-blue-bg: #ebf2ff;
+      --white: #ffffff;
+      --bookmark-yellow: #facc15;
+      --bookmark-yellow-stroke: #d4a50e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: var(--black);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { font-family: inherit; }
+
+    /* ✅ 커서(pointer) 공통 */
+    .brand,
+    .menu-title,
+    .menu-link,
+    .nav-util,
+    .btn.mypage-btn,
+    .profile-avatar,
+    .nav__search input,
+    .sidebar-events img {
+      cursor: pointer;
+    }
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar {
+      background: #111827;
+      color: #e5e7eb;
+      font-size: 12px;
+      text-align: center;
+      padding: 6px 16px;
+    }
+    .topbar strong { color: #facc15; font-weight: 600; }
+
+    /* ───────── 헤더 (공통) ───────── */
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-top {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 16px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      user-select: none;
+    }
+
+    .brand__e {
+      display: inline-block;
+      background: linear-gradient(120deg, #7b5cff, #ff4bff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .header-top__right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .nav-util { color: var(--gray-600); }
+    .nav-util:hover { color: var(--gray-800); }
+
+    .header-top__right--authed { gap: 14px; }
+
+    .profile-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #/uif: #e5e7eb;
+    }
+
+    .header-bottom { border-top: 1px solid rgba(229, 231, 235, 0.9); }
+
+    .header-bottom__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 8px 16px 10px;
+      display: grid;
+      grid-template-columns: auto minmax(360px, 1fr) auto; /* ✅ 검색창 너비 안정 */
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 20px; min-width: max-content; }
+
+    .nav-wrapper { position: relative; }
+
+    .menu-title {
+      background: none;
+      border: none;
+      padding: 6px 0;
+      font: inherit;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gray-800);
+    }
+
+    .menu-toggle-icon {
+      width: 16px;
+      height: 16px;
+      background-image: url("./assets/Button_1.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      transition: transform 0.18s ease;
+    }
+    .menu-toggle-icon.open { transform: rotate(90deg); }
+
+    .menu-link { color: var(--gray-700); font-weight: 500; }
+    .menu-link.active { color: #111827; font-weight: 700; }
+
+    /* ✅ 검색창 높이/정렬 고정 */
+    .nav__search {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      justify-self: center;
+    }
+
+    .nav__search input {
+      width: 100%;
+      height: 40px;                 /* ✅ 고정 */
+      padding: 0 40px;              /* ✅ 세로 정렬 */
+      border-radius: 999px;
+      border: 1px solid var(--gray-300);
+      font-size: 14px;
+      background: var(--gray-50);
+      outline: none;
+      line-height: 40px;
+    }
+
+    .nav__search input::placeholder { color: var(--gray-400); }
+
+    .icon-search {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    .header-bottom__right { text-align: right; }
+
+    .btn.mypage-btn {
+      border-radius: 999px;
+      background: #000000;
+      color: #ffffff;
+      padding: 9px 22px;
+      font-size: 14px;
+      border: 1px solid #000;
+      font-weight: 600;
+    }
+
+    /* 드롭다운 */
+    .nav-dropdown {
+      display: none;
+      position: absolute;
+      top: 34px;
+      left: 0;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+      padding: 10px 0;
+      min-width: 260px;
+      z-index: 30;
+    }
+
+    .nav-dropdown__list { list-style: none; margin: 0; padding: 0; }
+
+    .nav-dropdown__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    .nav-dropdown__item + .nav-dropdown__item { border-top: 1px solid var(--gray-200); }
+    .nav-dropdown__item:hover { background: var(--gray-50); }
+
+    .nav-dropdown__icon { width: 22px; height: 22px; object-fit: contain; }
+
+    /* ───────── 페이지 레이아웃 ───────── */
+    .page {
+      max-width: 1200px;
+      margin: 20px auto 60px;
+      padding: 0 16px 40px;
+      background: #ffffff;
+      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+      border-radius: 8px;
+    }
+
+    .page-layout {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* ───────── 좌측 사이드바 ───────── */
+    .sidebar {
+      border-right: 1px solid var(--gray-200);
+      padding: 24px 16px 24px 0;
+    }
+
+    .sidebar-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+
+    .sidebar-nav {
+      border-top: 1px solid var(--gray-200);
+      padding-top: 10px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-nav a {
+      display: block;
+      padding: 6px 8px;
+      font-size: 13px;
+      color: var(--gray-600);
+      border-radius: 4px;
+    }
+
+    .sidebar-nav a + a { margin-top: 2px; }
+
+    .sidebar-nav a.current {
+      background: #111827;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .sidebar-nav a.depth { padding-left: 18px; font-size: 12px; }
+
+    /* ✅ 좌측 광고 이미지 “안맞음” 해결 */
+    .sidebar-events {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar-events img {
+      width: 100%;
+      height: 92px;        /* ✅ 높이 통일 */
+      object-fit: cover;   /* ✅ 찌그러짐 방지 + 꽉 채우기 */
+      border-radius: 6px;
+    }
+
+    /* ───────── 메인 영역 ───────── */
+    .main { padding: 24px 0 24px 4px; }
+
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .main-title { font-size: 20px; font-weight: 700; }
+    .breadcrumb { font-size: 12px; color: var(--gray-500); }
+
+    /* 이하(필터/카드/푸터/반응형) 원본 유지 */
+    .filters {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 16px 18px 12px;
+      background: #f9fafb;
+      margin-bottom: 20px;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr);
+      align-items: flex-start;
+      gap: 4px 10px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .filter-label { padding-top: 6px; color: var(--gray-600); font-weight: 500; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid #d1e7ff;
+      padding: 4px 11px;
+      font-size: 11px;
+      background: #ffffff;
+      cursor: pointer;
+      color: var(--gray-700);
+      transition: all 0.15s ease;
+    }
+
+    .chip:hover { background: #eff6ff; }
+
+    .chip.is-active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .filter-search-row {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      gap: 6px 10px;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+    .filter-search-row .filter-label {
+      grid-column: 1 / 2;
+      grid-row: 1 / 3;
+      padding-top: 8px;
+    }
+
+    .filter-search-row input {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+      border-radius: 4px;
+      border: 1px solid var(--gray-300);
+      padding: 6px 8px;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .filter-search-row .btn-filter--primary {
+      grid-column: 3 / 4;
+      grid-row: 1 / 2;
+      justify-self: end;
+    }
+
+    .filter-search-row .btn-filter:last-child {
+      grid-column: 2 / 3;
+      grid-row: 2 / 3;
+      justify-self: flex-start;
+      font-size: 11px;
+      padding: 4px 10px;
+    }
+
+    .btn-filter {
+      border-radius: 4px;
+      border: 1px solid var(--gray-300);
+      background: #ffffff;
+      padding: 6px 18px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-filter--primary {
+      background: #111827;
+      border-color: #111827;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .sort-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .sort-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--gray-500);
+    }
+
+    .sort-input { accent-color: #111827; }
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .course-card {
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid var(--gray-200);
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .course-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 25px rgba(15, 23, 42, 0.12);
+    }
+
+    .course-thumb { background: #111827; overflow: hidden; }
+
+    .course-thumb img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      background: #111827;
+      display: block;
+    }
+
+    .course-body {
+      padding: 10px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .course-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .badge-level {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--badge-blue-bg);
+      color: var(--badge-blue);
+      font-weight: 600;
+    }
+
+    .bookmark-btn {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      border-radius: 8px;
+    }
+
+    .bookmark-btn:focus-visible {
+      outline: 2px solid rgba(37, 99, 235, 0.35);
+      outline-offset: 2px;
+    }
+
+    .bookmark-icon { width: 18px; height: 18px; display: block; }
+
+    .bookmark-btn .bookmark-path {
+      fill: transparent;
+      stroke: var(--gray-400);
+      stroke-width: 2;
+      transition: fill 0.15s ease, stroke 0.15s ease;
+    }
+
+    .bookmark-btn.is-active .bookmark-path {
+      fill: var(--bookmark-yellow);
+      stroke: var(--bookmark-yellow-stroke);
+    }
+
+    .bookmark-btn:hover .bookmark-path { stroke: var(--gray-600); }
+    .bookmark-btn.is-active:hover .bookmark-path { stroke: var(--bookmark-yellow-stroke); }
+
+    .course-title { font-size: 14px; font-weight: 700; margin: 0; }
+    .course-sub { font-size: 11px; color: var(--gray-600); }
+
+    .course-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .course-price { font-size: 13px; font-weight: 700; color: #111827; }
+
+    .footer {
+      background: #111827;
+      color: #e5e7f0;
+      padding: 32px 24px 46px;
+      font-size: 13px;
+    }
+
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+
+    .footer-links {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+      padding-bottom: 14px;
+    }
+
+    .footer h4 { margin: 0 0 8px; font-size: 14px; color: #ffffff; }
+
+    .footer a {
+      display: block;
+      margin: 3px 0;
+      color: #cbd5f5;
+      text-decoration: none;
+    }
+
+    .footer-copy { font-size: 12px; color: #9ca3c4; }
+
+    @media (max-width: 1024px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--gray-200);
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+      }
+      .sidebar-events { flex-direction: row; flex-wrap: wrap; }
+      .sidebar-events img { width: calc(50% - 5px); height: 92px; }
+      .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 768px) {
+      .header-bottom__inner { grid-template-columns: 1fr; row-gap: 8px; }
+      .nav-left { gap: 12px; }
+      .nav__search { justify-self: stretch; max-width: 100%; }
+      .page { margin-top: 12px; }
+      .course-grid { grid-template-columns: 1fr; }
+      .footer-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .sidebar-events img { width: 100%; height: 92px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <header class="header">
+    <div class="header-top">
+      <div class="brand" id="brandLogo">LEV<span class="brand__e">E</span>L-UP</div>
+
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__inner">
+        <div class="nav-left">
+          <div class="nav-wrapper">
+            <button class="menu-title" id="allLecturesBtn" type="button">
+              모든 강의
+              <span class="menu-toggle-icon" id="menuToggleIcon"></span>
+            </button>
+
+            <div class="nav-dropdown" id="navDropdown">
+              <ul class="nav-dropdown__list">
+                <li class="nav-dropdown__item js-go-ai-basic">
+                  <img src="./assets/9342101 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>AI 기초 이해 · 리터러시</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>업무 효율 향상</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>교육 자료 제작</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9731562 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>원생 관리</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/10316159 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>상담 업무</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>강의 기획 · 교육 설계</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>강의 홍보 · 피드백</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>자료 · 로고 디자인</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/11591525 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>창업 · 수익화</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <a href="course.html" class="menu-link active">자료실</a>
+        </div>
+
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+
+        <div class="header-bottom__right">
+          <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-layout">
+      <aside class="sidebar">
+        <div class="sidebar-title">AI 강의</div>
+
+        <nav class="sidebar-nav">
+          <a href="#" class="current">AI 기초 이해 · 리터러시</a>
+          <a href="#" class="depth">· 업무 효율 향상</a>
+          <a href="#" class="depth">· 교육 자료 제작</a>
+          <a href="#" class="depth">· 원생 관리</a>
+          <a href="#" class="depth">· 상담 업무</a>
+          <a href="#" class="depth">· 강의 기획 · 교육 설계</a>
+          <a href="#" class="depth">· 강의 홍보 · 피드백</a>
+          <a href="#" class="depth">· 자료 · 로고 디자인</a>
+          <a href="#" class="depth">· 창업 · 수익화</a>
+        </nav>
+
+        <div class="sidebar-events">
+          <img src="./lecture/img1.png" alt="이벤트 1" />
+          <img src="./lecture/img5.png" alt="이벤트 5" />
+          <img src="./lecture/img6.png" alt="이벤트 6" />
+          <img src="./lecture/img7.png" alt="이벤트 7" />
+          <img src="./lecture/img8.png" alt="이벤트 8" />
+        </div>
+      </aside>
+
+      <section class="main">
+        <!-- (원본 그대로) -->
+        <div class="main-header">
+          <h1 class="main-title">AI 기초 이해 · 리터러시</h1>
+          <div class="breadcrumb">홈 &gt; AI 강의실 &gt; AI 기초 이해 · 리터러시</div>
+        </div>
+
+        <!-- 이하 본문/카드/필터/푸터/JS는 네 원본 그대로 유지 -->
+        <!-- ... (중략: 너가 준 원본 그대로 두면 됨) ... -->
+      </section>
+    </div>
+  </main>
+
+  <!-- 푸터/스크립트(원본 유지) -->
+
+  <!-- ✅ nav.js는 head 밖에 두면 레이아웃 꼬일 수 있어서 body 끝으로 내림 -->
+  <script src="/js/nav.js"></script>
+
+  <script>
+    // 로고 클릭 → 홈으로 이동
+    document.getElementById("brandLogo").addEventListener("click", function () {
+      window.location.href = "index.html";
+    });
+
+    // 모든 강의 드롭다운
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let dropdownOpen = false;
+
+    allLecturesBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dropdownOpen = !dropdownOpen;
+      navDropdown.style.display = dropdownOpen ? "block" : "none";
+      menuToggleIcon.classList.toggle("open", dropdownOpen);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!dropdownOpen) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) {
+        dropdownOpen = false;
+        navDropdown.style.display = "none";
+        menuToggleIcon.classList.remove("open");
+      }
+    });
+
+    // 필터 칩 단일 선택 그룹
+    document.querySelectorAll("[data-filter-group]").forEach(group => {
+      const chips = group.querySelectorAll(".chip");
+      chips.forEach(chip => {
+        chip.addEventListener("click", () => {
+          chips.forEach(c => c.classList.remove("is-active"));
+          chip.classList.add("is-active");
+        });
+      });
+    });
+
+    // 북마크 토글
+    document.querySelectorAll(".bookmark-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        btn.classList.toggle("is-active");
+      });
+    });
+
+    // 카드 클릭 이동
+    document.querySelectorAll(".course-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const id = card.getAttribute("data-course-id");
+        window.location.href = `lecture-detail.html?id=${id}`;
+      });
+    });
+
+    // 검색 기능(유지)
+    const courseSearchInput = document.getElementById("courseSearchInput");
+    const courseSearchBtn   = document.getElementById("courseSearchBtn");
+    const courseResetBtn    = document.getElementById("courseResetBtn");
+    const courseCards       = document.querySelectorAll(".course-card");
+
+    function normalize(str) { return str.replace(/\s+/g, "").toLowerCase(); }
+
+    function applyCourseSearch() {
+      const query = courseSearchInput.value.trim();
+      if (!query) { courseCards.forEach(card => { card.style.display = ""; }); return; }
+
+      const normalizedQuery = normalize(query);
+      courseCards.forEach(card => {
+        const titleEl = card.querySelector(".course-title");
+        const titleText = titleEl ? titleEl.textContent : "";
+        const normalizedTitle = normalize(titleText);
+        card.style.display = normalizedTitle.includes(normalizedQuery) ? "" : "none";
+      });
+    }
+
+    courseSearchBtn.addEventListener("click", applyCourseSearch);
+    courseSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); applyCourseSearch(); }
+    });
+    courseResetBtn.addEventListener("click", () => {
+      courseSearchInput.value = "";
+      courseCards.forEach(card => { card.style.display = ""; });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>자유 게시판 | LEVEL-UP</title>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root{
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --black:#111827; --primary:#2563eb;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; color:var(--black); }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    button, input{ font-family:inherit; }
+
+    /* ✅ 메인 넓게: 오른쪽 padding 축소 */
+    .main{ padding-right: 100px; } /* 기존 320px → 140px */
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar{ background:#111827; color:#e5e7eb; font-size:12px; text-align:center; padding:6px 16px; }
+    .topbar strong{ color:#facc15; font-weight:600; }
+
+    /* ───────── 헤더(고정) ───────── */
+    .header{ background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:0; z-index:999; }
+    .header-top{
+      display:flex; align-items:center; justify-content:space-between;
+      max-width:1100px; margin:0 auto; padding:8px 16px 4px;
+    }
+    .brand{ font-size:22px; font-weight:800; letter-spacing:-0.06em; cursor:pointer; }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text; color:transparent;
+    }
+    .header-top__right{ display:flex; align-items:center; gap:14px; font-size:13px; }
+    .nav-util{ color:var(--gray-600); cursor:pointer; }
+    .profile-avatar{
+      width:28px; height:28px; border-radius:8px; object-fit:cover; border:1px solid var(--gray-200);
+    }
+
+    .header-bottom{
+      display:grid;
+      grid-template-columns:auto minmax(260px,1fr) auto;
+      align-items:center; gap:16px;
+      max-width:1100px; margin:0 auto;
+      padding:4px 16px 10px;
+      border-top:1px solid rgba(148,163,184,.35);
+      position:relative;
+    }
+    .header-bottom__left{ display:flex; align-items:center; gap:16px; }
+    .menu-title{
+      background:none; border:none; padding:6px 0; font:inherit;
+      font-weight:600; display:inline-flex; align-items:center; gap:4px;
+      cursor:pointer;
+    }
+    .menu-title:hover{ color:var(--primary); }
+
+    .header-bottom__center{ display:flex; justify-content:center; }
+    .header-bottom__right{ display:flex; justify-content:flex-end; }
+
+    .nav__search{ position:relative; max-width:620px; width:100%; }
+    .nav__search input{
+      width:100%;
+      padding:11px 14px 11px 34px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+      font-size:14px;
+      outline:none;
+    }
+    .icon-search{
+      position:absolute; left:10px; top:50%; transform:translateY(-50%);
+      font-size:16px; color:var(--gray-600);
+      cursor:default;
+    }
+
+    .menu-toggle-icon{
+      width:18px; height:18px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain; background-repeat:no-repeat; background-position:center;
+      transform:rotate(0deg);
+      transform-origin:center;
+      transition:transform .15s ease;
+    }
+    .menu-toggle-icon.open{ transform:rotate(90deg); }
+
+    .btn{
+      border-radius:12px;
+      border:1px solid transparent;
+      padding:10px 16px;
+      font-weight:600;
+      cursor:pointer;
+      background:#fff;
+      color:var(--black);
+      transition:all .2s ease;
+    }
+    .btn.mypage-btn{
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      padding:9px 22px;
+      font-size:14px;
+      border:1px solid #000;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+      transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .btn.mypage-btn:hover{
+      background: rgba(0,0,0,0.86);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      transform: translateY(-1px);
+    }
+    .btn.mypage-btn:active{
+      background: rgba(0,0,0,0.78);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+      transform: translateY(1px);
+    }
+
+    /* 드롭다운 */
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 20px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:2000;
+    }
+    .nav-dropdown__list{ list-style:none; margin:0; padding:0; }
+    .nav-dropdown__item{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 16px; font-size:14px; white-space:nowrap;
+      cursor:pointer;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{ border-top:1px solid var(--gray-200); }
+    .nav-dropdown__item:hover{ background:var(--gray-50); }
+    .nav-dropdown__icon{ width:22px; height:22px; object-fit:contain; }
+
+    /* ───────── 페이지 레이아웃(좌측 메뉴 + 메인) ───────── */
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 80px;
+      display:grid;
+      grid-template-columns:220px 1fr;
+      gap:26px;
+    }
+
+    /* 좌측 메뉴 */
+    .side{ border-right:1px solid var(--gray-200); padding-right:18px; }
+    .side__title{ font-size:14px; font-weight:900; margin:6px 0 14px; }
+    .side__group{ margin-bottom:18px; }
+    .side__links{ display:flex; flex-direction:column; gap:8px; font-size:12px; }
+    .side__links a{ color:var(--gray-700); cursor:pointer; }
+    .side__links a.active{ color:var(--primary); font-weight:900; }
+
+    /* 광고 */
+    .side__cards{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+    .evt{ border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; }
+    .evt__badge{
+      display:inline-block;
+      font-size:10px; font-weight:900;
+      padding:4px 8px;
+      background:#dbeafe; color:var(--primary);
+      border-radius:999px;
+      margin:10px 10px 0;
+    }
+    .evt img{ width:100%; height:140px; object-fit:cover; }
+
+    /* 메인 */
+    .main__crumb{ font-size:11px; color:var(--gray-500); text-align:right; margin:0 0 8px; }
+    .main__title{ font-size:16px; font-weight:900; margin:6px 0 14px; }
+    .tab-title{
+      font-size:12px; font-weight:900;
+      margin:0 0 14px; padding-bottom:10px;
+      border-bottom:1px solid var(--gray-200);
+      width:fit-content;
+    }
+
+    /* ✅ 필터는 100%, 업로드는 오른쪽으로 떨어져 */
+    .filter-wrap{
+      position:relative;
+      overflow:visible;
+      width:100%;
+    }
+    .filter-card{
+      width:100%;
+      background:#f3f4f6;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+    }
+
+    /* ✅ 업로드는 더 오른쪽(메인 넓혀도 유지되게) */
+    .upload-floating{
+      position:absolute;
+      top:0;
+      right:0;
+      transform:translateX(340px); /* 기존 300 → 340 (오른쪽 더 띄움) */
+      width:280px;
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:10px;
+      z-index:5;
+    }
+    .upload-title{ font-size:12px; font-weight:900; margin:0; }
+    .upload-btn{
+      height:44px;
+      border:none;
+      border-radius:12px;
+      background:#000;
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .upload-btn .plus{
+      width:18px; height:18px;
+      border:1px solid rgba(255,255,255,.75);
+      border-radius:6px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      line-height:1;
+      font-weight:900;
+    }
+
+    .filter-grid{
+      display:grid;
+      grid-template-columns:52px 1fr;
+      gap:10px 14px;
+      align-items:center;
+    }
+    .filter-label{ font-size:12px; font-weight:900; color:var(--gray-700); }
+    .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{
+      border:1px solid var(--gray-200);
+      background:#fff;
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:11px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip.active{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 2px rgba(37,99,235,.12) inset;
+      color:var(--primary);
+      background:#eff6ff;
+    }
+
+    .keyword-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .keyword-row input{
+      flex:1;
+      height:36px;
+      border-radius:10px;
+      border:1px solid var(--gray-200);
+      background:#fff;
+      padding:0 12px;
+      font-size:12px;
+      outline:none;
+      min-width:0;
+    }
+    .keyword-row button{
+      height:36px;
+      min-width:76px;
+      border-radius:10px;
+      border:1px solid var(--gray-300);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      font-size:12px;
+    }
+
+    .meta-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin:12px 0 10px;
+      font-size:12px;
+      color:var(--gray-700);
+    }
+    .meta-bar b{ color:var(--primary); }
+    .sort-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:12px;
+      color:var(--gray-700);
+      user-select:none;
+    }
+    .radio{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      cursor:pointer;
+    }
+    .dot{
+      width:12px; height:12px;
+      border-radius:999px;
+      border:1px solid var(--gray-300);
+      display:inline-block;
+      position:relative;
+      background:#fff;
+    }
+    .radio.active .dot{ border-color:var(--primary); }
+    .radio.active .dot:after{
+      content:"";
+      position:absolute;
+      inset:3px;
+      border-radius:999px;
+      background:var(--primary);
+    }
+
+    /* 게시글 리스트 */
+    .board-list{ display:flex; flex-direction:column; gap:12px; }
+    .post{
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      display:grid;
+      grid-template-columns:145px 1fr;
+      gap:14px;
+      background:#fff;
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .post:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 24px rgba(15,23,42,.06);
+      border-color:var(--gray-300);
+    }
+    .thumb{
+      width:145px; height:125px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--gray-200);
+      background:#f3f4f6;
+    }
+    .thumb img{ width:100%; height:100%; object-fit:cover; }
+    .post-title{ margin:0 0 6px; font-size:13px; font-weight:900; }
+    .post-desc{ margin:0 0 10px; font-size:12px; color:var(--gray-600); font-weight:600; line-height:1.5; }
+    .tag-row{ display:flex; gap:8px; flex-wrap:wrap; margin:0 0 10px; }
+    .tag{
+      font-size:10px;
+      font-weight:900;
+      padding:4px 8px;
+      border-radius:999px;
+      background:#f3f4f6;
+      border:1px solid var(--gray-200);
+      color:var(--gray-700);
+    }
+    .tag.purple{ background:#f5f3ff; border-color:#ddd6fe; color:#6d28d9; }
+    .tag.blue{ background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
+
+    .info-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      font-size:11px;
+      color:var(--gray-500);
+      font-weight:700;
+    }
+
+    .pagination{
+      margin:18px 0 0;
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      font-size:12px;
+      color:var(--gray-700);
+      user-select:none;
+    }
+    .page-btn{
+      width:28px; height:28px;
+      border-radius:8px;
+      border:1px solid var(--gray-200);
+      background:#fff;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+    }
+    .page-btn.active{
+      border-color:#93c5fd;
+      color:var(--primary);
+      box-shadow:0 0 0 2px rgba(37,99,235,.12) inset;
+      background:#eff6ff;
+    }
+
+    /* 푸터 */
+    .footer {
+      background: #0c1224;
+      color: #c7cee1;
+      padding: 32px 24px 50px;
+    }
+    .footer__links {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .footer h4 { margin: 0 0 8px; color: #ffffff; }
+    .footer a { display: block; margin: 4px 0; font-size: 14px; cursor:pointer; }
+    .footer__copy { margin: 0; text-align: center; font-size: 13px; color: #9ca6c7; }
+
+    @media (max-width:980px){
+      .page{ grid-template-columns:1fr; }
+      .side{ border-right:none; padding-right:0; }
+      .main{ padding-right: 0; }
+      .upload-floating{
+        position:static;
+        transform:none;
+        width:100%;
+        margin-top:12px;
+      }
+      .post{ grid-template-columns:1fr; }
+      .thumb{ width:100%; height:180px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <!-- ✅ 헤더 -->
+  <header class="header" id="headerRoot">
+    <div class="header-top">
+      <div class="header-top__left">
+        <a href="index.html" class="brand">LEV<span class="brand__e">E</span>L-UP</a>
+      </div>
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__left">
+        <button class="menu-title has-dropdown" id="allLecturesBtn" type="button">
+          <span>모든 강의</span>
+          <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+        </button>
+
+        <a class="menu-title" href="board_free.html">자료실</a>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+
+    <!-- 드롭다운 -->
+    <div class="nav-dropdown" id="navDropdown">
+      <ul class="nav-dropdown__list">
+        <li class="nav-dropdown__item js-go-ai-basic">
+          <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+          <span>AI 기초 이해 · 리터러시</span>
+        </li>
+        <li class="nav-dropdown__item"><img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" class="nav-dropdown__icon" alt=""><span>업무 효율 향상</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" class="nav-dropdown__icon" alt=""><span>교육 자료 제작</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9731562 1.png" class="nav-dropdown__icon" alt=""><span>원생 관리</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/10316159 1.png" class="nav-dropdown__icon" alt=""><span>상담 업무</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" class="nav-dropdown__icon" alt=""><span>강의 기획 · 교육 설계</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" class="nav-dropdown__icon" alt=""><span>강의 홍보 · 피드백</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" class="nav-dropdown__icon" alt=""><span>자료 · 로고 디자인</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/11591525 1.png" class="nav-dropdown__icon" alt=""><span>창업 · 수익화</span></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- 좌측 -->
+    <aside class="side">
+      <div class="side__title">자료실</div>
+
+      <div class="side__group">
+        <div class="side__links">
+          <a class="active" href="board_free.html">자료 게시판</a>
+          <a href="#">공식 게시판</a>
+          <a href="#">자유 게시판</a>
+        </div>
+      </div>
+
+      <!-- 광고 -->
+      <div class="side__cards">
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img5.png" alt="이벤트 1"></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img6.png" alt="이벤트 2"></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img7.png" alt="이벤트 3"></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img8.png" alt="이벤트 4"></div>
+      </div>
+    </aside>
+
+    <!-- 우측 -->
+    <section class="main">
+      <div class="main__crumb">홈 &gt; 자료 게시판 &gt; 자유게시판</div>
+
+      <div class="main__title">자료 게시판</div>
+      <div class="tab-title">자유 게시판</div>
+
+      <div class="filter-wrap">
+        <div class="filter-card">
+          <div class="filter-grid">
+            <div class="filter-label">분야</div>
+            <div class="chip-row" id="catRow">
+              <div class="chip active" data-cat="all">전체</div>
+              <div class="chip" data-cat="exam">입시</div>
+              <div class="chip" data-cat="lesson">레슨</div>
+              <div class="chip" data-cat="job">직업훈련</div>
+            </div>
+
+            <div class="filter-label">툴</div>
+            <div class="chip-row" id="toolRow">
+              <div class="chip active" data-tool="all">전체</div>
+              <div class="chip" data-tool="ChatGPT">ChatGPT</div>
+              <div class="chip" data-tool="Claude">Claude</div>
+              <div class="chip" data-tool="Gemini">Gemini</div>
+              <div class="chip" data-tool="Copilot">Copilot</div>
+              <div class="chip" data-tool="MirCanvas">MirCanvas</div>
+              <div class="chip" data-tool="Canva">Canva</div>
+              <div class="chip" data-tool="Excel">Excel</div>
+            </div>
+
+            <div class="filter-label">키워드</div>
+            <div class="keyword-row">
+              <input id="keywordInput" type="text" placeholder="이름 또는 자료명을 입력해주세요." autocomplete="off" />
+              <button id="searchBtn" type="button">검색</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="upload-floating">
+          <p class="upload-title">내 자료도 공유해 보세요!</p>
+          <button class="upload-btn" type="button" id="uploadBtn">
+            <span class="plus">+</span> 자료 업로드
+          </button>
+        </div>
+      </div>
+
+      <div class="meta-bar">
+        <div>전체 <b id="totalCount">0</b>건</div>
+
+        <div class="sort-row" id="sortRow">
+          <span class="radio active" data-sort="view"><span class="dot"></span>조회수순</span>
+          <span class="radio" data-sort="recent"><span class="dot"></span>최신순</span>
+          <span class="radio" data-sort="download"><span class="dot"></span>다운로드순</span>
+        </div>
+      </div>
+
+      <div class="board-list" id="boardList"></div>
+
+      <div class="pagination">
+        <span class="page-btn active">1</span>
+        <span class="page-btn">2</span>
+        <span class="page-btn">3</span>
+        <span class="page-btn">4</span>
+        <span class="page-btn">5</span>
+        <span class="page-btn">6</span>
+        <span class="page-btn">›</span>
+        <span class="page-btn">»</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__links">
+      <div>
+        <h4>회사</h4>
+        <a href="#">회사소개</a>
+        <a href="#">채용</a>
+        <a href="#">제휴 문의</a>
+      </div>
+      <div>
+        <h4>서비스</h4>
+        <a href="#">강의찾기</a>
+        <a href="#">커뮤니티</a>
+        <a href="#">이벤트</a>
+      </div>
+      <div>
+        <h4>정책</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+      </div>
+      <div>
+        <h4>고객센터</h4>
+        <a href="tel:1544-9044">1544-9044</a>
+        <a href="#">월-금 10:00~18:00</a>
+      </div>
+    </div>
+    <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* ✅ 마이페이지 이동 */
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest('[data-nav="mypage"]');
+      if (!btn) return;
+      window.location.href = "mypage.html";
+    });
+
+    /* ✅ 드롭다운 */
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let open = false;
+
+    function closeDropdown(){
+      open = false;
+      navDropdown.style.display = "none";
+      menuToggleIcon.classList.remove("open");
+    }
+
+    allLecturesBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      open = !open;
+      if(!open){ closeDropdown(); return; }
+
+      navDropdown.style.display = "block";
+      menuToggleIcon.classList.add("open");
+
+      const rect = allLecturesBtn.getBoundingClientRect();
+      navDropdown.style.top = (rect.bottom + window.scrollY + 8) + "px";
+      navDropdown.style.left = (rect.left + window.scrollX) + "px";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!open) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) closeDropdown();
+    });
+
+    document.querySelectorAll(".js-go-ai-basic").forEach((el) => {
+      el.addEventListener("click", () => window.location.href = "lecture_ai_basic.html");
+    });
+
+    /* ✅ 업로드 버튼(추후 개발 예정) */
+    document.getElementById("uploadBtn")?.addEventListener("click", () => {
+      alert("자료 업로드는 추후 개발 예정입니다!");
+    });
+
+    /* =========================
+       게시글 데이터(임시)
+    ========================= */
+    const posts = [
+      { id:1, thumb:"./data/img1.png", title:"원생 관리 템플릿", desc:"교육 운영 업무 자동화에 관한 강의에 대한 실습 자료를 공유합니다.", cat:"job", tool:"Excel", view:7942, download:151, date:"2025-12-01", tags:["템플릿","업무자동화","자료실"] },
+      { id:2, thumb:"./data/img4.png", title:"프롬프트 문법 정리 샘플 공유", desc:"AI 기초 이해력 리터러시 · 프롬프트 기법 관련 강의 실습 자료", cat:"lesson", tool:"ChatGPT", view:850, download:25, date:"2025-12-01", tags:["프롬프트","리터러시"] },
+      { id:3, thumb:"./data/img2.png", title:"자동화 실습 자료 공유합니다 - #1", desc:"강의 기획 및 교육설계 → 강의 단계별 분석 실습 자료", cat:"job", tool:"Canva", view:201, download:11, date:"2025-12-01", tags:["자동화","교육설계"] },
+      { id:4, thumb:"./data/img6.png", title:"교육 운영 업무 자동화 실습 자료", desc:"학생관리 · 평가 · 피드백 자동화 흐름과 템플릿", cat:"job", tool:"Copilot", view:7942, download:151, date:"2025-12-01", tags:["업무자동화","템플릿"] },
+      { id:5, thumb:"./data/img5.png", title:"프롬프트 문법 정리 샘플 공유(추가)", desc:"초급자용 프롬프트 작성 가이드 + 예시 모음", cat:"lesson", tool:"Claude", view:850, download:25, date:"2025-12-01", tags:["프롬프트","가이드"] },
+      { id:6, thumb:"./data/img3.png", title:"자동화 실습 자료 공유합니다 - #2", desc:"강의 자료 제작(시각자료/활동지) 자동 생성 실습", cat:"lesson", tool:"Gemini", view:201, download:11, date:"2025-12-01", tags:["자료제작","실습"] },
+    ];
+
+    /* ✅ 한글 라벨 매핑(검색 고도화용) */
+    const catLabel = { all:"전체", exam:"입시", lesson:"레슨", job:"직업훈련" };
+
+    let state = { cat:"all", tool:"all", keyword:"", sort:"view" };
+
+    const boardList = document.getElementById("boardList");
+    const totalCountEl = document.getElementById("totalCount");
+    const keywordInput = document.getElementById("keywordInput");
+    const searchBtn = document.getElementById("searchBtn");
+
+    function formatNum(n){ return Number(n).toLocaleString("ko-KR"); }
+
+    /* ✅ 키워드 정규화(공백 여러개/앞뒤 제거) */
+    function normalizeKeyword(v){
+      return (v || "").replace(/\s+/g, " ").trim();
+    }
+
+    /* ✅ 고도화 검색: title/desc/tags/tool/cat라벨까지 포함 */
+    function matchKeyword(post, kw){
+      if(!kw) return true;
+      const k = kw.toLowerCase();
+
+      const bag = [
+        post.title, post.desc,
+        (post.tags || []).join(" "),
+        post.tool,
+        catLabel[post.cat] || "",
+        post.cat
+      ].join(" ").toLowerCase();
+
+      return bag.includes(k);
+    }
+
+    function render(){
+      let list = [...posts];
+
+      if(state.cat !== "all") list = list.filter(p => p.cat === state.cat);
+      if(state.tool !== "all") list = list.filter(p => p.tool === state.tool);
+
+      const kw = normalizeKeyword(state.keyword);
+      if(kw) list = list.filter(p => matchKeyword(p, kw));
+
+      if(state.sort === "view") list.sort((a,b)=>b.view-a.view);
+      if(state.sort === "download") list.sort((a,b)=>b.download-a.download);
+      if(state.sort === "recent") list.sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+
+      totalCountEl.textContent = list.length;
+
+      boardList.innerHTML = list.map(p => {
+        const tagHtml = (p.tags||[]).slice(0,3).map((t,i)=>{
+          const cls = i===0 ? "tag blue" : (i===1 ? "tag purple" : "tag");
+          return `<span class="${cls}">${t}</span>`;
+        }).join("");
+        return `
+          <article class="post" data-id="${p.id}">
+            <div class="thumb"><img src="${p.thumb}" alt=""></div>
+            <div>
+              <h3 class="post-title">${p.title}</h3>
+              <p class="post-desc">${p.desc}</p>
+              <div class="tag-row">${tagHtml}</div>
+              <div class="info-row">
+                <span>작성자</span><span>·</span>
+                <span>${p.date}</span><span>·</span>
+                <span>조회 ${formatNum(p.view)}</span><span>·</span>
+                <span>다운 ${formatNum(p.download)}</span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".post").forEach(el=>{
+        el.addEventListener("click", ()=>{
+          alert("자료 상세 페이지는 추후 개발 예정입니다!");
+        });
+      });
+    }
+
+    function bindChipRow(rowId, key, attr){
+      const row = document.getElementById(rowId);
+      row?.addEventListener("click", (e)=>{
+        const chip = e.target.closest(".chip");
+        if(!chip) return;
+        row.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+        chip.classList.add("active");
+        state[key] = chip.getAttribute(attr);
+        render();
+      });
+    }
+    bindChipRow("catRow","cat","data-cat");
+    bindChipRow("toolRow","tool","data-tool");
+
+    /* ✅ 검색 실행 함수(버튼/엔터/입력 모두 공통) */
+    function runSearch(){
+      state.keyword = normalizeKeyword(keywordInput.value);
+      render();
+    }
+
+    /* ✅ 버튼 클릭 검색 */
+    searchBtn?.addEventListener("click", runSearch);
+
+    /* ✅ 엔터 검색(확실하게) */
+    keywordInput?.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        e.preventDefault();  // 폼 submit 같은 기본동작 방지
+        runSearch();
+      }
+    });
+
+    /* ✅ (선택) 입력 즉시 필터링: 너무 빠르면 아래 250을 400~600으로 */
+    let t = null;
+    keywordInput?.addEventListener("input", ()=>{
+      clearTimeout(t);
+      t = setTimeout(()=>{ runSearch(); }, 250);
+    });
+
+    /* 정렬 */
+    document.getElementById("sortRow")?.addEventListener("click",(e)=>{
+      const item = e.target.closest(".radio");
+      if(!item) return;
+      document.querySelectorAll("#sortRow .radio").forEach(r=>r.classList.remove("active"));
+      item.classList.add("active");
+      state.sort = item.dataset.sort;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

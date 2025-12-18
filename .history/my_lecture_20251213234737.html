@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>나의 강의 | LEVEL-UP</title>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root{
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-700:#374151;
+      --black:#111827; --primary:#2563eb;
+    }
+    body{ margin:0; font-family:"Noto Sans KR",sans-serif; background:#fff; color:var(--black); }
+
+    /* ================= HEADER (고정) ================= */
+    .header{ position:sticky; top:0; z-index:100; background:#fff; border-bottom:1px solid var(--gray-200); }
+    .header-top,.header-bottom{
+      max-width:1100px; margin:0 auto; padding:10px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .brand{ font-size:22px; font-weight:800; letter-spacing:-.06em; }
+    .brand__e{
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text; color:transparent;
+    }
+    .header-top__right{ display:flex; gap:14px; font-size:13px; }
+    .profile-avatar{ width:28px; height:28px; border-radius:8px; }
+
+    .header-bottom{ border-top:1px solid var(--gray-200); }
+    .menu-title{ font-weight:600; cursor:pointer; }
+    .nav__search input{
+      width:420px; padding:10px 36px;
+      border-radius:999px; border:1px solid var(--gray-200);
+      background:var(--gray-50);
+    }
+    .mypage-btn{
+      background:#000; color:#fff; border:none;
+      border-radius:999px; padding:9px 22px;
+      cursor:pointer;
+    }
+
+    /* ================= LAYOUT ================= */
+    .wrap{
+      max-width:1100px; margin:0 auto;
+      display:grid; grid-template-columns:220px 1fr;
+      gap:28px; padding:24px 16px 80px;
+    }
+
+    /* ================= SIDE ================= */
+    .side{ border-right:1px solid var(--gray-200); padding-right:16px; }
+    .side h4{ font-size:12px; margin:16px 0 8px; }
+    .side a{ display:block; font-size:12px; margin-bottom:6px; color:var(--gray-700); }
+    .side a.active{ color:var(--primary); font-weight:700; }
+
+    .side__ads img{
+      width:100%; height:140px;
+      object-fit:cover; border-radius:10px;
+      margin-bottom:12px;
+    }
+
+    /* ================= MAIN ================= */
+    .crumb{ font-size:11px; color:var(--gray-500); text-align:right; }
+    .title{ font-size:16px; font-weight:900; margin:8px 0 16px; }
+
+    .video-box{
+      background:#eef1f4;
+      border-radius:12px;
+      overflow:hidden;
+      position:relative;
+    }
+    .video-box img{
+      width:100%; height:420px; object-fit:cover;
+    }
+
+    .lecture-meta{
+      display:flex; justify-content:space-between;
+      align-items:center; margin:12px 0 24px;
+    }
+
+    .star{ color:#facc15; }
+
+    .chapter{
+      display:flex; gap:16px;
+      background:#f9fafb;
+      border-radius:12px;
+      padding:12px; margin-bottom:12px;
+    }
+    .chapter img{
+      width:160px; height:90px;
+      object-fit:cover; border-radius:8px;
+    }
+
+    /* ================= FOOTER ================= */
+    footer{
+      background:#111827; color:#e5e7eb;
+      padding:40px 16px;
+    }
+    footer .inner{
+      max-width:1100px; margin:0 auto;
+      display:grid; grid-template-columns:repeat(4,1fr);
+      gap:20px;
+    }
+    footer h4{ font-size:14px; margin-bottom:10px; }
+    footer a{ display:block; font-size:13px; color:#9ca3af; margin-bottom:6px; }
+    footer .copy{ text-align:center; font-size:12px; margin-top:30px; color:#9ca3af; }
+
+    @media(max-width:900px){
+      .wrap{ grid-template-columns:1fr; }
+      .side{ border-right:none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-top">
+    <a href="index.html" class="brand">LEV<span class="brand__e">E</span>L-UP</a>
+    <div class="header-top__right">
+      <span>고객센터</span>
+      <span>로그아웃</span>
+      <img src="./assets/ddd_thumbnail.png" class="profile-avatar" />
+    </div>
+  </div>
+
+  <div class="header-bottom">
+    <div>
+      <span class="menu-title">모든 강의</span>
+      &nbsp;&nbsp;
+      <span class="menu-title">자료실</span>
+    </div>
+
+    <div class="nav__search">
+      <input placeholder="어떤 강의를 찾고 있나요?" />
+    </div>
+
+    <button class="mypage-btn" onclick="location.href='mypage.html'">마이페이지</button>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<div class="wrap">
+
+  <!-- SIDE -->
+  <aside class="side">
+    <h4>수강 강의</h4>
+    <a class="active">· 나의 강의</a>
+    <a>· 대시보드</a>
+
+    <h4>자료</h4>
+    <a>· 다운로드 자료</a>
+    <a>· 업로드 자료</a>
+
+    <h4>이벤트</h4>
+    <div class="side__ads">
+      <img src="./lecture/img5.png">
+      <img src="./lecture/img6.png">
+      <img src="./lecture/img7.png">
+      <img src="./lecture/img8.png">
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <div class="crumb">홈 > 마이페이지 > 나의 강의</div>
+    <div class="title">1강. 오프닝 & AI 수업계획서 개념잡기</div>
+
+    <div class="video-box">
+      <img src="./my_lec/Group 427322280.png" />
+    </div>
+
+    <div class="lecture-meta">
+      <div>
+        <strong>강사 나혜림</strong>
+      </div>
+      <div class="star">★★★★★</div>
+    </div>
+
+    <!-- CHAPTERS -->
+    <div class="chapter">
+      <img src="./my_lec/mylect_my.png" />
+      <div>
+        <strong>1. 도입 (10분)</strong>
+        <p>AI 리터러시 개념 이해</p>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <img src="./my_lec/Rectangle 3468940.png" />
+      <div>
+        <strong>2. 실습</strong>
+        <p>AI 수업 설계 실습</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="inner">
+    <div>
+      <h4>LEVELUP</h4>
+      <a>서비스 소개</a><a>브랜드</a>
+    </div>
+    <div>
+      <h4>정책</h4>
+      <a>이용약관</a><a>개인정보</a>
+    </div>
+    <div>
+      <h4>고객센터</h4>
+      <a>1544-9044</a>
+    </div>
+    <div>
+      <h4>SNS</h4>
+      <a>Instagram</a><a>YouTube</a>
+    </div>
+  </div>
+  <div class="copy">© 2025 LEVEL-UP. All rights reserved.</div>
+</footer>
+
+</body>
+</html>

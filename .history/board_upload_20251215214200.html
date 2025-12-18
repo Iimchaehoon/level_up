@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>자료 업로드 | LEVEL-UP</title>
+
+  <style>
+    :root{
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --black:#111827; --primary:#2563eb;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; color:var(--black); }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    button,input,select{ font-family:inherit; }
+
+    /* 상단 공지 */
+    .topbar{ background:#111827; color:#e5e7eb; font-size:12px; text-align:center; padding:6px 16px; }
+    .topbar strong{ color:#facc15; font-weight:600; }
+
+    /* 헤더(너가 쓰던 스타일 그대로 유지) */
+    .header{ background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:0; z-index:999; }
+    .header-top{
+      display:flex; align-items:center; justify-content:space-between;
+      max-width:1100px; margin:0 auto; padding:8px 16px 4px;
+    }
+    .brand{ font-size:22px; font-weight:800; letter-spacing:-0.06em; cursor:pointer; }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text; color:transparent;
+    }
+    .header-top__right{ display:flex; align-items:center; gap:14px; font-size:13px; }
+    .nav-util{ color:var(--gray-600); cursor:pointer; }
+    .profile-avatar{ width:28px; height:28px; border-radius:8px; object-fit:cover; border:1px solid var(--gray-200); }
+
+    .header-bottom{
+      display:grid;
+      grid-template-columns:auto minmax(260px,1fr) auto;
+      align-items:center; gap:16px;
+      max-width:1100px; margin:0 auto;
+      padding:4px 16px 10px;
+      border-top:1px solid rgba(148,163,184,.35);
+      position:relative;
+    }
+    .header-bottom__left{ display:flex; align-items:center; gap:16px; }
+    .menu-title{
+      background:none; border:none; padding:6px 0; font:inherit;
+      font-weight:600; display:inline-flex; align-items:center; gap:4px;
+      cursor:pointer;
+    }
+    .menu-title:hover{ color:var(--primary); }
+    .header-bottom__center{ display:flex; justify-content:center; }
+    .header-bottom__right{ display:flex; justify-content:flex-end; }
+
+    .nav__search{ position:relative; max-width:620px; width:100%; }
+    .nav__search input{
+      width:100%;
+      padding:11px 14px 11px 34px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+      font-size:14px;
+      outline:none;
+    }
+    .icon-search{
+      position:absolute; left:10px; top:50%; transform:translateY(-50%);
+      font-size:16px; color:var(--gray-600);
+    }
+
+    .menu-toggle-icon{
+      width:18px; height:18px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain; background-repeat:no-repeat; background-position:center;
+      transition:transform .15s ease;
+    }
+    .menu-toggle-icon.open{ transform:rotate(90deg); }
+
+    .btn{
+      border-radius:12px;
+      border:1px solid transparent;
+      padding:10px 16px;
+      font-weight:600;
+      cursor:pointer;
+      background:#fff;
+      color:var(--black);
+      transition:all .2s ease;
+    }
+    .btn.mypage-btn{
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      padding:9px 22px;
+      font-size:14px;
+      border:1px solid #000;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+      transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .btn.mypage-btn:hover{ background: rgba(0,0,0,0.86); transform: translateY(-1px); }
+    .btn.mypage-btn:active{ background: rgba(0,0,0,0.78); transform: translateY(1px); }
+
+    /* 드롭다운 */
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 20px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:2000;
+    }
+    .nav-dropdown__list{ list-style:none; margin:0; padding:0; }
+    .nav-dropdown__item{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 16px; font-size:14px; white-space:nowrap;
+      cursor:pointer;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{ border-top:1px solid var(--gray-200); }
+    .nav-dropdown__item:hover{ background:var(--gray-50); }
+    .nav-dropdown__icon{ width:22px; height:22px; object-fit:contain; }
+
+    /* 페이지 레이아웃 */
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 80px;
+    }
+
+    /* 업로드 폼 (피그마 느낌) */
+    .form-title{ display:flex; align-items:center; justify-content:space-between; margin:8px 0 14px; }
+    .crumb{ font-size:11px; color:var(--gray-500); text-align:right; margin:0 0 8px; }
+
+    .field{ padding:14px 0; border-bottom:1px solid var(--gray-200); }
+    .label-row{ display:flex; align-items:center; gap:6px; margin:0 0 10px; }
+    .label{ font-size:12px; font-weight:900; }
+    .req{ color:#ef4444; font-weight:900; }
+
+    .text-input{
+      width:100%;
+      height:46px;
+      border-radius:10px;
+      border:1px solid var(--gray-200);
+      padding:0 14px;
+      outline:none;
+      background:#fff;
+      font-size:13px;
+    }
+    .text-input::placeholder{ color:var(--gray-400); font-weight:600; }
+
+    .chip-row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .chip{
+      border:1px solid var(--gray-200);
+      background:#fff;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:11px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip.active{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 2px rgba(37,99,235,.12) inset;
+      color:var(--primary);
+      background:#eff6ff;
+    }
+    .chip.add{
+      display:inline-flex; align-items:center; gap:6px;
+      border-style:dashed;
+      color:var(--gray-700);
+    }
+    .chip.add b{ font-size:12px; }
+    .chip.small{ padding:7px 10px; }
+
+    .row-tools{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .ghost-icon{
+      width:20px; height:20px; border-radius:999px;
+      border:1px solid var(--gray-200);
+      display:inline-flex; align-items:center; justify-content:center;
+      color:var(--gray-500);
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .select{
+      width:100%;
+      height:46px;
+      border-radius:10px;
+      border:1px solid var(--gray-200);
+      padding:0 14px;
+      background:#fff;
+      font-size:13px;
+      outline:none;
+      appearance:none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--gray-500) 50%),
+        linear-gradient(135deg, var(--gray-500) 50%, transparent 50%);
+      background-position:
+        calc(100% - 22px) 20px,
+        calc(100% - 16px) 20px;
+      background-size:6px 6px, 6px 6px;
+      background-repeat:no-repeat;
+    }
+
+    /* 파일 업로드 박스 */
+    .upload-box{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      height:120px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#fff;
+      cursor:pointer;
+      position:relative;
+    }
+    .upload-box:hover{ background:var(--gray-50); }
+    .upload-box .hint{
+      text-align:center;
+      font-size:12px;
+      color:var(--gray-500);
+      font-weight:800;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .upload-ico{
+      width:42px; height:42px;
+      object-fit:contain;
+    }
+    .file-pill{
+      position:absolute;
+      left:12px; bottom:12px;
+      font-size:11px;
+      font-weight:900;
+      color:var(--gray-700);
+      background:#f3f4f6;
+      border:1px solid var(--gray-200);
+      padding:6px 10px;
+      border-radius:999px;
+      display:none;
+      max-width:calc(100% - 24px);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    /* 썸네일 영역 */
+    .thumb-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-top:10px;
+    }
+    .thumb-card{
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      background:#fff;
+      padding:14px;
+      min-height:220px;
+    }
+    .thumb-head{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:10px;
+    }
+    .thumb-title{ font-size:12px; font-weight:900; margin:0; }
+    .thumb-desc{ font-size:11px; color:var(--gray-500); font-weight:800; margin:0; }
+
+    .thumb-left{
+      display:grid;
+      grid-template-columns:180px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    .big-preview{
+      width:180px; height:160px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--gray-200);
+      background:#f3f4f6;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .big-preview img{ width:100%; height:100%; object-fit:cover; }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 86px);
+      gap:10px;
+      justify-content:start;
+    }
+    .mini{
+      width:86px; height:70px;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid var(--gray-200);
+      background:#f3f4f6;
+      cursor:pointer;
+      position:relative;
+    }
+    .mini img{ width:100%; height:100%; object-fit:cover; }
+    .mini.active{
+      border-color:#2563eb;
+      box-shadow:0 0 0 2px rgba(37,99,235,.18) inset;
+    }
+
+    .thumb-upload{
+      height:186px;
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#fff;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+    }
+    .thumb-upload:hover{ background:var(--gray-50); }
+    .thumb-upload .center{
+      text-align:center;
+      font-size:12px;
+      color:var(--gray-500);
+      font-weight:900;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .thumb-upload img.preview{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      display:none;
+    }
+
+    /* 하단 업로드 버튼 */
+    .bottom{
+      padding:22px 0 0;
+      display:flex;
+      justify-content:center;
+    }
+    .submit{
+      width:260px;
+      height:46px;
+      border:none;
+      border-radius:12px;
+      background:#000;
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    /* 푸터 */
+    .footer {
+      background: #0c1224;
+      color: #c7cee1;
+      padding: 32px 24px 50px;
+      margin-top:40px;
+    }
+    .footer__links {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .footer h4 { margin: 0 0 8px; color: #ffffff; }
+    .footer a { display: block; margin: 4px 0; font-size: 14px; cursor:pointer; }
+    .footer__copy { margin: 0; text-align: center; font-size: 13px; color: #9ca6c7; }
+
+    @media (max-width:980px){
+      .thumb-grid{ grid-template-columns:1fr; }
+      .thumb-left{ grid-template-columns:1fr; }
+      .big-preview{ width:100%; height:200px; }
+      .mini-grid{ grid-template-columns:repeat(4, 1fr); }
+      .mini{ width:100%; height:76px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <!-- 헤더 -->
+  <header class="header" id="headerRoot">
+    <div class="header-top">
+      <div class="header-top__left">
+        <a href="index.html" class="brand">LEV<span class="brand__e">E</span>L-UP</a>
+      </div>
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__left">
+        <button class="menu-title has-dropdown" id="allLecturesBtn" type="button">
+          <span>모든 강의</span>
+          <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+        </button>
+        <a class="menu-title" href="board_free.html">자료실</a>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+
+    <!-- 드롭다운 -->
+    <div class="nav-dropdown" id="navDropdown">
+      <ul class="nav-dropdown__list">
+        <li class="nav-dropdown__item js-go-ai-basic">
+          <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+          <span>AI 기초 이해 · 리터러시</span>
+        </li>
+        <li class="nav-dropdown__item"><img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" class="nav-dropdown__icon" alt=""><span>업무 효율 향상</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" class="nav-dropdown__icon" alt=""><span>교육 자료 제작</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9731562 1.png" class="nav-dropdown__icon" alt=""><span>원생 관리</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/10316159 1.png" class="nav-dropdown__icon" alt=""><span>상담 업무</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" class="nav-dropdown__icon" alt=""><span>강의 기획 · 교육 설계</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" class="nav-dropdown__icon" alt=""><span>강의 홍보 · 피드백</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" class="nav-dropdown__icon" alt=""><span>자료 · 로고 디자인</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/11591525 1.png" class="nav-dropdown__icon" alt=""><span>창업 · 수익화</span></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="crumb">홈 &gt; 자료 게시판 &gt; 자유게시판 &gt; 자료 업로드</div>
+
+    <!-- 제목 입력 -->
+    <section class="field">
+      <div class="label-row">
+        <div class="label">제목</div><span class="req">*</span>
+      </div>
+      <input id="titleInput" class="text-input" type="text" placeholder="제목을 입력하세요." />
+    </section>
+
+    <!-- 분야 -->
+    <section class="field">
+      <div class="label-row">
+        <div class="label">분야</div><span class="req">*</span>
+      </div>
+      <div class="chip-row" id="catRow">
+        <div class="chip active" data-value="all">전체</div>
+        <div class="chip" data-value="exam">입시</div>
+        <div class="chip" data-value="tech">테크</div>
+        <div class="chip" data-value="job">직업훈련</div>
+      </div>
+    </section>
+
+    <!-- 태그 -->
+    <section class="field">
+      <div class="row-tools">
+        <div class="label-row" style="margin:0;">
+          <div class="label">태그</div>
+        </div>
+        <div class="ghost-icon" id="resetTagBtn" title="태그 초기화">↻</div>
+      </div>
+      <div class="chip-row" id="tagRow" style="margin-top:10px;">
+        <div class="chip small" data-tag="#국어">#국어</div>
+        <div class="chip small active" data-tag="#수학">#수학</div>
+        <div class="chip small" data-tag="#영어">#영어</div>
+        <div class="chip small" data-tag="#사회">#사회</div>
+        <div class="chip small" data-tag="#과학">#과학</div>
+        <div class="chip small" data-tag="#역사">#역사</div>
+        <div class="chip small" data-tag="#자동화">#자동화</div>
+        <div class="chip small" data-tag="#AI">#AI</div>
+        <div class="chip small" data-tag="#표지">#표지</div>
+        <div class="chip small" data-tag="#학생관리">#학생관리</div>
+        <div class="chip small" data-tag="#문제출제">#문제출제</div>
+        <div class="chip small" data-tag="#템플릿">#템플릿</div>
+        <div class="chip small" data-tag="#보고서">#보고서</div>
+        <div class="chip small" data-tag="#강의기획서">#강의기획서</div>
+
+        <div class="chip add" id="addTagBtn"><b>+</b> 직접입력</div>
+      </div>
+    </section>
+
+    <!-- 강의 선택 -->
+    <section class="field">
+      <div class="label-row">
+        <div class="label">강의 선택</div><span class="req">*</span>
+      </div>
+      <select id="lectureSelect" class="select">
+        <option value="">수강한 강의를 선택하세요.</option>
+        <option>원생관리 · 학부모 공지문 자동화</option>
+        <option>AI 기초 이해 & 수업 설계</option>
+        <option>교육 자료 제작 자동화</option>
+      </select>
+    </section>
+
+    <!-- 사용한 툴 -->
+    <section class="field">
+      <div class="row-tools">
+        <div class="label-row" style="margin:0;">
+          <div class="label">사용한 툴</div><span class="req">*</span>
+        </div>
+        <div class="ghost-icon" id="resetToolBtn" title="툴 초기화">↻</div>
+      </div>
+
+      <div class="chip-row" id="toolRow" style="margin-top:10px;">
+        <div class="chip small" data-tool="ChatGPT">ChatGPT</div>
+        <div class="chip small" data-tool="Claude">Claude</div>
+        <div class="chip small" data-tool="Gemini">Gemini</div>
+        <div class="chip small" data-tool="MirCanvas">MirCanvas</div>
+        <div class="chip small" data-tool="Canva">Canva</div>
+        <div class="chip small" data-tool="Excel">Excel</div>
+        <div class="chip small active" data-tool="PowerPoint">PowerPoint</div>
+
+        <div class="chip add" id="addToolBtn"><b>+</b> 직접입력</div>
+      </div>
+    </section>
+
+    <!-- 자료 업로드 -->
+    <section class="field">
+      <div class="label-row">
+        <div class="label">자료 업로드</div><span class="req">*</span>
+        <span style="margin-left:12px; font-size:11px; color:var(--gray-500); font-weight:800;">제작한 자료를 업로드 해주세요.</span>
+      </div>
+
+      <div class="upload-box" id="fileDrop">
+        <div class="hint">
+          <img class="upload-ico" src="./commuit/upload.png" alt="">
+          <div>자료를 업로드 해주세요.</div>
+        </div>
+        <div class="file-pill" id="filePill"></div>
+        <input id="fileInput" type="file" hidden />
+      </div>
+    </section>
+
+    <!-- 썸네일 선택 -->
+    <section class="field" style="border-bottom:none;">
+      <div class="label-row">
+        <div class="label">썸네일 선택</div><span class="req">*</span>
+        <span style="margin-left:12px; font-size:11px; color:var(--gray-500); font-weight:800;">썸네일을 선택 또는 업로드 해주세요.</span>
+      </div>
+
+      <div class="thumb-grid">
+        <!-- 왼쪽: 기본 썸네일 선택 -->
+        <div class="thumb-card">
+          <div class="thumb-head">
+            <div>
+              <p class="thumb-title">기본 썸네일</p>
+              <p class="thumb-desc">제공 썸네일 중 하나를 선택</p>
+            </div>
+          </div>
+
+          <div class="thumb-left">
+            <div class="big-preview">
+              <img id="bigThumb" src="./commuit/bigimg.png" alt="">
+            </div>
+
+            <div class="mini-grid" id="miniGrid">
+              <div class="mini active" data-src="./commuit/img.png"><img src="./commuit/img.png" alt=""></div>
+              <div class="mini" data-src="./commuit/img3.png"><img src="./commuit/img3.png" alt=""></div>
+              <div class="mini" data-src="./commuit/img4.png"><img src="./commuit/img4.png" alt=""></div>
+              <div class="mini" data-src="./commuit/img5.png"><img src="./commuit/img5.png" alt=""></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 오른쪽: 썸네일 업로드 -->
+        <div class="thumb-card">
+          <div class="thumb-head">
+            <div>
+              <p class="thumb-title">썸네일 업로드</p>
+              <p class="thumb-desc">직접 업로드</p>
+            </div>
+          </div>
+
+          <div class="thumb-upload" id="thumbUploadBox">
+            <img class="preview" id="thumbPreview" alt="">
+            <div class="center" id="thumbPlaceholder">
+              <img src="./commuit/gal.png" alt="" style="width:46px;height:46px;object-fit:contain;">
+              <div>썸네일을 업로드 해주세요.</div>
+            </div>
+            <input id="thumbInput" type="file" accept="image/*" hidden />
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom">
+        <button class="submit" id="submitBtn" type="button">업로드</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="footer">
+    <div class="footer__links">
+      <div>
+        <h4>회사</h4>
+        <a href="#">회사소개</a>
+        <a href="#">채용</a>
+        <a href="#">제휴 문의</a>
+      </div>
+      <div>
+        <h4>서비스</h4>
+        <a href="#">강의찾기</a>
+        <a href="#">커뮤니티</a>
+        <a href="#">이벤트</a>
+      </div>
+      <div>
+        <h4>정책</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+      </div>
+      <div>
+        <h4>고객센터</h4>
+        <a href="tel:1544-9044">1544-9044</a>
+        <a href="#">월-금 10:00~18:00</a>
+      </div>
+    </div>
+    <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* 마이페이지 이동 */
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest('[data-nav="mypage"]');
+      if (!btn) return;
+      window.location.href = "mypage.html";
+    });
+
+    /* 드롭다운 */
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let open = false;
+
+    function closeDropdown(){
+      open = false;
+      navDropdown.style.display = "none";
+      menuToggleIcon.classList.remove("open");
+    }
+    allLecturesBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      open = !open;
+      if(!open){ closeDropdown(); return; }
+      navDropdown.style.display = "block";
+      menuToggleIcon.classList.add("open");
+      const rect = allLecturesBtn.getBoundingClientRect();
+      navDropdown.style.top = (rect.bottom + window.scrollY + 8) + "px";
+      navDropdown.style.left = (rect.left + window.scrollX) + "px";
+    });
+    document.addEventListener("click", (e) => {
+      if (!open) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) closeDropdown();
+    });
+    document.querySelectorAll(".js-go-ai-basic").forEach((el) => {
+      el.addEventListener("click", () => window.location.href = "lecture_ai_basic.html");
+    });
+
+    /* ========== 칩 유틸 ========== */
+    function bindSingleSelect(rowId){
+      const row = document.getElementById(rowId);
+      row?.addEventListener("click", (e)=>{
+        const chip = e.target.closest(".chip");
+        if(!chip || chip.classList.contains("add")) return;
+        row.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+        chip.classList.add("active");
+      });
+    }
+    function bindMultiSelect(rowId){
+      const row = document.getElementById(rowId);
+      row?.addEventListener("click", (e)=>{
+        const chip = e.target.closest(".chip");
+        if(!chip || chip.classList.contains("add")) return;
+        chip.classList.toggle("active");
+      });
+    }
+
+    bindSingleSelect("catRow");
+    bindMultiSelect("tagRow");
+    bindMultiSelect("toolRow");
+
+    function addCustomChip(rowId, text, dataAttr){
+      const row = document.getElementById(rowId);
+      const addBtn = row.querySelector(".chip.add");
+      const div = document.createElement("div");
+      div.className = "chip small active";
+      div.textContent = text;
+      div.setAttribute(dataAttr, text);
+      row.insertBefore(div, addBtn);
+    }
+
+    document.getElementById("addTagBtn")?.addEventListener("click", ()=>{
+      const v = prompt("추가할 태그를 입력하세요. (예: #공지문)");
+      if(!v) return;
+      addCustomChip("tagRow", v.trim(), "data-tag");
+    });
+
+    document.getElementById("addToolBtn")?.addEventListener("click", ()=>{
+      const v = prompt("추가할 툴 이름을 입력하세요. (예: Notion)");
+      if(!v) return;
+      addCustomChip("toolRow", v.trim(), "data-tool");
+    });
+
+    document.getElementById("resetTagBtn")?.addEventListener("click", ()=>{
+      document.querySelectorAll("#tagRow .chip").forEach(c=>{
+        if(!c.classList.contains("add")) c.classList.remove("active");
+      });
+    });
+    document.getElementById("resetToolBtn")?.addEventListener("click", ()=>{
+      document.querySelectorAll("#toolRow .chip").forEach(c=>{
+        if(!c.classList.contains("add")) c.classList.remove("active");
+      });
+    });
+
+    /* ========== 자료 파일 업로드 ========== */
+    const fileDrop = document.getElementById("fileDrop");
+    const fileInput = document.getElementById("fileInput");
+    const filePill = document.getElementById("filePill");
+    let pickedFile = null;
+
+    function setPickedFile(f){
+      pickedFile = f;
+      if(!f){
+        filePill.style.display = "none";
+        filePill.textContent = "";
+        return;
+      }
+      filePill.style.display = "inline-flex";
+      filePill.textContent = "선택됨: " + f.name;
+    }
+
+    fileDrop?.addEventListener("click", ()=> fileInput.click());
+    fileInput?.addEventListener("change", (e)=>{
+      const f = e.target.files?.[0];
+      setPickedFile(f || null);
+    });
+
+    /* ========== 기본 썸네일 선택 ========== */
+    let selectedThumbMode = "preset"; // preset | upload
+    let selectedPresetThumb = "./commuit/img.png";
+    let selectedUploadThumbFile = null;
+
+    const bigThumb = document.getElementById("bigThumb");
+    document.getElementById("miniGrid")?.addEventListener("click", (e)=>{
+      const mini = e.target.closest(".mini");
+      if(!mini) return;
+      document.querySelectorAll(".mini").forEach(m=>m.classList.remove("active"));
+      mini.classList.add("active");
+      selectedPresetThumb = mini.dataset.src;
+      bigThumb.src = selectedPresetThumb;
+      selectedThumbMode = "preset";
+    });
+
+    /* ========== 썸네일 업로드 ========== */
+    const thumbUploadBox = document.getElementById("thumbUploadBox");
+    const thumbInput = document.getElementById("thumbInput");
+    const thumbPreview = document.getElementById("thumbPreview");
+    const thumbPlaceholder = document.getElementById("thumbPlaceholder");
+
+    thumbUploadBox?.addEventListener("click", ()=> thumbInput.click());
+    thumbInput?.addEventListener("change", (e)=>{
+      const f = e.target.files?.[0];
+      if(!f) return;
+      selectedUploadThumbFile = f;
+      const url = URL.createObjectURL(f);
+      thumbPreview.src = url;
+      thumbPreview.style.display = "block";
+      thumbPlaceholder.style.display = "none";
+      selectedThumbMode = "upload";
+    });
+
+    /* ========== 업로드 제출(현재는 알림만) ========== */
+    function getActiveValue(rowSelector, attr){
+      const el = document.querySelector(rowSelector + " .chip.active");
+      return el ? el.getAttribute(attr) : "";
+    }
+    function getMultiValues(rowSelector, attr){
+      return Array.from(document.querySelectorAll(rowSelector + " .chip.active"))
+        .filter(x=>!x.classList.contains("add"))
+        .map(x=>x.getAttribute(attr));
+    }
+
+    document.getElementById("submitBtn")?.addEventListener("click", ()=>{
+      const title = document.getElementById("titleInput").value.trim();
+      const cat = getActiveValue("#catRow", "data-value");
+      const lecture = document.getElementById("lectureSelect").value;
+      const tools = getMultiValues("#toolRow", "data-tool");
+      const tags = getMultiValues("#tagRow", "data-tag");
+
+      // 필수 검증(피그마 UI지만 동작도 깔끔하게)
+      if(!title) return alert("제목을 입력해주세요.");
+      if(!cat) return alert("분야를 선택해주세요.");
+      if(!lecture) return alert("강의를 선택해주세요.");
+      if(!tools.length) return alert("사용한 툴을 1개 이상 선택해주세요.");
+      if(!pickedFile) return alert("자료 파일을 업로드해주세요.");
+      if(selectedThumbMode === "preset" && !selectedPresetThumb) return alert("썸네일을 선택해주세요.");
+      if(selectedThumbMode === "upload" && !selectedUploadThumbFile) return alert("썸네일 이미지를 업로드해주세요.");
+
+      alert(
+        "업로드(임시)\n\n" +
+        "제목: " + title + "\n" +
+        "분야: " + cat + "\n" +
+        "강의: " + lecture + "\n" +
+        "툴: " + tools.join(", ") + "\n" +
+        "태그: " + (tags.join(", ") || "-") + "\n" +
+        "자료: " + pickedFile.name + "\n" +
+        "썸네일: " + (selectedThumbMode === "preset" ? selectedPresetThumb : selectedUploadThumbFile.name) + "\n\n" +
+        "※ 실제 업로드/저장은 추후 개발 예정"
+      );
+
+      // TODO: 추후 API 연동 후 전송
+      // fetch(...)
+
+      // 업로드 후 목록으로 돌아가기(원하면 주석 해제)
+      // window.location.href = "board_free.html";
+    });
+  </script>
+</body>
+</html>

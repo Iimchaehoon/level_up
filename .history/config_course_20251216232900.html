@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>추천 패키지 수강신청 | LEVEL-UP</title>
+
+  <style>
+    :root{
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --black:#111827; --primary:#2563eb;
+      --dim:#9f9f9f;
+      --blue:#1d4ed8;
+      --purple:#7e22ce;
+
+      /* ✅ 커리큘럼 중앙 기준값(정중앙 라인/노드 위치) */
+      --left-col: 92px;
+      --gap: 10px;
+      /* 중앙선 x = left-col + (gap/2)  → (92 + 5) = 97px */
+      --center-x: calc(var(--left-col) + (var(--gap) / 2));
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; color:var(--black); }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    button, input{ font-family:inherit; }
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar{ background:#111827; color:#e5e7eb; font-size:12px; text-align:center; padding:6px 16px; }
+    .topbar strong{ color:#facc15; font-weight:600; }
+
+    /* ───────── 헤더(고정) ───────── */
+    .header{ background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:0; z-index:999; }
+    .header-top{
+      display:flex; align-items:center; justify-content:space-between;
+      max-width:1100px; margin:0 auto; padding:8px 16px 4px;
+    }
+    .brand{ font-size:22px; font-weight:800; letter-spacing:-0.06em; cursor:pointer; }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text; color:transparent;
+    }
+    .header-top__right{ display:flex; align-items:center; gap:14px; font-size:13px; }
+    .nav-util{ color:var(--gray-600); cursor:pointer; }
+    .profile-avatar{
+      width:28px; height:28px; border-radius:8px; object-fit:cover; border:1px solid var(--gray-200);
+      cursor:pointer;
+    }
+
+    .header-bottom{
+      display:grid;
+      grid-template-columns:auto minmax(260px,1fr) auto;
+      align-items:center; gap:16px;
+      max-width:1100px; margin:0 auto;
+      padding:4px 16px 10px;
+      border-top:1px solid rgba(148,163,184,.35);
+      position:relative;
+    }
+    .header-bottom__left{ display:flex; align-items:center; gap:16px; }
+    .menu-title{
+      background:none; border:none; padding:6px 0; font:inherit;
+      font-weight:600; display:inline-flex; align-items:center; gap:6px;
+      cursor:pointer;
+    }
+    .menu-title:hover{ color:var(--primary); }
+    .header-bottom__center{ display:flex; justify-content:center; }
+    .header-bottom__right{ display:flex; justify-content:flex-end; }
+
+    .nav__search{ position:relative; max-width:620px; width:100%; }
+    .nav__search input{
+      width:100%;
+      padding:11px 14px 11px 34px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+      font-size:14px;
+      outline:none;
+    }
+    .icon-search{
+      position:absolute; left:10px; top:50%; transform:translateY(-50%);
+      font-size:16px; color:var(--gray-600);
+      cursor:default;
+    }
+
+    .menu-toggle-icon{
+      width:18px; height:18px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain; background-repeat:no-repeat; background-position:center;
+      transform:rotate(0deg);
+      transform-origin:center;
+      transition:transform .15s ease;
+    }
+    .menu-toggle-icon.open{ transform:rotate(90deg); }
+
+    .btn{
+      border-radius:12px;
+      border:1px solid transparent;
+      padding:10px 16px;
+      font-weight:600;
+      cursor:pointer;
+      background:#fff;
+      color:var(--black);
+      transition:all .2s ease;
+    }
+    .btn.mypage-btn{
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      padding:9px 22px;
+      font-size:14px;
+      border:1px solid #000;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+      transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .btn.mypage-btn:hover{
+      background: rgba(0,0,0,0.86);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      transform: translateY(-1px);
+    }
+    .btn.mypage-btn:active{
+      background: rgba(0,0,0,0.78);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+      transform: translateY(1px);
+    }
+
+    /* 드롭다운 */
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 20px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:2000;
+    }
+    .nav-dropdown__list{ list-style:none; margin:0; padding:0; }
+    .nav-dropdown__item{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 16px; font-size:14px; white-space:nowrap;
+      cursor:pointer;
+      color:#111827;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{ border-top:1px solid var(--gray-200); }
+    .nav-dropdown__item:hover{ background:var(--gray-50); }
+    .nav-dropdown__icon{ width:22px; height:22px; object-fit:contain; }
+
+    /* ───────── 메인 ───────── */
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 80px;
+    }
+
+    .crumb{ font-size:11px; color:var(--gray-500); text-align:right; margin:0 0 8px; }
+    .hero{
+      text-align:center;
+      padding:24px 0 10px;
+    }
+    .hero .sub{ font-size:13px; color:var(--gray-500); font-weight:700; margin:0 0 4px; }
+    .hero h1{ font-size:26px; margin:0; font-weight:900; letter-spacing:-0.04em; }
+
+    .grid2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:40px;
+      margin-top:22px;
+      align-items:start;
+    }
+
+    /* 패키지 카드 */
+    .package{ transition: filter .18s ease, opacity .18s ease; }
+    .package__title{ text-align:center; font-weight:900; margin:0 0 10px; font-size:18px; }
+    .card{
+      border:1px solid var(--gray-200);
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 10px 22px rgba(15,23,42,.06);
+      overflow:hidden;
+      position:relative;
+    }
+    .card__bar{
+      padding:12px 14px;
+      color:#fff;
+      font-weight:900;
+      font-size:13px;
+      line-height:1.25;
+      border-bottom:1px solid rgba(255,255,255,.18);
+    }
+    .card__bar.small{ font-size:12px; opacity:.95; }
+    .barA{ background:linear-gradient(90deg,#0b2b74,#0b3aa6); }
+    .barB{ background:linear-gradient(90deg,#4b0066,#7e22ce); }
+
+    .card__body{
+      padding:16px 16px 14px;
+      display:grid;
+      grid-template-columns:1fr 88px;
+      gap:10px;
+      align-items:start;
+    }
+    .benefits{
+      margin:0; padding-left:16px;
+      font-size:12px;
+      color:#111827;
+      font-weight:700;
+      line-height:1.75;
+    }
+    .mascot{
+      width:70px; height:70px;
+      margin-left:auto;
+      border-radius:10px;
+      overflow:hidden;
+    }
+    .mascot img{ width:100%; height:100%; object-fit:contain; }
+
+    .price{ padding:0 16px 14px; }
+    .price .line{
+      display:flex; justify-content:center; gap:8px; align-items:baseline;
+      margin:6px 0 0;
+      font-weight:900;
+    }
+    .price del{ color:var(--gray-400); font-weight:700; font-size:11px; }
+    .price .now{ font-size:12px; color:#111827; }
+    .price .big{ text-align:center; margin-top:6px; font-size:22px; font-weight:900; }
+    .price .note{ text-align:center; font-size:11px; color:var(--gray-500); font-weight:700; margin-top:2px; }
+
+    .ctaRow{ display:flex; justify-content:center; padding:0 16px 16px; }
+    .cta{
+      height:42px; padding:0 18px;
+      border:none; border-radius:999px;
+      background:#000; color:#fff;
+      font-weight:900; cursor:pointer;
+      min-width:170px;
+      box-shadow:0 8px 18px rgba(0,0,0,.12);
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .cta:active{ transform:translateY(1px); }
+
+    /* 커리큘럼 */
+    .curriTitle{
+      text-align:center;
+      margin:18px 0 10px;
+      color:#111827;
+      font-size:12px;
+      font-weight:900;
+      line-height:1.3;
+    }
+    .curriTitle .top{ color:var(--gray-500); font-weight:900; }
+    .curriTitle .big{ font-size:16px; color:#111827; }
+
+    .timeline{
+      margin-top:10px;
+      position:relative;
+      padding:0 0 10px;
+      --center: var(--center-x);
+    }
+    /* ✅ 라인을 “정중앙(좌/우 박스 사이 중앙)”에 고정 */
+    .timeline::before{
+      content:"";
+      position:absolute;
+      left: 60%;
+      top:8px;
+      bottom:18px;
+      width:2px;
+      transform:none;
+      background:var(--gray-200);
+      z-index:1;
+    }
+    .timeline.blue::before{ background:rgba(37,99,235,.35); }
+    .timeline.purple::before{ background:rgba(126,34,206,.35); }
+
+    .step{
+      display:grid;
+      grid-template-columns:var(--left-col) 1fr;
+      gap:var(--gap);
+      align-items:stretch;
+      margin-bottom:12px;
+      position:relative;
+    }
+    .step:last-child{ margin-bottom:0; }
+
+    .stepLeft{
+      border-radius:12px;
+      color:#fff;
+      font-weight:900;
+      padding:12px 10px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:8px;
+      min-height:96px;
+    }
+    .stepLeft .num{
+      width:26px; height:26px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px;
+    }
+    .stepLeft .txt{ font-size:12px; line-height:1.25; }
+    .stepLeft.blue{ background:linear-gradient(180deg,#0b2b74,#2563eb); }
+    .stepLeft.purple{ background:linear-gradient(180deg,#4b0066,#a21caf); }
+
+    .stepRight{
+      background:#f3f4f6;
+      border-radius:12px;
+      padding:12px 12px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      border:1px solid var(--gray-200);
+    }
+
+    .mini{
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:10px;
+      padding:10px;
+      font-size:11px;
+      color:#111827;
+      line-height:1.55;
+      font-weight:700;
+      min-height:76px;
+      position:relative;
+      z-index:2;
+    }
+    .mini b{ display:block; margin-bottom:6px; font-size:11px; }
+
+    /* ✅ tool: 체크박스 제거 → 🛠️ 아이콘 + tool 느낌(칩) */
+    .mini .tool{
+      margin-top:8px;
+      color:#374151;
+      font-weight:900;
+      font-size:10px;
+      display: block;
+      align-items:center;
+      gap:6px;
+      padding:3px 8px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+      width:fit-content;
+    }
+    .mini .tool::before{
+      content:"🛠️";
+      font-size:12px;
+      line-height:1;
+    }
+
+    /* ✅ 노드(화살표)도 “정중앙”에 고정 */
+    .node{
+      position:absolute;
+      left: 60%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:26px; height:26px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid var(--gray-300);
+      box-shadow:0 10px 18px rgba(15,23,42,.10);
+      display:flex; align-items:center; justify-content:center;
+      z-index:3;
+    }
+    .node img{ width:14px; height:14px; object-fit:contain; }
+
+    /* ✅ 호버 집중 효과 */
+    .focus-a .packageB,
+    .focus-b .packageA{
+      filter: grayscale(1) saturate(0) brightness(0.95);
+      opacity: .35;
+    }
+    .focus-a .packageB * ,
+    .focus-b .packageA *{
+      color: var(--dim) !important;
+      border-color: rgba(159,159,159,.35) !important;
+    }
+    .focus-a .packageB img,
+    .focus-b .packageA img{ opacity:.55; }
+
+    /* ───────── 푸터 ───────── */
+    .footer {
+      background: #0c1224;
+      color: #c7cee1;
+      padding: 32px 24px 50px;
+      margin-top:60px;
+    }
+    .footer__links {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .footer h4 { margin: 0 0 8px; color: #ffffff; }
+    .footer a { display: block; margin: 4px 0; font-size: 14px; cursor:pointer; }
+    .footer__copy { margin: 0; text-align: center; font-size: 13px; color: #9ca6c7; }
+
+    /* 반응형 */
+    @media (max-width:980px){
+      .grid2{ grid-template-columns:1fr; gap:26px; }
+      .hero h1{ font-size:22px; }
+
+      /* 모바일에서는 기존처럼 왼쪽 라인으로(너 코드 유지) */
+      .timeline{ --center: 22px; }
+      .timeline::before{ left:22px; }
+      .node{ left:22px; }
+      .step{ grid-template-columns:var(--left-col) 1fr; }
+    }
+
+    @media (max-width:520px){
+      .card__body{ grid-template-columns:1fr; }
+      .mascot{ margin:6px 0 0; }
+      .stepRight{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <header class="header" id="headerRoot">
+    <div class="header-top">
+      <div class="header-top__left">
+         <a href="index.html" class="brand" id="brandLogo">
+  <img src="./assets/top_logo.png" alt="LEVEL-UP" width="130" height="40">
+</a>
+
+      </div>
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__left">
+        <button class="menu-title has-dropdown" id="allLecturesBtn" type="button">
+          <span>모든 강의</span>
+          <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+        </button>
+
+        <a class="menu-title" href="board_free.html">자료실</a>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+
+    <div class="nav-dropdown" id="navDropdown">
+      <ul class="nav-dropdown__list">
+        <li class="nav-dropdown__item js-go-ai-basic">
+          <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+          <span>AI 기초 이해 · 리터러시</span>
+        </li>
+        <li class="nav-dropdown__item"><img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" class="nav-dropdown__icon" alt=""><span>업무 효율 향상</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" class="nav-dropdown__icon" alt=""><span>교육 자료 제작</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9731562 1.png" class="nav-dropdown__icon" alt=""><span>원생 관리</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/10316159 1.png" class="nav-dropdown__icon" alt=""><span>상담 업무</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" class="nav-dropdown__icon" alt=""><span>강의 기획 · 교육 설계</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" class="nav-dropdown__icon" alt=""><span>강의 홍보 · 피드백</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" class="nav-dropdown__icon" alt=""><span>자료 · 로고 디자인</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/11591525 1.png" class="nav-dropdown__icon" alt=""><span>창업 · 수익화</span></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="page" id="coursePage">
+    <div class="crumb">선착순! 지금 회원가입하고 무료 자료집 <b style="color:#7c3aed;">다운로드</b>하기 &gt;</div>
+
+    <section class="hero">
+      <p class="sub">박지연 님을 위한</p>
+      <h1>추천 패키지 수강신청</h1>
+    </section>
+
+    <section class="grid2">
+      <!-- 패키지 A -->
+      <div class="package packageA" id="packageA" aria-label="패키지 A">
+        <h2 class="package__title">패키지A</h2>
+
+        <div class="card">
+          <div class="card__bar barA">
+            강사에게 바로 필요한<br/>
+            <span class="card__bar small">AI 시각자료·콘텐츠 제작 중심</span>
+          </div>
+
+          <div class="card__body">
+            <ul class="benefits">
+              <li>수강료 20% 할인</li>
+              <li>과제 무제한 피드백</li>
+              <li>질문권 5개 더!</li>
+            </ul>
+            <div class="mascot" title="마스코트">
+              <img src="./config_course/img1.png" alt="마스코트" />
+            </div>
+          </div>
+
+          <div class="price">
+            <div class="line">
+              <del>253,000원</del>
+              <span class="now">199,000원</span>
+            </div>
+            <div class="big">월 16,580원</div>
+            <div class="note">12개월 무이자 할부 시</div>
+          </div>
+
+          <div class="ctaRow">
+            <button class="cta" type="button">수강신청하기 <span aria-hidden="true">›</span></button>
+          </div>
+        </div>
+
+        <div class="curriTitle">
+          <div class="top">수강신청 전!</div>
+          <div class="big">커리큘럼 미리보기</div>
+        </div>
+
+        <div class="timeline blue">
+          <div class="step">
+            <div class="stepLeft blue">
+              <div class="num">1</div>
+              <div class="txt">초중고 강사를 위한<br/>AI 시각자료 제작 기초</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                설명형 강의에 필요한 시각 자료를 만드는 능력 확보.
+                <div class="tool">Canva AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                교과 내용을 설명용 AI 이미지 만들기 / 도식·정리형 슬라이드 제작
+              </div>
+            </div>
+            <!-- ✅ 파란 커리큘럼은 파란 화살표(img4) -->
+            <div class="node"><img src="./config_course/img5.png" alt="down" /></div>
+          </div>
+
+          <div class="step">
+            <div class="stepLeft blue">
+              <div class="num">2</div>
+              <div class="txt">AI 기반 PPT·수업자료<br/>시각화 자동화 워크숍</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                긴 설명을 PPT로 자동 정리하는 흐름 학습.
+                <div class="tool">Gamma AI, Canva AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                “강의용 PPT 구조” 자동 생성 / 이미지·표 자동 삽입
+              </div>
+            </div>
+            <div class="node"><img src="./config_course/img5.png" alt="down" /></div>
+          </div>
+
+          <div class="step">
+            <div class="stepLeft blue">
+              <div class="num">3</div>
+              <div class="txt">AI 교과 시각 콘텐츠<br/>제작 실습</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                학습 장면/개념을 “보이게” 만드는 제작력 강화.
+                <div class="tool">CapCut AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                30초 홍보/설명 영상 만들기 / 교과 개념 애니메이션
+              </div>
+            </div>
+            <div class="node"><img src="./config_course/img5.png" alt="down" /></div>
+          </div>
+
+          <div class="step">
+            <div class="stepLeft blue">
+              <div class="num">4</div>
+              <div class="txt">AI를 활용한 교과 설명<br/>강의 기술</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                어려운 개념을 쉽게 설명하는 스크립트/비유 설계.
+                <div class="tool">ChatGPT</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                설명형 강의 스크립트 자동 생성 / 질문 예상 & 답변 구성
+              </div>
+            </div>
+            <div class="node"><img src="./config_course/img5.png" alt="down" /></div>
+          </div>
+
+          <div class="step">
+            <div class="stepLeft blue">
+              <div class="num">5</div>
+              <div class="txt">강사 브랜딩 & 홍보<br/>콘텐츠 AI 제작 실전</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                강사/학원 홍보용 콘텐츠를 빠르게 제작.
+                <div class="tool">ChatGPT, Canva AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                포스터·썸네일·SNS 카드뉴스 자동 제작 / 문구 생성
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 패키지 B -->
+      <div class="package packageB" id="packageB" aria-label="패키지 B">
+        <h2 class="package__title">패키지B</h2>
+
+        <div class="card">
+          <div class="card__bar barB">
+            초중고 강사를 위한<br/>
+            <span class="card__bar small">수업자료·문제·피드백 자동화</span>
+          </div>
+
+          <div class="card__body">
+            <ul class="benefits">
+              <li>수강료 20% 할인</li>
+              <li>과제 무제한 피드백</li>
+              <li>질문권 5개 더!</li>
+            </ul>
+            <div class="mascot" title="마스코트">
+              <img src="./config_course/img1.png" alt="마스코트" />
+            </div>
+          </div>
+
+          <div class="price">
+            <div class="line">
+              <del>253,000원</del>
+              <span class="now">199,000원</span>
+            </div>
+            <div class="big">월 16,580원</div>
+            <div class="note">12개월 무이자 할부 시</div>
+          </div>
+
+          <div class="ctaRow">
+            <button class="cta" type="button">수강신청하기 <span aria-hidden="true">›</span></button>
+          </div>
+        </div>
+
+        <div class="curriTitle">
+          <div class="top">수강신청 전!</div>
+          <div class="big">커리큘럼 미리보기</div>
+        </div>
+
+        <div class="timeline purple">
+          <div class="step">
+            <div class="stepLeft purple">
+              <div class="num">1</div>
+              <div class="txt">AI 기본도구 마스터<br/>강사용 필수 AI 툴 입문</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                수업자료 제작을 빠르게 할 수 있도록 기본 AI 도구 익히기.
+                <div class="tool">ChatGPT, Canva AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                단원 설명/수업 스크립트 생성 / 이미지·도식 자동 생성
+              </div>
+            </div>
+            <!-- ✅ 보라 커리큘럼은 보라 화살표(img5) -->
+            <div class="node"><img src="./config_course/img4.png" alt="down" /></div>
+          </div>
+
+          <div class="step">
+            <div class="stepLeft purple">
+              <div class="num">2</div>
+              <div class="txt">AI로 만드는 PPT 자동화<br/>동화·시각자료 생산</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                강사가 쓰는 PPT를 AI 기반으로 구조화·디자인.
+                <div class="tool">ChatGPT, Canva AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                텍스트→PPT 자동 변환 / 이미지 자동 삽입
+              </div>
+            </div>
+            <div class="node"><img src="./config_course/img4.png" alt="down" /></div>
+          </div>
+
+          <div class="step">
+            <div class="stepLeft purple">
+              <div class="num">3</div>
+              <div class="txt">AI 문제·평가지시문 생성<br/>워크플로우 구축</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                수업자료 제작을 빠르게 할 수 있도록 기본 AI 도구 익히기.
+                <div class="tool">ChatGPT, Gamma AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                단원별 문제 자동 생성 / 난이도·유형별 변형
+              </div>
+            </div>
+            <div class="node"><img src="./config_course/img4.png" alt="down" /></div>
+          </div>
+
+          <div class="step">
+            <div class="stepLeft purple">
+              <div class="num">4</div>
+              <div class="txt">AI 기반 학습 피드백 자동화<br/>학생 맞춤 피드백</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                학생 답안/과제를 자동 채점·코멘트로 피드백.
+                <div class="tool">ChatGPT, Notion AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                학생 과제 피드백 템플릿 / 채점 기준 자동 생성
+              </div>
+            </div>
+            <div class="node"><img src="./config_course/img4.png" alt="down" /></div>
+          </div>
+
+          <div class="step">
+            <div class="stepLeft purple">
+              <div class="num">5</div>
+              <div class="txt">AI 기반 수업 운영 자동화<br/>프로젝트·나만의 AI 템플 만들기</div>
+            </div>
+            <div class="stepRight">
+              <div class="mini">
+                <b>📌 목적</b>
+                강사 운영을 AI 자동 시스템으로 전환.
+                <div class="tool">ChatGPT, Notion AI</div>
+              </div>
+              <div class="mini">
+                <b>📌 목차</b>
+                나만의 수업자료 자동 생성 템플릿 / 운영 체크리스트
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__links">
+      <div>
+        <h4>회사</h4>
+        <a href="#">회사소개</a>
+        <a href="#">채용</a>
+        <a href="#">제휴 문의</a>
+      </div>
+      <div>
+        <h4>서비스</h4>
+        <a href="#">강의찾기</a>
+        <a href="#">커뮤니티</a>
+        <a href="#">이벤트</a>
+      </div>
+      <div>
+        <h4>정책</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+      </div>
+      <div>
+        <h4>고객센터</h4>
+        <a href="tel:1544-9044">1544-9044</a>
+        <a href="#">월-금 10:00~18:00</a>
+      </div>
+    </div>
+    <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* 마이페이지 이동 */
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest('[data-nav="mypage"]');
+      if (!btn) return;
+      window.location.href = "mypage.html";
+    });
+
+    /* 드롭다운 */
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let open = false;
+
+    function closeDropdown(){
+      open = false;
+      navDropdown.style.display = "none";
+      menuToggleIcon.classList.remove("open");
+    }
+
+    allLecturesBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      open = !open;
+      if(!open){ closeDropdown(); return; }
+
+      navDropdown.style.display = "block";
+      menuToggleIcon.classList.add("open");
+
+      const rect = allLecturesBtn.getBoundingClientRect();
+      navDropdown.style.top = (rect.bottom + window.scrollY + 8) + "px";
+      navDropdown.style.left = (rect.left + window.scrollX) + "px";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!open) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) closeDropdown();
+    });
+
+    document.querySelectorAll(".js-go-ai-basic").forEach((el) => {
+      el.addEventListener("click", () => window.location.href = "lecture_ai_basic.html");
+    });
+
+    /* 호버 집중 효과 */
+    const coursePage = document.getElementById("coursePage");
+    const packageA = document.getElementById("packageA");
+    const packageB = document.getElementById("packageB");
+
+    function setFocus(cls){
+      coursePage.classList.remove("focus-a","focus-b");
+      if(cls) coursePage.classList.add(cls);
+    }
+
+    packageA?.addEventListener("mouseenter", ()=> setFocus("focus-a"));
+    packageA?.addEventListener("mouseleave", ()=> setFocus(null));
+    packageB?.addEventListener("mouseenter", ()=> setFocus("focus-b"));
+    packageB?.addEventListener("mouseleave", ()=> setFocus(null));
+  </script>
+</body>
+</html>

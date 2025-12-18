@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>마이페이지 | LEVEL-UP</title>
+
+  <!-- 공통 CSS -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    /* =========================
+       마이페이지 전용 (캡쳐 레이아웃)
+       ========================= */
+    body { background:#fff; }
+
+    .mypage-wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 22px 16px 80px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 26px;
+    }
+
+    /* 좌측 메뉴 */
+    .side{
+      border-right: 1px solid #e5e7eb;
+      padding-right: 18px;
+    }
+    .side__title{
+      font-size: 14px;
+      font-weight: 900;
+      margin: 6px 0 14px;
+    }
+    .side__group{ margin-bottom: 18px; }
+    .side__group h4{
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 900;
+      color:#111827;
+    }
+    .side__links{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      font-size:12px;
+    }
+    .side__links a{ color:#374151; text-decoration:none; }
+    .side__links a.active{ color:#2563eb; font-weight:900; }
+
+    /* ✅ 좌측 광고(캡쳐처럼 세로 카드) */
+    .side__cards{
+      margin-top: 14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .evt{
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .evt__badge{
+      display:inline-block;
+      font-size:10px;
+      font-weight:900;
+      padding:4px 8px;
+      background:#dbeafe;
+      color:#2563eb;
+      border-radius:999px;
+      margin:10px 10px 0;
+    }
+    .evt img{
+      width:100%;
+      height: 86px;         /* ✅ 안맞는 문제 방지 */
+      object-fit: cover;    /* ✅ 찌그러짐 방지 */
+      display:block;
+    }
+
+    /* 메인 */
+    .main__crumb{
+      font-size: 11px;
+      color:#6b7280;
+      text-align: right;
+      margin: 0 0 8px;
+    }
+    .main__title{
+      font-size: 16px;
+      font-weight: 900;
+      margin: 6px 0 14px;
+    }
+    .tab-title{
+      font-size: 12px;
+      font-weight: 900;
+      margin: 0 0 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      width: fit-content;
+    }
+
+    .block{
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      background:#fff;
+    }
+    .block__head{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      font-weight:900;
+      margin-bottom: 12px;
+    }
+
+    /* 수강 카드 */
+    .course-list{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .course-card{
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      display:grid;
+      grid-template-columns: 150px 1fr 90px;
+      gap: 14px;
+      align-items:center;
+      background:#fff;
+    }
+    .course-thumb{
+      width:150px;
+      height:84px;
+      border-radius: 10px;
+      overflow:hidden;
+      border:1px solid #e5e7eb;
+      background:#f3f4f6;
+    }
+    .course-thumb img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+
+    .course-info .course-name{
+      font-size: 12px;
+      font-weight: 900;
+      margin: 0 0 6px;
+      color:#111827;
+    }
+    .course-info .teacher{
+      font-size: 11px;
+      color:#6b7280;
+      margin: 0 0 8px;
+    }
+
+    .meta-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:11px;
+      color:#6b7280;
+      margin-bottom: 8px;
+    }
+    .stars{ color:#111827; font-weight:900; }
+
+    .progress-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .progress{
+      flex:1;
+      height:6px;
+      background:#e5e7eb;
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .progress > span{
+      display:block;
+      height:100%;
+      background:#7c3aed;
+    }
+    .pct{
+      font-size: 11px;
+      color:#6b7280;
+      width:40px;
+      text-align:right;
+      font-weight:900;
+    }
+
+    .course-action{ display:flex; justify-content:flex-end; }
+    .btn-action{
+      width: 78px;
+      height: 44px;
+      border-radius: 999px;
+      border: none;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:900;
+    }
+    .btn-action.black{ background:#000; color:#fff; }
+    .btn-action.gray{ background:#e5e7eb; color:#374151; }
+
+    .pager{
+      margin-top: 18px;
+      text-align:center;
+      font-size:12px;
+      color:#6b7280;
+      user-select:none;
+    }
+
+    @media (max-width: 980px){
+      .mypage-wrap{ grid-template-columns: 1fr; }
+      .side{ border-right:none; padding-right:0; }
+      .course-card{
+        grid-template-columns: 120px 1fr;
+        grid-template-rows: auto auto;
+      }
+      .course-action{
+        grid-column: 1 / -1;
+        justify-content:flex-end;
+      }
+      .course-thumb{ width:120px; height:72px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ✅ ai_basic 헤더 구조 그대로 -->
+  <header class="header">
+    <div class="header-top">
+      <div class="brand" id="brandLogo">LEV<span class="brand__e">E</span>L-UP</div>
+
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__inner">
+        <div class="nav-left">
+          <div class="nav-wrapper">
+            <button class="menu-title" id="allLecturesBtn" type="button">
+              모든 강의
+              <span class="menu-toggle-icon" id="menuToggleIcon"></span>
+            </button>
+
+            <div class="nav-dropdown" id="navDropdown">
+              <ul class="nav-dropdown__list">
+                <li class="nav-dropdown__item js-go-ai-basic">
+                  <img src="./assets/9342101 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>AI 기초 이해 · 리터러시</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>업무 효율 향상</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>교육 자료 제작</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9731562 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>원생 관리</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/10316159 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>상담 업무</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>강의 기획 · 교육 설계</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>강의 홍보 · 피드백</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>자료 · 로고 디자인</span>
+                </li>
+                <li class="nav-dropdown__item">
+                  <img src="./assets/11591525 1.png" class="nav-dropdown__icon" alt="" />
+                  <span>창업 · 수익화</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <a href="course.html" class="menu-link">자료실</a>
+        </div>
+
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+
+        <div class="header-bottom__right">
+          <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mypage-wrap">
+    <!-- 좌측 메뉴 -->
+    <aside class="side">
+      <div class="side__title">마이페이지</div>
+
+      <div class="side__group"><h4>프로필 관리</h4></div>
+
+      <div class="side__group">
+        <h4>수강 강의</h4>
+        <div class="side__links">
+          <a href="#" class="active">· 나의 강의</a>
+          <a href="#">· 대시보드</a>
+        </div>
+      </div>
+
+      <div class="side__group">
+        <h4>자료</h4>
+        <div class="side__links">
+          <a href="#">· 다운로드 자료</a>
+          <a href="#">· 업로드 자료</a>
+        </div>
+      </div>
+
+      <div class="side__group"><h4>결제 관리</h4></div>
+
+      <!-- 광고 카드 -->
+      <div class="side__cards">
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./my/image 16.png" alt="이벤트 카드 1" /></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./my/image 1810_1.png" alt="이벤트 카드 2" /></div>
+        <div class="evt"><span class="evt__badge">베스트</span><img src="./my/image 1810.png" alt="이벤트 카드 3" /></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./my/생성형 AI 개념 이해.png" alt="이벤트 카드 4" /></div>
+      </div>
+    </aside>
+
+    <!-- 메인 -->
+    <section class="main">
+      <div class="main__crumb">홈 &gt; 마이페이지 &gt; 수강 강의 &gt; 나의 강의</div>
+
+      <div class="main__title">마이페이지</div>
+      <div class="tab-title">나의 강의</div>
+
+      <div class="block">
+        <div class="block__head">
+          <span class="mini-ico" aria-hidden="true">🧾</span>
+          구매한 강의
+        </div>
+
+        <div class="course-list">
+          <div class="course-card">
+            <div class="course-thumb">
+              <img src="./my/334312.gif.mp4.png" alt="강의 썸네일" />
+            </div>
+
+            <div class="course-info">
+              <p class="course-name">AI 시대의 프로덕트 디자인 - Figma Meetup in Korea</p>
+              <p class="teacher">강사명</p>
+
+              <div class="meta-row">
+                <span class="stars">★ 4.6</span>
+                <span>(45)</span>
+                <span>·</span>
+                <span>3,300+</span>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress"><span style="width:77%"></span></div>
+                <div class="pct">77%</div>
+              </div>
+            </div>
+
+            <div class="course-action">
+              <button class="btn-action black" type="button">이어<br/>보기</button>
+            </div>
+          </div>
+
+          <div class="course-card">
+            <div class="course-thumb">
+              <img src="./my/생성형 AI 개념 이해.png" alt="강의 썸네일" />
+            </div>
+
+            <div class="course-info">
+              <p class="course-name">생성형 AI 개념 이해</p>
+              <p class="teacher">강사명</p>
+
+              <div class="meta-row">
+                <span class="stars">★ 4.5</span>
+                <span>(22)</span>
+                <span>·</span>
+                <span>1,000+</span>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress"><span style="width:100%"></span></div>
+                <div class="pct">100%</div>
+              </div>
+            </div>
+
+            <div class="course-action">
+              <button class="btn-action gray" type="button">수강<br/>완료</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pager">&lt; &nbsp; 1 &nbsp; &gt;</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ✅ nav.js는 body 끝에 -->
+  <script src="/js/nav.js"></script>
+
+  <script>
+    // 로고 → 메인
+    document.getElementById("brandLogo")?.addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    // (네 nav.js에서 data-nav="mypage" 처리하도록 이미 만들었으면 이거 없어도 됨)
+    document.querySelectorAll('[data-nav="mypage"]').forEach(btn=>{
+      btn.addEventListener("click", ()=> window.location.href = "mypage.html");
+    });
+
+    // 모든 강의 드롭다운(헤더 공통 동작 유지)
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let dropdownOpen = false;
+
+    allLecturesBtn?.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dropdownOpen = !dropdownOpen;
+      navDropdown.style.display = dropdownOpen ? "block" : "none";
+      menuToggleIcon.classList.toggle("open", dropdownOpen);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!dropdownOpen) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) {
+        dropdownOpen = false;
+        navDropdown.style.display = "none";
+        menuToggleIcon.classList.remove("open");
+      }
+    });
+  </script>
+</body>
+</html>

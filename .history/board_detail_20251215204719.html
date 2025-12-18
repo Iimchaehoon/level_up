@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>자료 상세 | LEVEL-UP</title>
+
+<style>
+:root{
+  --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb;
+  --gray-400:#9ca3af; --gray-600:#4b5563; --gray-700:#374151;
+  --black:#111827; --primary:#2563eb;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Noto Sans KR",system-ui,sans-serif;
+  color:var(--black);
+  background:#fff;
+}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* ───────── 헤더/푸터는 기존 페이지와 동일 ───────── */
+.header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--gray-200)}
+.header-top,.header-bottom{max-width:1200px;margin:0 auto;padding:10px 16px}
+.brand{font-weight:900;font-size:22px}
+.footer{background:#0c1224;color:#c7cee1;padding:40px 24px}
+.footer__links{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.footer h4{color:#fff}
+.footer__copy{text-align:center;margin-top:20px;font-size:13px;color:#9ca6c7}
+
+/* ───────── 레이아웃 ───────── */
+.page{
+  max-width:1200px;
+  margin:0 auto;
+  padding:24px 16px 80px;
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:32px;
+}
+
+/* 좌측 메뉴 */
+.side{border-right:1px solid var(--gray-200);padding-right:16px}
+.side h3{font-size:15px;margin-bottom:16px}
+.side a{display:block;font-size:13px;margin:6px 0;color:var(--gray-700)}
+.side a.active{color:var(--primary);font-weight:900}
+
+/* 광고 */
+.ad{margin-top:16px;border-radius:12px;overflow:hidden}
+.ad img{width:100%}
+
+/* ───────── 상세 콘텐츠 ───────── */
+.main-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+.back-btn{
+  border:1px solid var(--gray-200);
+  border-radius:999px;
+  padding:6px 14px;
+  font-size:13px;
+  cursor:pointer;
+}
+.action-btns button{
+  margin-left:6px;
+  border:1px solid var(--gray-200);
+  background:#fff;
+  padding:6px 12px;
+  border-radius:999px;
+  cursor:pointer;
+}
+
+/* 제목 */
+.post-title{
+  font-size:20px;
+  font-weight:900;
+  margin:10px 0 12px;
+}
+.badge{
+  display:inline-block;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:999px;
+  background:#e0f2fe;
+  color:#0369a1;
+  font-weight:700;
+  margin-right:6px;
+}
+
+/* 작성자 */
+.meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--gray-200);
+  padding-bottom:14px;
+  margin-bottom:24px;
+}
+.author{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+}
+.author img{
+  width:32px;height:32px;border-radius:50%;
+}
+.meta-right{
+  display:flex;
+  gap:8px;
+}
+.icon-btn{
+  border:1px solid var(--gray-200);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+/* 본문 */
+.content{
+  font-size:14px;
+  line-height:1.8;
+  margin-bottom:32px;
+}
+
+/* 이미지 미리보기 */
+.image-row{
+  display:flex;
+  gap:12px;
+  margin-bottom:32px;
+}
+.image-row img{
+  width:140px;
+  border-radius:10px;
+  border:1px solid var(--gray-200);
+}
+
+/* 카드 공통 */
+.card{
+  border:1px solid var(--gray-200);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:20px;
+}
+.card h4{margin:0 0 12px;font-size:15px}
+
+/* 다운로드 카드 */
+.download{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+.download img{width:90px;border-radius:10px}
+.download button{
+  margin-left:auto;
+  border:none;
+  background:#000;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* 강의 카드 */
+.lecture{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+.lecture img{width:90px;border-radius:10px}
+.lecture button{
+  margin-left:auto;
+  border:none;
+  background:#000;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <a class="brand" href="index.html">LEVEL-UP</a>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- 좌측 -->
+  <aside class="side">
+    <h3>게시판</h3>
+    <a class="active">자료 게시판</a>
+    <a>공식 게시판</a>
+    <a>자유 게시판</a>
+
+    <div class="ad">
+      <img src="./lecture/img5.png" alt="">
+    </div>
+  </aside>
+
+  <!-- 우측 -->
+  <section>
+
+    <div class="main-top">
+      <button class="back-btn" onclick="history.back()">← 목록으로</button>
+      <div class="action-btns">
+        <button>수정</button>
+        <button>삭제</button>
+      </div>
+    </div>
+
+    <span class="badge">입시</span>
+    <h1 class="post-title">교육 운영 업무 자동화에 관한 강의에 대한 실습 자료를 공유합니다.</h1>
+
+    <div class="meta">
+      <div class="author">
+        <img src="./board_detail/img2.png">
+        <div>
+          <div><strong>나천재</strong></div>
+          <div style="font-size:12px;color:var(--gray-600)">2025.12.01</div>
+        </div>
+      </div>
+      <div class="meta-right">
+        <div class="icon-btn">❤️ 200</div>
+        <div class="icon-btn">🤍</div>
+        <div class="icon-btn">🔗</div>
+      </div>
+    </div>
+
+    <div class="content">
+      ChatGPT를 활용한 공지문 자동 작성 실습 자료입니다.<br><br>
+      공지문뿐만 아니라 문서 자동 작성에 특화된 자료로 활용 가능합니다.<br><br>
+      강강사 강사님 강의를 듣고 만든 산출물인데 결과물이 마음에 듭니다.
+    </div>
+
+    <div class="image-row">
+      <img src="./board_detail/img1.png">
+      <img src="./board_detail/img2.png">
+      <img src="./board_detail/img3.png">
+    </div>
+
+    <div class="card">
+      <h4>자료 다운로드</h4>
+      <div class="download">
+        <img src="./board_detail/img1.png">
+        <div>
+          <strong>학부모 공지문 샘플.pdf</strong><br>
+          <span style="font-size:12px;color:var(--gray-600)">13.1MB</span>
+        </div>
+        <button onclick="alert('다운로드는 추후 제공됩니다')">자료 다운로드</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>수강한 강의 보기</h4>
+      <div class="lecture">
+        <img src="./board_detail/img3.png">
+        <div>
+          <strong>원생관리 + 학부모 공지문 자동화</strong><br>
+          <span style="font-size:12px;color:var(--gray-600)">사용툴: ChatGPT</span>
+        </div>
+        <button onclick="alert('강의 페이지로 이동 예정')">강의 보러가기</button>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer__links">
+    <div><h4>회사</h4><a>회사소개</a></div>
+    <div><h4>서비스</h4><a>강의찾기</a></div>
+    <div><h4>정책</h4><a>이용약관</a></div>
+    <div><h4>고객센터</h4><a>1544-9044</a></div>
+  </div>
+  <p class="footer__copy">© 2025 LEVEL-UP</p>
+</footer>
+
+</body>
+</html>

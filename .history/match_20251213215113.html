@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>맞춤 코스 추천 설문 | LEVEL-UP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --black: #0d0d0d;
+      --gray-100: #f6f7fb;
+      --gray-200: #e7eaf2;
+      --gray-400: #b6bccb;
+      --gray-600: #6b7385;
+      --primary: #3b3dfb;
+      --primary-dark: #2227d9;
+      --white: #fff;
+      --neon-teal: #54f0ff;
+      --neon-pink: #ff2fd2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+      background: #000;
+      color: var(--white);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* ───────── 상단 공지 & 헤더 ───────── */
+
+    .topbar {
+      background: #0c0c0c;
+      color: #f5f5f5;
+      padding: 8px 24px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .topbar span {
+      opacity: 0.9;
+    }
+
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 8px 16px 4px;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      cursor: pointer;
+      color: black;
+    }
+
+    .brand__e {
+      display: inline-block;
+      background: linear-gradient(120deg, #7b5cff, #ff4bff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .header-top__right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+    }
+
+    .nav-util {
+      color: var(--gray-600);
+      cursor: pointer;
+    }
+
+    .nav-util.strong {
+      font-weight: 700;
+    }
+
+    .btn {
+      border-radius: 12px;
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--black);
+      transition: all 0.2s ease;
+    }
+
+    .btn.mypage-btn {
+      border-radius: 999px;
+      background: #000000;
+      color: #ffffff;
+      padding: 9px 22px;
+      font-size: 14px;
+    }
+
+    .header-bottom {
+      display: grid;
+      grid-template-columns: auto minmax(260px, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4px 16px 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .header-bottom__left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .menu-title {
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 6px 0;
+      font: inherit;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .menu-title:hover {
+      color: var(--primary);
+    }
+
+    /* 공통 헤더의 "자료실" 메뉴 */
+    .menu-link {
+      font:inherit;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 0;
+      color: #111827;
+    }
+
+    .menu-link:hover {
+      color: var(--primary);
+    }
+
+    .menu-toggle-icon {
+      width: 18px;
+      height: 18px;
+      background-image: url('./assets/Button_1.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      transform: rotate(0deg);
+      transform-origin: center center;
+      transition: transform 0.15s ease;
+    }
+
+    .menu-toggle-icon.open {
+      transform: rotate(90deg);
+    }
+
+    .header-bottom__center {
+      display: flex;
+      justify-content: center;
+    }
+
+    .header-bottom__right {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .nav__search {
+      position: relative;
+      max-width: 620px;
+      width: 100%;
+    }
+
+    .nav__search input {
+      width: 100%;
+      padding: 11px 14px 11px 34px;
+      border-radius: 999px;
+      border: 1px solid var(--gray-200);
+      background: var(--gray-100);
+      font-size: 14px;
+    }
+
+    .icon-search {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--gray-600);
+    }
+
+    /* 드롭다운 */
+
+    .nav-wrapper {
+      position: relative;
+    }
+
+    .nav-dropdown {
+      display: none;
+      position: absolute;
+      top: 40px;
+      left: 0;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+      padding: 10px 0;
+      min-width: 260px;
+      z-index: 30;
+    }
+    .nav-dropdown__item span {
+  color: #111827;
+}
+
+    .nav-dropdown__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-dropdown__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .nav-dropdown__item + .nav-dropdown__item {
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .nav-dropdown__item:hover {
+      background: #f9fafb;
+    }
+
+    .nav-dropdown__icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+
+    /* ───────── 메인 레이아웃 ───────── */
+
+    main {
+      max-width: 1320px;
+      margin: 0 auto 80px;
+      padding: 0;
+      background: #000;
+      color: #fff;
+    }
+
+    /* 상단 맞춤 코스 배너 */
+
+    .match-hero {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .match-hero__img {
+      width: 100%;
+      display: block;
+    }
+
+    /* 검은 CTA 배너 */
+
+    .match-cta {
+      background: #000;
+      border-top: 1px solid #0b0b0b;
+      border-bottom: 1px solid #0b0b0b;
+    }
+
+    .match-cta__inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 16px;
+      text-align: center;
+      font-size: 15px;
+      cursor: pointer;
+      color: #fff;
+      position: relative;
+    }
+
+    .match-cta__inner::after {
+      content: '≫';
+      margin-left: 6px;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .match-cta__inner:hover {
+      background: #050505;
+    }
+
+    /* 인트로 스피치 버블 영역 */
+
+    .match-intro {
+      background: radial-gradient(circle at top, #152b6b 0, #02020a 55%);
+      padding: 40px 40px 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .match-intro__inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .match-intro__title {
+      margin: 0 0 10px;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .match-intro__subtitle {
+      margin: 0 0 24px;
+      font-size: 14px;
+      opacity: 0.85;
+      text-align: center;
+    }
+
+    .bubble-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 26px;
+      margin-bottom: 26px;
+    }
+
+    .bubble-card {
+      width: 180px;
+      transition: transform 0.2s ease;
+    }
+
+    /* 지그재그 배치 */
+    .bubble-card:nth-child(odd) {
+      transform: translateY(0);
+    }
+
+    .bubble-card:nth-child(even) {
+      transform: translateY(18px);
+    }
+
+    .bubble-card img {
+      width: 100%;
+      border-radius: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .bubble-card__label {
+      margin-top: 6px;
+      font-size: 12px;
+      text-align: center;
+      color: #a5f3fc;
+    }
+
+    .match-intro__bottom {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #e5e7eb;
+      line-height: 1.6;
+    }
+
+    .match-intro__bottom strong {
+      color: #fbbf24;
+    }
+
+    /* 타임라인 설문 섹션 */
+
+    .survey-section {
+      background: #000;
+      padding: 40px 0 60px;
+    }
+
+    .survey-shell {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 32px 34px;
+      border-radius: 32px;
+      background: radial-gradient(circle at top, #050011 0, #020012 40%, #000 100%);
+      box-shadow:
+        0 0 0 1px rgba(148, 163, 184, 0.16),
+        0 28px 60px rgba(0, 0, 0, 0.85);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 세로 라인 – 왼쪽 컬럼 중앙 */
+
+    .survey-shell::before {
+      content: '';
+      position: absolute;
+      left: 80px;
+      top: 36px;
+      bottom: 90px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--neon-teal), var(--neon-pink));
+      opacity: 0.95;
+    }
+
+    .survey-grid {
+      display: grid;
+      grid-template-columns: 90px minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .survey-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 115px;
+      padding-top: 6px;
+    }
+
+    .survey-step-indicator {
+      position: relative;
+      padding-right: -10px;
+      font-size: 11px;
+      color: #e5e7eb;
+      text-align: right;
+    }
+
+    .survey-step-indicator span {
+      opacity: 0.7;
+    }
+
+    .survey-step-indicator::before {
+      content: '';
+      position: absolute;
+      left: 42px;
+      top: 2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 2px solid #0f172a;
+      background: radial-gradient(circle, #ffffff 0, #22d3ee 40%, #1d4ed8 90%);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.9);
+    }
+
+    .survey-step-indicator.is-active::before {
+      background: radial-gradient(circle, #fff 0, #f472b6 40%, #8b5cf6 90%);
+      box-shadow: 0 0 14px rgba(236, 72, 153, 0.95);
+    }
+
+    .survey-content {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .question-block {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .question-block::before {
+      content: attr(data-number);
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .question-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+
+    .question-note {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-left: 4px;
+      font-weight: 400;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+    }
+
+    .chip {
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 11px;
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.9);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+      white-space: nowrap;
+    }
+
+    .chip:hover {
+      border-color: var(--neon-teal);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    }
+
+    /* 클릭 시 색상 변경: B4EBE6 80% */
+    .chip.is-active {
+      background: rgba(180, 235, 230, 0.8);
+      color: #031514;
+      border-color: #b4ebe6;
+      box-shadow: 0 0 10px rgba(180, 235, 230, 0.6);
+    }
+
+    .survey-footer {
+      margin-top: 34px;
+      text-align: center;
+    }
+
+    .survey-submit {
+      width: 260px;
+      max-width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #ffffff;
+      background: linear-gradient(90deg, #4c1d95, #2563eb);
+      box-shadow:
+        0 0 26px rgba(79, 70, 229, 0.8),
+        0 16px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .survey-submit:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    /* ───────── 푸터 ───────── */
+
+    .footer {
+      background: #0c1224;
+      color: #c7cee1;
+      padding: 32px 24px 50px;
+    }
+
+    .footer__links {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .footer h4 {
+      margin: 0 0 8px;
+      color: #ffffff;
+      font-size: 15px;
+    }
+
+    .footer a {
+      display: block;
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    .footer__copy {
+      margin: 0;
+      text-align: center;
+      font-size: 13px;
+      color: #9ca6c7;
+    }
+
+    /* 반응형 */
+
+    @media (max-width: 960px) {
+      .header-bottom {
+        grid-template-columns: 1fr;
+        row-gap: 8px;
+      }
+
+      .survey-shell {
+        padding: 28px 18px 30px;
+        border-radius: 26px;
+      }
+
+      .survey-shell::before {
+        left: 60px;
+      }
+
+      .survey-grid {
+        grid-template-columns: 70px minmax(0, 1fr);
+        gap: 18px;
+      }
+
+      .survey-step-indicator::before {
+        left: 56px;
+      }
+
+      .survey-steps {
+        gap: 48px;
+      }
+
+      .question-block {
+        padding-left: 24px;
+      }
+
+      .match-intro {
+        padding: 28px 20px 40px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .bubble-card {
+        width: 44%;
+      }
+
+      .match-intro__title {
+        font-size: 18px;
+      }
+    }
+    /* 로그인 상태 헤더 오른쪽 */
+.header-top__right--authed {
+  gap: 14px;
+}
+
+.profile-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;     /* 동그라미 원하면 999px */
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+  </style>
+</head>
+<body>
+  <!-- 상단 공지 -->
+  <div class="topbar">
+    <span>설문에 답하면 AI 맞춤 코스를 추천해 드립니다.</span>
+  </div>
+
+  <!-- 헤더 -->
+  <header class="header">
+    <div class="header-top">
+      <div class="brand" id="brandLogo">
+        LEV<span class="brand__e">E</span>L-UP
+      </div>
+      <div class="header-top__right header-top__right--authed">
+       
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+      
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+      
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__left nav-wrapper">
+        <button class="menu-title" id="allLecturesBtn">
+          모든 강의
+          <span class="menu-toggle-icon" id="menuToggleIcon"></span>
+        </button>
+
+        <!-- 공통 헤더의 자료실 메뉴 -->
+        <a href="#" class="menu-link">자료실</a>
+       
+        <!-- 드롭다운 -->
+        <div class="nav-dropdown" id="navDropdown">
+          <ul class="nav-dropdown__list">
+            <li class="nav-dropdown__item js-go-ai-basic">
+              <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+              <span>AI 기초 이해 · 리터러시</span>
+            </li>
+            <li class="nav-dropdown__item">
+              <img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" alt="" class="nav-dropdown__icon" />
+              <span>업무 효율 향상</span>
+            </li>
+            <li class="nav-dropdown__item">
+              <img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" alt="" class="nav-dropdown__icon" />
+              <span>교육 자료 제작</span>
+            </li>
+            <li class="nav-dropdown__item">
+              <img src="./assets/9731562 1.png" alt="" class="nav-dropdown__icon" />
+              <span>원생 관리</span>
+            </li>
+            <li class="nav-dropdown__item">
+              <img src="./assets/10316159 1.png" alt="" class="nav-dropdown__icon" />
+              <span>상담 업무</span>
+            </li>
+            <li class="nav-dropdown__item">
+              <img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" alt="" class="nav-dropdown__icon" />
+              <span>강의 기획 · 교육 설계</span>
+            </li>
+            <li class="nav-dropdown__item">
+              <img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" alt="" class="nav-dropdown__icon" />
+              <span>강의 홍보 · 피드백</span>
+            </li>
+            <li class="nav-dropdown__item">
+              <img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" alt="" class="nav-dropdown__icon" />
+              <span>자료 · 로고 디자인</span>
+            </li>
+            <li class="nav-dropdown__item">
+              <img src="./assets/11591525 1.png" alt="" class="nav-dropdown__icon" />
+              <span>창업 · 수익화</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+          <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 -->
+  <main>
+    <!-- 상단 맞춤 코스 추천 배너 -->
+    <section class="match-hero">
+      <img src="./match/matcu.png" alt="나만을 위한 맞춤코스 추천" class="match-hero__img" />
+    </section>
+
+    <!-- 검은 CTA 배너: 설문 섹션으로 스크롤 -->
+    <section class="match-cta">
+      <div class="match-cta__inner" id="matchCta">
+        나만을 위한 코스 확인하러 가기
+      </div>
+    </section>
+
+    <!-- 인트로 스피치 버블 -->
+    <section class="match-intro">
+      <div class="match-intro__inner">
+        <h2 class="match-intro__title">
+          AI, 나도 쓰고 싶은데 어디서 배워야 할지 막막하셨나요?
+        </h2>
+        <p class="match-intro__subtitle">
+          아래 고민 중 하나라도 해당된다면, 지금 딱 맞는 AI 활용 강의를 추천해 드릴게요.
+        </p>
+
+        <div class="bubble-row">
+          <div class="bubble-card">
+            <img src="./match/Group_1.png" alt="Group 1" />
+            <div class="bubble-card__label">Group_1</div>
+          </div>
+          <div class="bubble-card">
+            <img src="./match/Group_2.png" alt="Group 2" />
+            <div class="bubble-card__label">Group_2</div>
+          </div>
+          <div class="bubble-card">
+            <img src="./match/Group_3.png" alt="Group 3" />
+            <div class="bubble-card__label">Group_3</div>
+          </div>
+          <div class="bubble-card">
+            <img src="./match/Group_4.png" alt="Group 4" />
+            <div class="bubble-card__label">Group_4</div>
+          </div>
+          <div class="bubble-card">
+            <img src="./match/Group_5.png" alt="Group 5" />
+            <div class="bubble-card__label">Group_5</div>
+          </div>
+        </div>
+
+        <div class="match-intro__bottom">
+          <strong>단순한 툴 사용이 아닌, 업무에 바로 쓸 수 있는 AI 스킬</strong>을
+          한 번 수강으로 평생 활용할 수 있도록<br />
+          6개의 질문으로 필요한 강의를 딱 맞게 추천해 드립니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- 설문 타임라인 -->
+    <section class="survey-section" id="survey">
+      <div class="survey-shell">
+        <div class="survey-grid">
+          <!-- 왼쪽 단계 번호 -->
+          <div class="survey-steps">
+            <div class="survey-step-indicator is-active"><span>1/6</span></div>
+            <div class="survey-step-indicator"><span>2/6</span></div>
+            <div class="survey-step-indicator"><span>3/6</span></div>
+            <div class="survey-step-indicator"><span>4/6</span></div>
+            <div class="survey-step-indicator"><span>5/6</span></div>
+            <div class="survey-step-indicator"><span>6/6</span></div>
+          </div>
+
+          <!-- 오른쪽 질문들 -->
+          <div class="survey-content">
+
+            <!-- Q1 -->
+            <div class="question-block" data-question="q1" data-multiple="true" data-number="(1번)">
+              <p class="question-title">
+                해당되는 항목을 모두 선택하세요.
+              </p>
+              <div class="chip-row">
+                <button type="button" class="chip" data-value="학원/교과과목 강사">
+                  학원/교과과목 강사
+                </button>
+                <button type="button" class="chip" data-value="테크(IT·프로그래밍·데이터) 강사">
+                  테크(IT·프로그래밍·데이터) 강사
+                </button>
+                <button type="button" class="chip" data-value="기업교육(직무·리더십·소통 등) 강사">
+                  기업교육(직무·리더십·소통 등) 강사
+                </button>
+                <button type="button" class="chip" data-value="직업교육(자동차·기능훈련 등) 강사">
+                  직업교육(자동차·기능훈련 등) 강사
+                </button>
+                <button type="button" class="chip" data-value="자기계발·코칭·프리랜서 강사">
+                  자기계발·코칭·프리랜서 강사
+                </button>
+                <button type="button" class="chip" data-value="예비 강사·기타">
+                  예비 강사·기타
+                </button>
+              </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="question-block" data-question="q2" data-multiple="true" data-number="(2번)">
+              <p class="question-title">
+                이번 AI 교육을 통해 가장 강화하고 싶은 부분은 무엇인가요?
+                <span class="question-note">(복수선택 가능)</span>
+              </p>
+              <div class="chip-row">
+                <button type="button" class="chip" data-value="수업자료 제작 자동화">
+                  수업자료 제작 자동화
+                </button>
+                <button type="button" class="chip" data-value="문제·평가문항 생성">
+                  문제·평가문항 생성
+                </button>
+                <button type="button" class="chip" data-value="교육커리큘럼 기획">
+                  교육커리큘럼 기획
+                </button>
+                <button type="button" class="chip" data-value="학습자 피드백 자동화">
+                  학습자 피드백 자동화
+                </button>
+                <button type="button" class="chip" data-value="수업 시각화(이미지·도식·영상 등)">
+                  수업 시각화(이미지·도식·영상 등)
+                </button>
+                <button type="button" class="chip" data-value="강의 브랜딩/홍보 콘텐츠 제작">
+                  강의 브랜딩/홍보 콘텐츠 제작
+                </button>
+              </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="question-block" data-question="q3" data-multiple="false" data-number="(3번)">
+              <p class="question-title">
+                주로 어떤 학습자를 대상으로 하시나요?
+              </p>
+              <div class="chip-row">
+                <button type="button" class="chip" data-value="초·중·고등학생">
+                  초·중·고등학생
+                </button>
+                <button type="button" class="chip" data-value="대학생/취업준비생">
+                  대학생/취업준비생
+                </button>
+                <button type="button" class="chip" data-value="직장인/실무자">
+                  직장인/실무자
+                </button>
+                <button type="button" class="chip" data-value="관리자/리더">
+                  관리자/리더
+                </button>
+                <button type="button" class="chip" data-value="기능직/기술훈련생">
+                  기능직/기술훈련생
+                </button>
+                <button type="button" class="chip" data-value="일반 시민/평생학습자">
+                  일반 시민/평생학습자
+                </button>
+              </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="question-block" data-question="q4" data-multiple="false" data-number="(4번)">
+              <p class="question-title">
+                현재 본인의 AI 사용 경험은 어느 정도인가요?
+              </p>
+              <div class="chip-row">
+                <button type="button" class="chip" data-value="처음 써본다 (AI가 뭔지 궁금한 수준)">
+                  처음 써본다 (AI가 뭔지 궁금한 수준)
+                </button>
+                <button type="button" class="chip" data-value="기초 (ChatGPT·Canva 정도는 써봤다)">
+                  기초 (ChatGPT·Canva 정도는 써봤다)
+                </button>
+                <button type="button" class="chip" data-value="중급 (여러 AI 툴을 교육에 활용 중이다)">
+                  중급 (여러 AI 툴을 교육에 활용 중이다)
+                </button>
+                <button type="button" class="chip" data-value="고급 (프로그램 설계나 AI 커리큘럼을 직접 만든다)">
+                  고급 (프로그램 설계나 AI 커리큘럼을 직접 만든다)
+                </button>
+              </div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="question-block" data-question="q5" data-multiple="false" data-number="(5번)">
+              <p class="question-title">
+                선호하는 강의 형식은 무엇인가요?
+              </p>
+              <div class="chip-row">
+                <button type="button" class="chip" data-value="설명 중심(지식 전달형)">
+                  설명 중심(지식 전달형)
+                </button>
+                <button type="button" class="chip" data-value="실습 중심(체험형·워크숍형)">
+                  실습 중심(체험형·워크숍형)
+                </button>
+                <button type="button" class="chip" data-value="토론 중심(사례·문제 해결형)">
+                  토론 중심(사례·문제 해결형)
+                </button>
+                <button type="button" class="chip" data-value="프로젝트 중심(결과물 제작형)">
+                  프로젝트 중심(결과물 제작형)
+                </button>
+                <button type="button" class="chip" data-value="코칭 중심(질문·성찰형)">
+                  코칭 중심(질문·성찰형)
+                </button>
+              </div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="question-block" data-question="q6" data-multiple="true" data-number="(6번)">
+              <p class="question-title">
+                AI 교육 후 달성하고 싶은 구체적인 결과를 선택하세요.
+                <span class="question-note">(복수선택 가능)</span>
+              </p>
+              <div class="chip-row">
+                <button type="button" class="chip" data-value="나만의 AI 기반 수업 자료 템플릿 만들기">
+                  나만의 AI 기반 수업 자료 템플릿 만들기
+                </button>
+                <button type="button" class="chip" data-value="AI로 교재·커리큘럼 기초안 완성">
+                  AI로 교재·커리큘럼 기초안 완성
+                </button>
+                <button type="button" class="chip" data-value="AI로 문제은행·평가지시문 구축">
+                  AI로 문제은행·평가지시문 구축
+                </button>
+                <button type="button" class="chip" data-value="AI 시각자료·PPT 자동화 루틴 만들기">
+                  AI 시각자료·PPT 자동화 루틴 만들기
+                </button>
+                <button type="button" class="chip" data-value="AI 피드백 평가표 구축">
+                  AI 피드백 평가표 구축
+                </button>
+                <button type="button" class="chip" data-value="AI를 이용한 홍보·브랜딩 콘텐츠 제작">
+                  AI를 이용한 홍보·브랜딩 콘텐츠 제작
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="survey-footer">
+          <button type="button" class="survey-submit" id="surveySubmit">
+            맞춤코스 확인하기
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="footer">
+    <div class="footer__links">
+      <div>
+        <h4>레벨업 소개</h4>
+        <a href="#">회사소개</a>
+        <a href="#">강의제휴 문의</a>
+        <a href="#">채용안내</a>
+      </div>
+      <div>
+        <h4>고객지원</h4>
+        <a href="#">공지사항</a>
+        <a href="#">자주 묻는 질문</a>
+        <a href="#">1:1 문의</a>
+      </div>
+      <div>
+        <h4>이용안내</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+      </div>
+    </div>
+    <p class="footer__copy">© LEVEL-UP. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // 로고 클릭 → 홈으로 이동
+    document.getElementById('brandLogo').addEventListener('click', function () {
+      // 홈 파일 이름에 맞게 수정
+      window.location.href = 'index.html';
+    });
+
+    // 모든 강의 드롭다운 토글
+    const allLecturesBtn = document.getElementById('allLecturesBtn');
+    const navDropdown = document.getElementById('navDropdown');
+    const menuToggleIcon = document.getElementById('menuToggleIcon');
+    let dropdownOpen = false;
+
+    allLecturesBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      dropdownOpen = !dropdownOpen;
+      navDropdown.style.display = dropdownOpen ? 'block' : 'none';
+      menuToggleIcon.classList.toggle('open', dropdownOpen);
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!dropdownOpen) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) {
+        dropdownOpen = false;
+        navDropdown.style.display = 'none';
+        menuToggleIcon.classList.remove('open');
+      }
+    });
+
+    // 검은 CTA 클릭 시 설문 영역으로 스크롤
+    document.getElementById('matchCta').addEventListener('click', function () {
+      const survey = document.getElementById('survey');
+      if (survey) survey.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // 설문 응답 수집 함수
+    function collectAnswers() {
+      const result = {};
+      document.querySelectorAll('[data-question]').forEach(section => {
+        const key = section.getAttribute('data-question');
+        const activeChips = section.querySelectorAll('.chip.is-active');
+        result[key] = Array.from(activeChips).map(chip => chip.getAttribute('data-value'));
+      });
+      return result;
+    }
+
+    // 칩 클릭 이벤트
+    document.querySelectorAll('[data-question]').forEach(section => {
+      const allowMultiple = section.getAttribute('data-multiple') === 'true';
+      const chips = section.querySelectorAll('.chip');
+
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          if (allowMultiple) {
+            chip.classList.toggle('is-active');
+          } else {
+            chips.forEach(c => c.classList.remove('is-active'));
+            chip.classList.add('is-active');
+          }
+
+          // 클릭할 때마다 현재 응답 콘솔에 출력
+          console.log('Current answers:', collectAnswers());
+        });
+      });
+    });
+
+    // 제출 버튼
+    document.getElementById('surveySubmit').addEventListener('click', () => {
+      const answers = collectAnswers();
+      console.log('Final answers to submit:', answers);
+
+      // TODO: 추후 맞춤 추천 결과 페이지로 이동 예정
+      // window.location.href = 'course-result.html';
+      alert('지금은 데모 페이지입니다.\n선택하신 응답을 기반으로 맞춤 코스 추천 페이지가 추후 오픈될 예정입니다!');
+    });
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>

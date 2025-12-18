@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>자유게시판 | LEVEL-UP</title>
+
+  <style>
+    :root{
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --black:#111827; --primary:#2563eb;
+      --card:#ffffff;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; color:var(--black); }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    button,input{ font-family:inherit; }
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar{ background:#111827; color:#e5e7eb; font-size:12px; text-align:center; padding:6px 16px; }
+    .topbar strong{ color:#facc15; font-weight:600; }
+
+    /* ───────── 헤더(고정) ───────── */
+    .header{ background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:0; z-index:999; }
+    .header-top{
+      display:flex; align-items:center; justify-content:space-between;
+      max-width:1100px; margin:0 auto; padding:8px 16px 4px;
+    }
+    .brand{ font-size:22px; font-weight:800; letter-spacing:-0.06em; cursor:pointer; }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text; color:transparent;
+    }
+    .header-top__right{ display:flex; align-items:center; gap:14px; font-size:13px; }
+    .nav-util{ color:var(--gray-600); cursor:pointer; }
+    .profile-avatar{
+      width:28px; height:28px; border-radius:8px; object-fit:cover; border:1px solid var(--gray-200);
+    }
+
+    .header-bottom{
+      display:grid;
+      grid-template-columns:auto minmax(260px,1fr) auto;
+      align-items:center; gap:16px;
+      max-width:1100px; margin:0 auto;
+      padding:4px 16px 10px;
+      border-top:1px solid rgba(148,163,184,.35);
+      position:relative;
+    }
+    .header-bottom__left{ display:flex; align-items:center; gap:16px; }
+    .menu-title{
+      background:none; border:none; padding:6px 0; font:inherit;
+      font-weight:600; display:inline-flex; align-items:center; gap:6px;
+      cursor:pointer;
+    }
+    .menu-title:hover{ color:var(--primary); }
+    .header-bottom__center{ display:flex; justify-content:center; }
+    .header-bottom__right{ display:flex; justify-content:flex-end; }
+
+    .nav__search{ position:relative; max-width:620px; width:100%; }
+    .nav__search input{
+      width:100%;
+      padding:11px 14px 11px 34px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+      font-size:14px;
+      outline:none;
+    }
+    .icon-search{
+      position:absolute; left:10px; top:50%; transform:translateY(-50%);
+      font-size:16px; color:var(--gray-600);
+      cursor:default;
+    }
+    .menu-toggle-icon{
+      width:18px; height:18px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain; background-repeat:no-repeat; background-position:center;
+      transform:rotate(0deg);
+      transform-origin:center;
+      transition:transform .15s ease;
+    }
+    .menu-toggle-icon.open{ transform:rotate(90deg); }
+
+    .btn{
+      border-radius:12px;
+      border:1px solid transparent;
+      padding:10px 16px;
+      font-weight:600;
+      cursor:pointer;
+      background:#fff;
+      color:var(--black);
+      transition:all .2s ease;
+    }
+    .btn.mypage-btn{
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      padding:9px 22px;
+      font-size:14px;
+      border:1px solid #000;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+      transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .btn.mypage-btn:hover{
+      background: rgba(0,0,0,0.86);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      transform: translateY(-1px);
+    }
+    .btn.mypage-btn:active{
+      background: rgba(0,0,0,0.78);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+      transform: translateY(1px);
+    }
+
+    /* 드롭다운 */
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 20px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:2000;
+    }
+    .nav-dropdown__list{ list-style:none; margin:0; padding:0; }
+    .nav-dropdown__item{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 16px; font-size:14px; white-space:nowrap;
+      cursor:pointer;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{ border-top:1px solid var(--gray-200); }
+    .nav-dropdown__item:hover{ background:var(--gray-50); }
+    .nav-dropdown__icon{ width:22px; height:22px; object-fit:contain; }
+
+    /* ───────── 페이지 레이아웃 ───────── */
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 80px;
+      display:grid;
+      grid-template-columns:220px 1fr;
+      gap:26px;
+    }
+
+    /* 좌측 메뉴 + 광고 */
+    .side{ border-right:1px solid var(--gray-200); padding-right:18px; }
+    .side__title{ font-size:14px; font-weight:900; margin:6px 0 14px; }
+    .side__group{ margin-bottom:18px; }
+    .side__group h4{ margin:0 0 8px; font-size:12px; font-weight:900; color:var(--black); }
+    .side__links{ display:flex; flex-direction:column; gap:8px; font-size:12px; }
+    .side__links a{ color:var(--gray-700); cursor:pointer; }
+    .side__links a.active{ color:var(--primary); font-weight:900; }
+
+    .side__cards{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+    .evt{ border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; }
+    .evt__badge{
+      display:inline-block;
+      font-size:10px; font-weight:900;
+      padding:4px 8px;
+      background:#dbeafe; color:var(--primary);
+      border-radius:999px;
+      margin:10px 10px 0;
+    }
+    .evt img{ width:100%; height:120px; object-fit:cover; }
+
+    /* 우측 */
+    .crumb{ font-size:11px; color:var(--gray-500); text-align:right; margin:0 0 10px; }
+    .title-row{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:10px; }
+    .page-title{ margin:0; font-size:16px; font-weight:900; }
+    .tab-title{
+      margin:0 0 14px;
+      font-size:12px; font-weight:900;
+      padding-bottom:10px;
+      border-bottom:1px solid var(--gray-200);
+      width:fit-content;
+    }
+
+    /* 검색/업로드 줄(오른쪽 업로드 박스 고정) */
+    .tool-row{
+      display:grid;
+      grid-template-columns: 1fr 260px;
+      gap:14px;
+      align-items:start;
+      margin-bottom:14px;
+    }
+
+    .filter-panel{
+      background:var(--gray-100);
+      border-radius:14px;
+      padding:14px;
+      border:1px solid var(--gray-200);
+    }
+
+    .filter-grid{
+      display:grid;
+      grid-template-columns: 44px 1fr;
+      gap:10px 12px;
+      align-items:center;
+    }
+    .label{ font-size:12px; color:var(--gray-600); font-weight:900; }
+
+    .pill-row{ display:flex; flex-wrap:wrap; gap:8px; }
+    .pill{
+      font-size:11px; font-weight:900;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--gray-300);
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill.active{
+      border-color:rgba(37,99,235,.35);
+      box-shadow:0 0 0 3px rgba(37,99,235,.08);
+    }
+
+    .keyword-wrap{
+      position:relative;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .keyword{
+      width:100%;
+      border:1px solid var(--gray-300);
+      background:#fff;
+      border-radius:10px;
+      padding:10px 38px 10px 12px;
+      outline:none;
+      font-size:12px;
+    }
+    .keyword-ico{
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      opacity:.65;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .search-btn{
+      width:120px;
+      height:36px;
+      border-radius:8px;
+      border:1px solid var(--gray-300);
+      background:#fff;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .upload-card{
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      justify-content:center;
+    }
+    .upload-title{ font-size:12px; font-weight:900; margin:0; }
+    .upload-btn{
+      border:none;
+      border-radius:10px;
+      height:44px;
+      background:#000;
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .upload-plus{
+      width:18px; height:18px;
+      border:1px solid rgba(255,255,255,.6);
+      border-radius:6px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+    }
+
+    /* 리스트 상단: 건수 + 정렬 */
+    .list-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin:10px 0 10px;
+    }
+    .count{ font-size:12px; color:var(--gray-700); font-weight:900; }
+    .count b{ color:var(--primary); }
+    .sort{
+      display:flex; align-items:center; gap:12px;
+      font-size:12px; color:var(--gray-700);
+    }
+    .sort label{ display:inline-flex; align-items:center; gap:6px; cursor:pointer; user-select:none; }
+    .sort input{ accent-color: var(--primary); }
+
+    /* 게시글 카드 */
+    .post-list{ display:flex; flex-direction:column; gap:12px; }
+    .post{
+      background:var(--card);
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:12px;
+      display:grid;
+      grid-template-columns: 145px 1fr;
+      gap:14px;
+      align-items:center;
+      cursor:pointer;
+      transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+    }
+    .post:hover{
+      transform: translateY(-2px);
+      border-color: var(--gray-300);
+      box-shadow: 0 10px 22px rgba(15,23,42,.06);
+    }
+    .thumb{
+      width:145px;
+      height:125px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+      flex:0 0 auto;
+    }
+    .thumb img{ width:100%; height:100%; object-fit:cover; }
+
+    .post-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .post-title{
+      margin:0 0 6px;
+      font-size:13px;
+      font-weight:900;
+      color:var(--black);
+      line-height:1.3;
+    }
+    .post-desc{
+      margin:0 0 8px;
+      font-size:12px;
+      color:var(--gray-600);
+      font-weight:600;
+      line-height:1.45;
+    }
+    .tag-row{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .tag{
+      font-size:10px;
+      font-weight:900;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:#fff;
+      color:var(--gray-700);
+    }
+    .meta{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:11px;
+      color:var(--gray-500);
+      font-weight:700;
+      flex-wrap:wrap;
+    }
+    .meta .dot{ opacity:.5; }
+
+    /* 페이지네이션 */
+    .pager{
+      margin-top:18px;
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      font-size:12px;
+      user-select:none;
+    }
+    .page-btn{
+      width:28px; height:28px;
+      border-radius:8px;
+      border:1px solid var(--gray-200);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+    }
+    .page-btn.active{
+      border-color: rgba(37,99,235,.35);
+      box-shadow:0 0 0 3px rgba(37,99,235,.08);
+      color:var(--primary);
+    }
+
+    /* 푸터(네가 준 그대로) */
+    .footer {
+      background: #0c1224;
+      color: #c7cee1;
+      padding: 32px 24px 50px;
+    }
+    .footer__links {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .footer h4 {
+      margin: 0 0 8px;
+      color: #ffffff;
+    }
+    .footer a {
+      display: block;
+      margin: 4px 0;
+      font-size: 14px;
+      cursor:pointer;
+    }
+    .footer__copy {
+      margin: 0;
+      text-align: center;
+      font-size: 13px;
+      color: #9ca6c7;
+    }
+
+    @media (max-width:980px){
+      .wrap{ grid-template-columns:1fr; }
+      .side{ border-right:none; padding-right:0; }
+      .tool-row{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <!-- ✅ 헤더 -->
+  <header class="header" id="headerRoot">
+    <div class="header-top">
+      <div class="header-top__left">
+        <a href="index.html" class="brand">LEV<span class="brand__e">E</span>L-UP</a>
+      </div>
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__left">
+        <button class="menu-title has-dropdown" id="allLecturesBtn" type="button">
+          <span>모든 강의</span>
+          <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+        </button>
+        <!-- ✅ 여기 href를 “자료실(자유게시판)” 페이지로 연결 -->
+        <a class="menu-title" href="board_free.html">자료실</a>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+
+    <!-- 드롭다운 -->
+    <div class="nav-dropdown" id="navDropdown">
+      <ul class="nav-dropdown__list">
+        <li class="nav-dropdown__item js-go-ai-basic">
+          <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+          <span>AI 기초 이해 · 리터러시</span>
+        </li>
+        <li class="nav-dropdown__item"><img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" alt="" class="nav-dropdown__icon" /><span>업무 효율 향상</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" alt="" class="nav-dropdown__icon" /><span>교육 자료 제작</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9731562 1.png" alt="" class="nav-dropdown__icon" /><span>원생 관리</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/10316159 1.png" alt="" class="nav-dropdown__icon" /><span>상담 업무</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" alt="" class="nav-dropdown__icon" /><span>강의 기획 · 교육 설계</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" alt="" class="nav-dropdown__icon" /><span>강의 홍보 · 피드백</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" alt="" class="nav-dropdown__icon" /><span>자료 · 로고 디자인</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/11591525 1.png" alt="" class="nav-dropdown__icon" /><span>창업 · 수익화</span></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 좌측 -->
+    <aside class="side">
+      <div class="side__title">자료실</div>
+
+      <div class="side__group">
+        <h4>자료 게시판</h4>
+        <div class="side__links">
+          <a class="active" href="board_free.html">자유 게시판</a>
+          <a href="#" onclick="alert('추후 개발 예정'); return false;">공지 게시판</a>
+        </div>
+      </div>
+
+      <!-- 광고(lecture 폴더) -->
+      <div class="side__cards">
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img5.png" alt="이벤트" /></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img6.png" alt="이벤트" /></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img7.png" alt="이벤트" /></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img8.png" alt="이벤트" /></div>
+      </div>
+    </aside>
+
+    <!-- 우측 -->
+    <section>
+      <div class="crumb">홈 &gt; 자료 게시판 &gt; 자유게시판</div>
+
+      <div class="title-row">
+        <h2 class="page-title">자유 게시판</h2>
+      </div>
+      <div class="tab-title">자료 게시판</div>
+
+      <!-- ✅ 검색창 + 업로드(오른쪽) -->
+      <div class="tool-row">
+        <div class="filter-panel">
+          <div class="filter-grid">
+            <div class="label">분야</div>
+            <div class="pill-row" id="fieldRow">
+              <span class="pill active" data-field="전체">전체</span>
+              <span class="pill" data-field="입시">입시</span>
+              <span class="pill" data-field="레슨">레슨</span>
+              <span class="pill" data-field="직업훈련">직업훈련</span>
+            </div>
+
+            <div class="label">툴</div>
+            <div class="pill-row" id="toolRow">
+              <span class="pill active" data-tool="전체">전체</span>
+              <span class="pill" data-tool="ChatGPT">ChatGPT</span>
+              <span class="pill" data-tool="Claude">Claude</span>
+              <span class="pill" data-tool="Gemini">Gemini</span>
+              <span class="pill" data-tool="Copilot">Copilot</span>
+              <span class="pill" data-tool="MirCanvas">MirCanvas</span>
+              <span class="pill" data-tool="Canva">Canva</span>
+              <span class="pill" data-tool="Excel">Excel</span>
+            </div>
+
+            <div class="label">키워드</div>
+            <div class="keyword-wrap">
+              <input id="keywordInput" class="keyword" type="text" placeholder="이름 또는 자료명을 입력해주세요." />
+              <span class="keyword-ico" id="keywordIco" title="검색">🔍</span>
+              <button class="search-btn" id="searchBtn" type="button">검색</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="upload-card">
+          <p class="upload-title">내 자료도 공유해 보세요!</p>
+          <button class="upload-btn" id="uploadBtn" type="button">
+            <span class="upload-plus">+</span> 자료 업로드
+          </button>
+        </div>
+      </div>
+
+      <div class="list-head">
+        <div class="count">전체 <b id="countNum">0</b>건</div>
+        <div class="sort">
+          <label><input type="radio" name="sort" value="views" checked> 조회수 순</label>
+          <label><input type="radio" name="sort" value="latest"> 최신 순</label>
+          <label><input type="radio" name="sort" value="downloads"> 다운로드 순</label>
+        </div>
+      </div>
+
+      <div class="post-list" id="postList"></div>
+
+      <div class="pager">
+        <button class="page-btn active" type="button">1</button>
+        <button class="page-btn" type="button">2</button>
+        <button class="page-btn" type="button">3</button>
+        <button class="page-btn" type="button">4</button>
+        <button class="page-btn" type="button">5</button>
+        <button class="page-btn" type="button">6</button>
+        <button class="page-btn" type="button">›</button>
+        <button class="page-btn" type="button">»</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ✅ 푸터 -->
+  <footer class="footer">
+    <div class="footer__links">
+      <div>
+        <h4>회사</h4>
+        <a href="#">회사소개</a>
+        <a href="#">채용</a>
+        <a href="#">제휴 문의</a>
+      </div>
+      <div>
+        <h4>서비스</h4>
+        <a href="#">강의찾기</a>
+        <a href="#">커뮤니티</a>
+        <a href="#">이벤트</a>
+      </div>
+      <div>
+        <h4>정책</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+      </div>
+      <div>
+        <h4>고객센터</h4>
+        <a href="tel:1544-9044">1544-9044</a>
+        <a href="#">월-금 10:00~18:00</a>
+      </div>
+    </div>
+    <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* ✅ 마이페이지 이동 */
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest('[data-nav="mypage"]');
+      if (!btn) return;
+      window.location.href = "mypage.html";
+    });
+
+    /* ✅ 드롭다운 토글 */
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let dropdownOpen = false;
+
+    function closeDropdown(){
+      dropdownOpen = false;
+      navDropdown.style.display = "none";
+      menuToggleIcon.classList.remove("open");
+    }
+
+    allLecturesBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdownOpen = !dropdownOpen;
+
+      if(!dropdownOpen){ closeDropdown(); return; }
+
+      navDropdown.style.display = "block";
+      menuToggleIcon.classList.add("open");
+
+      const r = allLecturesBtn.getBoundingClientRect();
+      navDropdown.style.top  = (r.bottom + window.scrollY + 8) + "px";
+      navDropdown.style.left = (r.left + window.scrollX) + "px";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!dropdownOpen) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) closeDropdown();
+    });
+
+    document.querySelectorAll(".js-go-ai-basic").forEach((el) => {
+      el.addEventListener("click", () => window.location.href = "lecture_ai_basic.html");
+    });
+
+    /* ✅ 업로드 버튼(추후 개발 예정) */
+    document.getElementById("uploadBtn")?.addEventListener("click", () => {
+      alert("자료 업로드는 추후 개발 예정입니다.");
+    });
+
+    /* =========================
+       ✅ 게시판 데이터 (샘플)
+       - 썸네일: ./data/img1~img6.png
+       - “이름/자료명” 검색은 title/desc/author/tag 전체에서 필터
+    ========================= */
+    const posts = [
+      {
+        id: 1,
+        thumb: "./data/img1.png",
+        title: "원생 관리 템플릿",
+        desc: "교육 운영 업무 자동화를 위한 강의/관리 실습 자료 공유합니다.",
+        author: "김강사",
+        date: "2025.12.01",
+        views: 7942,
+        downloads: 151,
+        size: "121.1MB",
+        field: "직업훈련",
+        tool: "Excel",
+        tags: ["원생관리", "템플릿", "업무자동화"]
+      },
+      {
+        id: 2,
+        thumb: "./data/img4.png",
+        title: "프롬프트 문법 강의 실습물 공유!",
+        desc: "AI 기초 이해 리터러시 - 프롬프트 기본 문법 강의 실습 자료",
+        author: "나의미",
+        date: "2025.12.01",
+        views: 850,
+        downloads: 25,
+        size: "101.1MB",
+        field: "입시",
+        tool: "ChatGPT",
+        tags: ["프롬프트", "기초", "실습"]
+      },
+      {
+        id: 3,
+        thumb: "./data/img2.png",
+        title: "자동화 실습 자료 공유합니다 - #1",
+        desc: "강의 기획 및 교육설계 - 강의 단계별 문서 자동 생성 실습 자료",
+        author: "강사A",
+        date: "2025.12.01",
+        views: 201,
+        downloads: 11,
+        size: "231.1MB",
+        field: "레슨",
+        tool: "Canva",
+        tags: ["자동화", "문서", "자료"]
+      },
+      {
+        id: 4,
+        thumb: "./data/img6.png",
+        title: "교육 운영 업무 자동화를 위한 강의 실습 자료 공유합니다.",
+        desc: "원생관리/평가/피드백 자동화 흐름 예시 자료 포함",
+        author: "김강사",
+        date: "2025.12.01",
+        views: 7942,
+        downloads: 151,
+        size: "121.1MB",
+        field: "직업훈련",
+        tool: "Copilot",
+        tags: ["평가", "피드백", "자동화"]
+      },
+      {
+        id: 5,
+        thumb: "./data/img5.png",
+        title: "프롬프트 문법 강의 실습물 공유 (심화)",
+        desc: "조건/형식/제약을 활용한 프롬프트 구조화 실습",
+        author: "나의미",
+        date: "2025.12.01",
+        views: 850,
+        downloads: 25,
+        size: "101.1MB",
+        field: "입시",
+        tool: "Claude",
+        tags: ["프롬프트", "심화", "구조화"]
+      },
+      {
+        id: 6,
+        thumb: "./data/img3.png",
+        title: "자동화 실습 자료 공유합니다 - #2",
+        desc: "업무 효율 향상 - AI로 자료 정리/요약/분류 실습",
+        author: "강사B",
+        date: "2025.12.01",
+        views: 201,
+        downloads: 11,
+        size: "231.1MB",
+        field: "레슨",
+        tool: "Gemini",
+        tags: ["요약", "분류", "효율"]
+      }
+    ];
+
+    /* =========================
+       ✅ UI 상태
+    ========================= */
+    let state = {
+      field: "전체",
+      tool: "전체",
+      keyword: "",
+      sort: "views"
+    };
+
+    const postList = document.getElementById("postList");
+    const countNum = document.getElementById("countNum");
+    const keywordInput = document.getElementById("keywordInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const keywordIco = document.getElementById("keywordIco");
+
+    function normalize(s){ return (s || "").toString().trim().toLowerCase(); }
+
+    function matches(post){
+      // 분야/툴
+      if(state.field !== "전체" && post.field !== state.field) return false;
+      if(state.tool !== "전체" && post.tool !== state.tool) return false;
+
+      // 키워드(이름/자료명 등)
+      const k = normalize(state.keyword);
+      if(!k) return true;
+
+      const hay = normalize([
+        post.title, post.desc, post.author, post.field, post.tool,
+        ...(post.tags || [])
+      ].join(" "));
+      return hay.includes(k);
+    }
+
+    function sortPosts(list){
+      const cp = [...list];
+      if(state.sort === "views") cp.sort((a,b)=> b.views - a.views);
+      if(state.sort === "downloads") cp.sort((a,b)=> b.downloads - a.downloads);
+      if(state.sort === "latest") cp.sort((a,b)=> (b.date || "").localeCompare(a.date || ""));
+      return cp;
+    }
+
+    function render(){
+      const filtered = posts.filter(matches);
+      const sorted = sortPosts(filtered);
+
+      countNum.textContent = filtered.length.toString();
+
+      postList.innerHTML = "";
+      sorted.forEach(p => {
+        const el = document.createElement("div");
+        el.className = "post";
+        el.dataset.id = p.id;
+        el.innerHTML = `
+          <div class="thumb"><img src="${p.thumb}" alt="${p.title}"></div>
+          <div>
+            <div class="post-top">
+              <div>
+                <p class="post-title">${p.title}</p>
+                <p class="post-desc">${p.desc}</p>
+              </div>
+              <div style="font-size:11px;color:var(--gray-500);font-weight:900;white-space:nowrap;">
+                ${p.size}
+              </div>
+            </div>
+
+            <div class="tag-row">
+              ${(p.tags||[]).slice(0,4).map(t=>`<span class="tag">#${t}</span>`).join("")}
+            </div>
+
+            <div class="meta">
+              <span>작성자 ${p.author}</span>
+              <span class="dot">·</span>
+              <span>${p.date}</span>
+              <span class="dot">·</span>
+              <span>조회 ${p.views}</span>
+              <span class="dot">·</span>
+              <span>다운 ${p.downloads}</span>
+              <span class="dot">·</span>
+              <span>${p.field}</span>
+              <span class="dot">·</span>
+              <span>${p.tool}</span>
+            </div>
+          </div>
+        `;
+        el.addEventListener("click", () => {
+          // ✅ 게시글 상세는 추후 개발 예정
+          alert("자료 상세 페이지는 추후 개발 예정입니다.");
+        });
+        postList.appendChild(el);
+      });
+    }
+
+    /* =========================
+       ✅ 필터(분야/툴 pill)
+    ========================= */
+    function setupPills(rowId, key, attr){
+      const row = document.getElementById(rowId);
+      row?.addEventListener("click", (e) => {
+        const pill = e.target.closest(".pill");
+        if(!pill) return;
+        row.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        state[key] = pill.getAttribute(attr);
+        render();
+      });
+    }
+    setupPills("fieldRow", "field", "data-field");
+    setupPills("toolRow", "tool", "data-tool");
+
+    /* =========================
+       ✅ 키워드 검색(이름/자료명)
+    ========================= */
+    function doSearch(){
+      state.keyword = keywordInput.value || "";
+      render();
+    }
+    searchBtn.addEventListener("click", doSearch);
+    keywordIco.addEventListener("click", doSearch);
+    keywordInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") doSearch(); });
+    keywordInput.addEventListener("input", () => { // 타이핑 즉시 필터
+      state.keyword = keywordInput.value || "";
+      render();
+    });
+
+    /* =========================
+       ✅ 정렬
+    ========================= */
+    document.querySelectorAll('input[name="sort"]').forEach(r => {
+      r.addEventListener("change", () => {
+        state.sort = r.value;
+        render();
+      });
+    });
+
+    /* 최초 렌더 */
+    render();
+  </script>
+</body>
+</html>

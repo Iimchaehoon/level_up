@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>결제 | LEVEL-UP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --black:#111827;
+      --gray-50:#f9fafb;
+      --gray-100:#f3f4f6;
+      --gray-200:#e5e7eb;
+      --gray-300:#d1d5db;
+      --gray-400:#9ca3af;
+      --gray-500:#6b7280;
+      --gray-600:#4b5563;
+      --gray-700:#374151;
+      --white:#fff;
+      --shadow: 0 10px 26px rgba(15,23,42,.08);
+      --radius: 14px;
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:"Noto Sans KR", system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:#d9d9d9;   /* 캡쳐처럼 바깥 회색 */
+      color:var(--black);
+    }
+    a{color:inherit;text-decoration:none;}
+    img{max-width:100%;display:block;}
+    button,input,select{font-family:inherit;}
+
+    /* ───────── 상단 공지 (lecture-detail.html 그대로 스타일) ───────── */
+    .topbar{
+      background:#0c0c0c;
+      color:#e5e7eb;
+      font-size:12px;
+      text-align:center;
+      padding:7px 16px;
+    }
+    .topbar strong{color:#60a5fa;font-weight:700;}
+    .topbar a{color:#93c5fd;text-decoration:underline;}
+
+    /* ───────── 헤더(결제 페이지 캡쳐 형태) ───────── */
+    .header{
+      background:#fff;
+      border-bottom:1px solid var(--gray-200);
+    }
+    .header-inner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      font-size:22px;
+      font-weight:900;
+      cursor:pointer;
+      letter-spacing:-0.06em;
+      user-select:none;
+    }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+    .header-right{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      font-size:13px;
+      color:var(--gray-600);
+      white-space:nowrap;
+    }
+    .btn-mypage{
+      border-radius:999px;
+      border:1px solid #000;
+      background:#fff;
+      color:#000;
+      padding:7px 14px;
+      font-size:13px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .nav-util{cursor:pointer;color:var(--gray-600);}
+    .profile{
+      width:22px;height:22px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid var(--gray-200);
+    }
+
+    /* ───────── 페이지 프레임(중앙 흰 배경) ───────── */
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      background:#fff;
+      min-height:calc(100vh - 70px);
+      padding:28px 0 40px;
+    }
+
+    .container{
+      max-width:920px;
+      margin:0 auto;
+      padding:0 16px;
+    }
+
+    .title{
+      text-align:center;
+      font-size:22px;
+      font-weight:800;
+      margin:20px 0 22px;
+      letter-spacing:-0.02em;
+    }
+
+    /* ───────── 공통 섹션 ───────── */
+    .section{
+      margin-top:18px;
+    }
+    .section-h{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin:0 0 10px;
+    }
+    .section-h h3{
+      margin:0;
+      font-size:13px;
+      font-weight:800;
+      color:#111827;
+    }
+    .section-h .small-btn{
+      border:1px solid var(--gray-300);
+      background:#fff;
+      color:#111827;
+      font-size:12px;
+      font-weight:700;
+      padding:6px 10px;
+      border-radius:999px;
+      cursor:pointer;
+    }
+    .box{
+      border:1px solid var(--gray-200);
+      border-radius:10px;
+      background:#fff;
+    }
+
+    /* ───────── 장바구니 라인 ───────── */
+    .cart-row{
+      display:grid;
+      grid-template-columns:18px 78px 1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:14px 14px;
+    }
+    .chk{
+      width:14px;height:14px;
+      border-radius:3px;
+      background:#f59e0b;
+      position:relative;
+      margin-left:2px;
+    }
+    .thumb{
+      width:72px;height:52px;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid var(--gray-200);
+      background:#f3f4f6;
+    }
+    .cart-info .name{
+      font-size:12px;
+      font-weight:800;
+      color:#111827;
+      margin:0 0 4px;
+      line-height:1.35;
+    }
+    .cart-info .meta{
+      font-size:11px;
+      color:var(--gray-500);
+      margin:0;
+    }
+    .cart-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .cart-right .remove{
+      border:none;background:transparent;
+      color:#9ca3af;
+      font-size:18px;
+      cursor:pointer;
+      line-height:1;
+      padding:0 2px;
+    }
+    .price{
+      font-size:12px;
+      font-weight:900;
+      color:#111827;
+      min-width:78px;
+      text-align:right;
+    }
+
+    /* ───────── 폼 ───────── */
+    .form{
+      padding:14px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:10px;
+      align-items:center;
+      padding:8px 0;
+    }
+    .label{
+      font-size:12px;
+      font-weight:800;
+      color:#111827;
+    }
+    .req{
+      color:#ef4444;
+      font-weight:900;
+      margin-left:4px;
+    }
+    .input, .select{
+      width:100%;
+      height:34px;
+      border:1px solid var(--gray-200);
+      border-radius:8px;
+      padding:0 10px;
+      font-size:12px;
+      outline:none;
+      background:#fff;
+    }
+    .input[disabled]{
+      background:#f3f4f6;
+      color:#9ca3af;
+    }
+    .hint{
+      font-size:11px;
+      color:var(--gray-500);
+      margin:6px 0 0;
+    }
+
+    /* ───────── 할인 / 결제수단 ───────── */
+    .radio-line{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border-top:1px solid var(--gray-200);
+    }
+    .radio-line:first-child{border-top:none;}
+    .pill{
+      font-size:10px;
+      font-weight:900;
+      padding:3px 8px;
+      border-radius:999px;
+      line-height:1;
+      white-space:nowrap;
+    }
+    .pill.green{background:#dcfce7;color:#16a34a;}
+    .pill.blue{background:#dbeafe;color:#2563eb;}
+
+    .pay-wrap{
+      display:grid;
+      grid-template-columns:1fr 320px;
+      gap:22px;
+      margin-top:18px;
+      align-items:start;
+    }
+
+    .pay-methods .method{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-top:1px solid var(--gray-200);
+    }
+    .pay-methods .method:first-child{border-top:none;}
+    .method-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:12px;
+      font-weight:800;
+      color:#111827;
+    }
+    .method-logo{
+      height:18px;
+      width:auto;
+      display:block;
+    }
+    .method-desc{
+      padding:10px 14px 12px;
+      border-top:1px solid var(--gray-200);
+      background:#f3f4f6;
+      font-size:11px;
+      color:#374151;
+      line-height:1.55;
+      display:none;
+    }
+    .method-desc.on{display:block;}
+
+    /* ───────── 요약 박스 ───────── */
+    .summary{
+      padding:12px 12px;
+    }
+    .summary h4{
+      margin:0 0 10px;
+      font-size:12px;
+      font-weight:900;
+      color:#111827;
+    }
+    .sum-list{
+      border-top:1px solid var(--gray-200);
+      padding-top:10px;
+      margin-top:10px;
+    }
+    .sum-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:12px;
+      padding:6px 0;
+      color:#111827;
+    }
+    .sum-item .k{color:#111827;font-weight:800;}
+    .sum-item .v{font-weight:900;}
+    .sum-total{
+      margin-top:8px;
+      padding-top:10px;
+      border-top:1px solid var(--gray-200);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:13px;
+      font-weight:900;
+    }
+
+    /* ───────── 결제 버튼 ───────── */
+    .pay-btn{
+      margin-top:18px;
+      width:100%;
+      height:46px;
+      border:none;
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    @media (max-width: 920px){
+      .pay-wrap{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 <a href="#">다운로드</a></strong> 하기 &gt;
+  </div>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand" id="brandLogo">LEV<span class="brand__e">E</span>L-UP</div>
+      <div class="header-right">
+        <button class="btn-mypage" type="button" id="goMypageBtn">마이페이지</button>
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util" id="logoutBtn">로그아웃</span>
+        <img class="profile" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="container">
+      <div class="title">결제</div>
+
+      <!-- 상품 -->
+      <div class="box">
+        <div class="cart-row">
+          <div class="chk" aria-hidden="true"></div>
+
+          <!-- 강의 썸네일(없으면 pay/make1.png) -->
+          <div class="thumb">
+            <img id="lectureThumb" src="./pay/make1.png" alt="강의 썸네일" />
+          </div>
+
+          <div class="cart-info">
+            <p class="name" id="lectureTitle">AI 기초 이해 · 리터러시 - 학생/강사 같이 이해하기</p>
+            <p class="meta">1개 · 강의 · 결제</p>
+          </div>
+
+          <div class="cart-right">
+            <button class="remove" type="button" aria-label="삭제">×</button>
+            <div class="price" id="lecturePrice">₩25,000</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 구매자 정보 -->
+      <div class="section">
+        <div class="section-h">
+          <h3>구매자정보</h3>
+          <button class="small-btn" type="button">수정</button>
+        </div>
+
+        <div class="box form">
+          <div class="row">
+            <div class="label">이름<span class="req">*</span></div>
+            <input class="input" type="text" value="" placeholder="" />
+          </div>
+          <div class="row">
+            <div class="label">이메일<span class="req">*</span></div>
+            <input class="input" type="email" value="asd@gmail.com" />
+          </div>
+          <div class="row">
+            <div class="label">휴대폰 번호<span class="req">*</span></div>
+            <input class="input" type="tel" placeholder="010-0000-0000" />
+          </div>
+
+          <div class="row">
+            <div class="label">주소<span class="req">*</span></div>
+            <select class="select">
+              <option>대한민국 +82</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="label">상세 주소</div>
+            <input class="input" type="text" placeholder="" />
+          </div>
+
+          <p class="hint">* 표시 항목은 필수 입력입니다.</p>
+        </div>
+      </div>
+
+      <!-- 할인 -->
+      <div class="section">
+        <div class="section-h">
+          <h3>할인</h3>
+        </div>
+        <div class="box">
+          <div class="radio-line">
+            <input type="radio" name="discount" id="dcCoupon" checked />
+            <label for="dcCoupon" style="font-size:12px;font-weight:800;">쿠폰을 사용</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 결제수단 + 요약 -->
+      <div class="pay-wrap">
+        <div class="section pay-methods">
+          <div class="section-h">
+            <h3>결제수단</h3>
+          </div>
+
+          <div class="box">
+            <!-- 네이버페이 -->
+            <div class="method">
+              <div class="method-left">
+                <input type="radio" name="paymethod" id="pmNaver" />
+                <label for="pmNaver" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                  네이버페이
+                  <span class="pill green">추천</span>
+                </label>
+              </div>
+              <img class="method-logo" src="./pay/naver.png" alt="naverpay" />
+            </div>
+            <div class="method-desc" id="descNaver">
+              · 결제 내역은 네이버페이에서 확인 가능합니다.<br />
+              · 네이버페이 약관/결제수단에 따라 결제 진행됩니다.
+            </div>
+
+            <!-- 토스페이 -->
+            <div class="method">
+              <div class="method-left">
+                <input type="radio" name="paymethod" id="pmToss" checked />
+                <label for="pmToss" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                  토스페이
+                  <span class="pill blue">빠른결제</span>
+                </label>
+              </div>
+              <img class="method-logo" src="./pay/toss.png" alt="tosspay" />
+            </div>
+            <div class="method-desc on" id="descToss">
+              [2025-03-01~2025-03-20] · 2만원 이상 결제 시 최대 혜택<br />
+              · 결제 금액에 따라 혜택이 달라질 수 있습니다.
+            </div>
+
+            <!-- 카드 결제(캡쳐 하단 텍스트 느낌만) -->
+            <div class="radio-line" style="background:#fff;">
+              <input type="radio" name="paymethod" id="pmCard" />
+              <label for="pmCard" style="font-size:12px;font-weight:800;">카드 결제 수단</label>
+              <span style="margin-left:auto;font-size:11px;color:#6b7280;">(추후 지원)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 결제요약 -->
+        <aside class="box summary" aria-label="결제 요약">
+          <h4>결제요약</h4>
+
+          <div class="sum-list">
+            <div class="sum-item">
+              <span class="k" id="sumTitle">AI 기초 이해 · 리터러시 - 학생/강사 같이 이해하기</span>
+              <span class="v" id="sumPrice">₩25,000</span>
+            </div>
+            <div class="sum-item">
+              <span class="k">할인</span>
+              <span class="v" id="sumDiscount">₩0</span>
+            </div>
+            <div class="sum-item">
+              <span class="k">배송</span>
+              <span class="v">₩0</span>
+            </div>
+
+            <div class="sum-total">
+              <span>총 결제금액</span>
+              <span id="sumTotal">₩25,000</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <button class="pay-btn" type="button" id="payBtn">결제하기</button>
+    </div>
+  </div>
+
+  <script src="courseData.js"></script>
+  <script>
+    // 로고 클릭 → 메인
+    document.getElementById("brandLogo").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    // 마이페이지(추후 연결 페이지)
+    document.getElementById("goMypageBtn").addEventListener("click", () => {
+      window.location.href = "mypage.html";
+    });
+
+    // 결제하기(추후: 나의 강의로 이동)
+    document.getElementById("payBtn").addEventListener("click", () => {
+      window.location.href = "mypage.html";
+    });
+
+    // 결제수단 설명 토글(디자인만 맞추는 최소 동작)
+    const pmNaver = document.getElementById("pmNaver");
+    const pmToss  = document.getElementById("pmToss");
+    const pmCard  = document.getElementById("pmCard");
+    const descNaver = document.getElementById("descNaver");
+    const descToss  = document.getElementById("descToss");
+
+    function syncMethodDesc(){
+      descNaver.classList.toggle("on", pmNaver.checked);
+      descToss.classList.toggle("on", pmToss.checked);
+      if (pmCard.checked){
+        descNaver.classList.remove("on");
+        descToss.classList.remove("on");
+      }
+    }
+    [pmNaver, pmToss, pmCard].forEach(r => r.addEventListener("change", syncMethodDesc));
+    syncMethodDesc();
+
+    // lecture-detail.html에서 넘어온 id로 강의명/가격/썸네일 반영 (가능한 범위에서만)
+    const params = new URLSearchParams(location.search);
+    const courseId = params.get("id");
+
+    function normalizePrice(p){
+      if (!p) return "₩25,000";
+      const s = String(p).replace(/[^\d]/g,'');
+      if (!s) return String(p);
+      const n = Number(s);
+      return "₩" + n.toLocaleString("ko-KR");
+    }
+
+    if (courseId && window.COURSE_DATA && window.COURSE_DATA[courseId]) {
+      const d = window.COURSE_DATA[courseId];
+
+      const title = d.title || "강의";
+      const price = normalizePrice(d.price || "₩25,000");
+      const thumb = d.thumb || "./pay/make1.png";
+
+      document.getElementById("lectureTitle").textContent = title;
+      document.getElementById("sumTitle").textContent = title;
+
+      document.getElementById("lecturePrice").textContent = price;
+      document.getElementById("sumPrice").textContent = price;
+      document.getElementById("sumTotal").textContent = price;
+
+      document.getElementById("lectureThumb").src = thumb;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>자료 상세 | LEVEL-UP</title>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root{
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --black:#111827; --primary:#2563eb;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; color:var(--black); }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    button, input{ font-family:inherit; }
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar{ background:#111827; color:#e5e7eb; font-size:12px; text-align:center; padding:6px 16px; }
+    .topbar strong{ color:#facc15; font-weight:600; }
+
+    /* ───────── 헤더(너가 쓰던 그대로) ───────── */
+    .header{ background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:0; z-index:999; }
+    .header-top{
+      display:flex; align-items:center; justify-content:space-between;
+      max-width:1100px; margin:0 auto; padding:8px 16px 4px;
+    }
+    .brand{ font-size:22px; font-weight:800; letter-spacing:-0.06em; cursor:pointer; }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text; color:transparent;
+    }
+    .header-top__right{ display:flex; align-items:center; gap:14px; font-size:13px; }
+    .nav-util{ color:var(--gray-600); cursor:pointer; }
+    .profile-avatar{
+      width:28px; height:28px; border-radius:8px; object-fit:cover; border:1px solid var(--gray-200);
+    }
+
+    .header-bottom{
+      display:grid;
+      grid-template-columns:auto minmax(260px,1fr) auto;
+      align-items:center; gap:16px;
+      max-width:1100px; margin:0 auto;
+      padding:4px 16px 10px;
+      border-top:1px solid rgba(148,163,184,.35);
+      position:relative;
+    }
+    .header-bottom__left{ display:flex; align-items:center; gap:16px; }
+    .menu-title{
+      background:none; border:none; padding:6px 0; font:inherit;
+      font-weight:600; display:inline-flex; align-items:center; gap:4px;
+      cursor:pointer;
+    }
+    .menu-title:hover{ color:var(--primary); }
+
+    .header-bottom__center{ display:flex; justify-content:center; }
+    .header-bottom__right{ display:flex; justify-content:flex-end; }
+
+    .nav__search{ position:relative; max-width:620px; width:100%; }
+    .nav__search input{
+      width:100%;
+      padding:11px 14px 11px 34px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+      font-size:14px;
+      outline:none;
+    }
+    .icon-search{
+      position:absolute; left:10px; top:50%; transform:translateY(-50%);
+      font-size:16px; color:var(--gray-600);
+      cursor:default;
+    }
+
+    .menu-toggle-icon{
+      width:18px; height:18px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain; background-repeat:no-repeat; background-position:center;
+      transition:transform .15s ease;
+    }
+    .menu-toggle-icon.open{ transform:rotate(90deg); }
+
+    .btn{
+      border-radius:12px;
+      border:1px solid transparent;
+      padding:10px 16px;
+      font-weight:600;
+      cursor:pointer;
+      background:#fff;
+      color:var(--black);
+      transition:all .2s ease;
+    }
+    .btn.mypage-btn{
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      padding:9px 22px;
+      font-size:14px;
+      border:1px solid #000;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+      transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .btn.mypage-btn:hover{ background: rgba(0,0,0,0.86); transform: translateY(-1px); }
+    .btn.mypage-btn:active{ background: rgba(0,0,0,0.78); transform: translateY(1px); }
+
+    /* 드롭다운 */
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 20px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:2000;
+    }
+    .nav-dropdown__list{ list-style:none; margin:0; padding:0; }
+    .nav-dropdown__item{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 16px; font-size:14px; white-space:nowrap;
+      cursor:pointer;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{ border-top:1px solid var(--gray-200); }
+    .nav-dropdown__item:hover{ background:var(--gray-50); }
+    .nav-dropdown__icon{ width:22px; height:22px; object-fit:contain; }
+
+    /* ───────── 페이지 레이아웃 ───────── */
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 80px;
+      display:grid;
+      grid-template-columns:220px 1fr;
+      gap:26px;
+      align-items:start;
+    }
+
+    /* 좌측 메뉴 + 광고 */
+    .side{ border-right:1px solid var(--gray-200); padding-right:18px; }
+    .side__title{ font-size:24px; font-weight:900; margin:18px 0 14px; }
+    .side__group{ margin-bottom:14px; }
+    .side__links{ display:flex; flex-direction:column; gap:10px; font-size:13px; }
+    .side__links a{ color:var(--gray-700); cursor:pointer; }
+    .side__links a.active{ color:var(--primary); font-weight:900; }
+    .side__divider{ height:1px; background:var(--gray-200); margin:12px 0 8px; }
+
+    .side__cards{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+    .evt{ border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; }
+    .evt__badge{
+      display:inline-block;
+      font-size:10px; font-weight:900;
+      padding:4px 8px;
+      background:#dbeafe; color:var(--primary);
+      border-radius:999px;
+      margin:10px 10px 0;
+    }
+    .evt img{ width:100%; height:76px; object-fit:cover; }
+
+    /* 메인 */
+    .main__crumb{ font-size:11px; color:var(--gray-500); text-align:right; margin:0 0 8px; }
+    .detail-wrap{
+      background:#fff;
+      border:1px solid transparent;
+    }
+
+    .detail-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:6px 0 14px;
+    }
+    .back-btn{
+      border:1px solid var(--gray-300);
+      background:#fff;
+      height:30px;
+      padding:0 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+    .head-actions{ display:flex; gap:10px; }
+    .mini-btn{
+      border:1px solid var(--gray-300);
+      background:#fff;
+      height:30px;
+      padding:0 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .title-row{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      flex-wrap:wrap;
+      margin:10px 0 10px;
+    }
+    .cat-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:26px;
+      padding:0 10px;
+      border-radius:10px;
+      border:1px solid #67e8f9;
+      background:#ecfeff;
+      color:#0e7490;
+      font-size:12px;
+      font-weight:900;
+    }
+    .detail-title{
+      margin:0;
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:-0.02em;
+      line-height:1.25;
+    }
+
+    .author-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:14px 0 14px;
+      border-bottom:1px solid var(--gray-200);
+    }
+    .author-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .author-avatar{
+      width:38px; height:38px;
+      border-radius:999px;
+      object-fit:cover;
+      border:1px solid var(--gray-200);
+      background:#fff;
+    }
+    .author-meta{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .author-name{
+      font-size:13px;
+      font-weight:900;
+      color:var(--black);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .author-date{
+      font-size:12px;
+      font-weight:700;
+      color:var(--gray-500);
+    }
+
+    .author-right{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .icon-btn{
+      height:40px;
+      min-width:48px;
+      padding:0 12px;
+      border-radius:10px;
+      border:1px solid var(--gray-200);
+      background:#fff;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-weight:900;
+      color:var(--black);
+    }
+    .heart{
+      width:16px; height:16px;
+      border-radius:4px;
+      display:inline-block;
+      background:transparent;
+      position:relative;
+    }
+    .heart:before{
+      content:"♡";
+      font-size:18px;
+      line-height:1;
+      color:#ef4444;
+      display:block;
+      transform:translateY(-1px);
+    }
+    .icon-only{
+      min-width:40px;
+      width:40px;
+      padding:0;
+    }
+    .icon-only span{
+      font-size:16px;
+      color:var(--gray-700);
+      transform:translateY(-1px);
+    }
+
+    .content{
+      padding:22px 0 8px;
+      line-height:2.2;
+      font-size:14px;
+      font-weight:600;
+      color:#111827;
+      min-height:180px;
+    }
+    .content a{
+      color:inherit;
+      text-decoration:underline;
+      text-underline-offset:4px;
+    }
+
+    /* 아래 카드 영역 */
+    .section-title{
+      margin:26px 0 10px;
+      font-size:14px;
+      font-weight:900;
+    }
+    .card{
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      max-width:520px; /* 피그마 느낌: 너무 길게 안 늘어남 */
+    }
+    .card-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .card-thumb{
+      width:74px; height:64px;
+      border-radius:12px;
+      border:1px solid var(--gray-200);
+      overflow:hidden;
+      background:#f3f4f6;
+      flex:0 0 auto;
+    }
+    .card-thumb img{ width:100%; height:100%; object-fit:cover; }
+    .card-meta{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:0;
+    }
+    .card-name{
+      font-size:12px;
+      font-weight:900;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:260px;
+    }
+    .card-sub{
+      font-size:11px;
+      font-weight:700;
+      color:var(--gray-500);
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      font-size:10px;
+      font-weight:900;
+      padding:3px 7px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:#f3f4f6;
+      color:var(--gray-700);
+    }
+    .badge.blue{ background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
+    .badge.purple{ background:#f5f3ff; border-color:#ddd6fe; color:#6d28d9; }
+
+    .card-btn{
+      border:none;
+      height:30px;
+      padding:0 12px;
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .card-btn .arrow{ display:inline-block; margin-left:6px; transform:translateY(-1px); }
+
+    /* 푸터(너가 쓰던 그대로) */
+    .footer {
+      background: #0c1224;
+      color: #c7cee1;
+      padding: 32px 24px 50px;
+    }
+    .footer__links {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .footer h4 { margin: 0 0 8px; color: #ffffff; }
+    .footer a { display: block; margin: 4px 0; font-size: 14px; cursor:pointer; }
+    .footer__copy { margin: 0; text-align: center; font-size: 13px; color: #9ca6c7; }
+
+    @media (max-width:980px){
+      .page{ grid-template-columns:1fr; }
+      .side{ border-right:none; padding-right:0; }
+      .card{ max-width:100%; }
+      .detail-title{ font-size:18px; }
+      .author-row{ flex-direction:column; align-items:flex-start; }
+      .author-right{ width:100%; justify-content:flex-end; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <!-- ✅ 헤더 -->
+  <header class="header" id="headerRoot">
+    <div class="header-top">
+      <div class="header-top__left">
+        <a href="index.html" class="brand">LEV<span class="brand__e">E</span>L-UP</a>
+      </div>
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__left">
+        <button class="menu-title has-dropdown" id="allLecturesBtn" type="button">
+          <span>모든 강의</span>
+          <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+        </button>
+
+        <!-- ✅ 자료실 클릭하면 게시판으로 -->
+        <a class="menu-title" href="board_free.html">자료실</a>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+
+    <!-- 드롭다운 -->
+    <div class="nav-dropdown" id="navDropdown">
+      <ul class="nav-dropdown__list">
+        <li class="nav-dropdown__item js-go-ai-basic">
+          <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+          <span>AI 기초 이해 · 리터러시</span>
+        </li>
+        <li class="nav-dropdown__item"><img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" class="nav-dropdown__icon" alt=""><span>업무 효율 향상</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" class="nav-dropdown__icon" alt=""><span>교육 자료 제작</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9731562 1.png" class="nav-dropdown__icon" alt=""><span>원생 관리</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/10316159 1.png" class="nav-dropdown__icon" alt=""><span>상담 업무</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" class="nav-dropdown__icon" alt=""><span>강의 기획 · 교육 설계</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" class="nav-dropdown__icon" alt=""><span>강의 홍보 · 피드백</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" class="nav-dropdown__icon" alt=""><span>자료 · 로고 디자인</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/11591525 1.png" class="nav-dropdown__icon" alt=""><span>창업 · 수익화</span></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- 좌측 -->
+    <aside class="side">
+      <div class="side__title">게시판</div>
+
+      <div class="side__group">
+        <div class="side__links">
+          <a class="active" href="board_free.html">자료 게시판</a>
+        </div>
+        <div class="side__divider"></div>
+        <div class="side__links">
+          <a href="#">· 공식 게시판</a>
+          <a class="active" href="#">· 자유 게시판</a>
+        </div>
+      </div>
+
+      <!-- 광고(기존과 동일하게 유지) -->
+      <div class="side__cards">
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img5.png" alt="이벤트 1"></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img6.png" alt="이벤트 2"></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img7.png" alt="이벤트 3"></div>
+        <div class="evt"><span class="evt__badge">이벤트</span><img src="./lecture/img8.png" alt="이벤트 4"></div>
+      </div>
+    </aside>
+
+    <!-- 우측 -->
+    <section class="main">
+      <div class="main__crumb" id="crumb">홈 &gt; 자료 게시판 &gt; 자유게시판</div>
+
+      <div class="detail-wrap">
+        <div class="detail-head">
+          <button class="back-btn" id="backBtn" type="button">‹ 목록으로</button>
+          <div class="head-actions">
+            <button class="mini-btn" id="editBtn" type="button">수정</button>
+            <button class="mini-btn" id="deleteBtn" type="button">삭제</button>
+          </div>
+        </div>
+
+        <div class="title-row">
+          <span class="cat-pill" id="catPill">입시</span>
+          <h1 class="detail-title" id="detailTitle">교육 운영 업무 자동화에 관한 강의에 대한 실습 자료를 공유합니다.</h1>
+        </div>
+
+        <div class="author-row">
+          <div class="author-left">
+            <img class="author-avatar" id="authorAvatar" src="./board_detail/img2.png" alt="작성자">
+            <div class="author-meta">
+              <div class="author-name" id="authorName">나천재</div>
+              <div class="author-date" id="authorDate">2025. 12. 01</div>
+            </div>
+          </div>
+
+          <div class="author-right">
+            <button class="icon-btn" id="likeBtn" type="button" aria-label="좋아요">
+              <span class="heart"></span>
+              <span id="likeCount">200</span>
+            </button>
+            <button class="icon-btn icon-only" type="button" aria-label="북마크(추후)">
+              <span>♡</span>
+            </button>
+            <button class="icon-btn icon-only" type="button" aria-label="공유" id="shareBtn">
+              <span>⤴</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="content" id="detailContent">
+          <p><a href="#">Chat GPT를 활용한 공지문 자동 작성 실습 자료 입니다.</a> 공지문 뿐만 아니라 문서 자동 작성에 특화 된 자료로 활용 가능합니다.</p>
+          <p><a href="#">김강사 강사님 강의를 듣고 만든 산출물인데</a> 꽤나 결과물이 마음에 듭니다.</p>
+          <p><a href="#">다른 강사님들도</a> 학부모 공지문 자동 작성에 관심 있으시면 한 번 수강해보시는 걸 추천드려요! 업무 시간이 많이 단축될 것 같아서 앞으로도 자주 이용할 것 같아요.</p>
+        </div>
+
+        <div class="section-title">자료 다운로드</div>
+        <div class="card" id="downloadCard">
+          <div class="card-left">
+            <div class="card-thumb">
+              <img id="downloadThumb" src="./board_detail/img1.png" alt="자료 썸네일">
+            </div>
+            <div class="card-meta">
+              <div class="card-name" id="downloadName">학부모 공지문 샘플.pdf <span style="color:var(--gray-500); font-weight:700; font-size:11px;">(131.1MB)</span></div>
+              <div class="card-sub" id="downloadBadges">
+                <span class="badge">#입시</span>
+                <span class="badge blue">#게시판</span>
+                <span class="badge purple">#자료실</span>
+              </div>
+            </div>
+          </div>
+          <button class="card-btn" id="downloadBtn" type="button">자료 다운로드 <span class="arrow">›</span></button>
+        </div>
+
+        <div class="section-title">수강한 강의 보기</div>
+        <div class="card" id="lectureCard">
+          <div class="card-left">
+            <div class="card-thumb">
+              <img id="lectureThumb" src="./board_detail/img3.png" alt="강의 썸네일">
+            </div>
+            <div class="card-meta">
+              <div class="card-name" id="lectureName">원생관리 · 학부모 공지문 자동화</div>
+              <div class="card-sub">
+                <span style="font-size:11px; font-weight:800; color:var(--gray-600);">강사명 김강사</span>
+                <span style="font-size:11px; font-weight:800; color:var(--gray-600);">난이도 중급</span>
+                <span style="font-size:11px; font-weight:800; color:var(--gray-600);">사용툴 ChatGPT</span>
+              </div>
+            </div>
+          </div>
+          <button class="card-btn" id="goLectureBtn" type="button">강의 보러가기 <span class="arrow">›</span></button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ✅ 푸터 -->
+  <footer class="footer">
+    <div class="footer__links">
+      <div>
+        <h4>회사</h4>
+        <a href="#">회사소개</a>
+        <a href="#">채용</a>
+        <a href="#">제휴 문의</a>
+      </div>
+      <div>
+        <h4>서비스</h4>
+        <a href="#">강의찾기</a>
+        <a href="#">커뮤니티</a>
+        <a href="#">이벤트</a>
+      </div>
+      <div>
+        <h4>정책</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+      </div>
+      <div>
+        <h4>고객센터</h4>
+        <a href="tel:1544-9044">1544-9044</a>
+        <a href="#">월-금 10:00~18:00</a>
+      </div>
+    </div>
+    <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* ✅ 마이페이지 이동 */
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest('[data-nav="mypage"]');
+      if (!btn) return;
+      window.location.href = "mypage.html";
+    });
+
+    /* ✅ 드롭다운 */
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let open = false;
+
+    function closeDropdown(){
+      open = false;
+      navDropdown.style.display = "none";
+      menuToggleIcon.classList.remove("open");
+    }
+
+    allLecturesBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      open = !open;
+      if(!open){ closeDropdown(); return; }
+
+      navDropdown.style.display = "block";
+      menuToggleIcon.classList.add("open");
+
+      const rect = allLecturesBtn.getBoundingClientRect();
+      navDropdown.style.top = (rect.bottom + window.scrollY + 8) + "px";
+      navDropdown.style.left = (rect.left + window.scrollX) + "px";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!open) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) closeDropdown();
+    });
+
+    document.querySelectorAll(".js-go-ai-basic").forEach((el) => {
+      el.addEventListener("click", () => window.location.href = "lecture_ai_basic.html");
+    });
+
+    /* =========================
+      ✅ 상세 데이터(임시)
+      - 리스트에서 id를 넘겨주면 해당 글로 렌더링
+    ========================= */
+    const detailData = {
+      1: {
+        catText: "입시",
+        title: "교육 운영 업무 자동화에 관한 강의에 대한 실습 자료를 공유합니다.",
+        author: "나천재",
+        date: "2025. 12. 01",
+        authorAvatar: "./board_detail/img2.png",
+        like: 200,
+        contentHtml: `
+          <p><a href="#">Chat GPT를 활용한 공지문 자동 작성 실습 자료 입니다.</a> 공지문 뿐만 아니라 문서 자동 작성에 특화 된 자료로 활용 가능합니다.</p>
+          <p><a href="#">김강사 강사님 강의를 듣고 만든 산출물인데</a> 꽤나 결과물이 마음에 듭니다.</p>
+          <p><a href="#">다른 강사님들도</a> 학부모 공지문 자동 작성에 관심 있으시면 한 번 수강해보시는 걸 추천드려요! 업무 시간이 많이 단축될 것 같아서 앞으로도 자주 이용할 것 같아요.</p>
+        `,
+        download: {
+          thumb: "./board_detail/img1.png",
+          name: "학부모 공지문 샘플.pdf",
+          size: "131.1MB",
+          badges: ["#입시", "#게시판", "#자료실"]
+        },
+        lecture: {
+          thumb: "./board_detail/img3.png",
+          name: "원생관리 · 학부모 공지문 자동화",
+          meta: ["강사명 김강사", "난이도 중급", "사용툴 ChatGPT"]
+        }
+      }
+    };
+
+    function $(id){ return document.getElementById(id); }
+
+    function applyDetail(d){
+      $("catPill").textContent = d.catText || "입시";
+      $("detailTitle").textContent = d.title || "";
+      $("authorName").textContent = d.author || "";
+      $("authorDate").textContent = d.date || "";
+      $("authorAvatar").src = d.authorAvatar || "./board_detail/img2.png";
+      $("likeCount").textContent = (d.like ?? 0);
+
+      $("detailContent").innerHTML = d.contentHtml || "";
+
+      $("downloadThumb").src = d.download?.thumb || "./board_detail/img1.png";
+      $("downloadName").innerHTML = `${d.download?.name || ""} <span style="color:var(--gray-500); font-weight:700; font-size:11px;">(${d.download?.size || ""})</span>`;
+      $("downloadBadges").innerHTML = (d.download?.badges || []).map((t,i)=>{
+        const cls = i===1 ? "badge blue" : (i===2 ? "badge purple" : "badge");
+        return `<span class="${cls}">${t}</span>`;
+      }).join("");
+
+      $("lectureThumb").src = d.lecture?.thumb || "./board_detail/img3.png";
+      $("lectureName").textContent = d.lecture?.name || "";
+      $("lectureCard").querySelector(".card-sub").innerHTML =
+        (d.lecture?.meta || []).map(m=>`<span style="font-size:11px; font-weight:800; color:var(--gray-600);">${m}</span>`).join("");
+    }
+
+    // ✅ URL 쿼리 id로 상세 렌더
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id") || "1";
+    applyDetail(detailData[id] || detailData["1"]);
+
+    /* ✅ 버튼 동작(추후 연결 예정) */
+    $("backBtn").addEventListener("click", () => {
+      // 이전 페이지가 게시판이면 history.back(), 아니면 게시판으로
+      if (document.referrer) history.back();
+      else location.href = "board_free.html";
+    });
+
+    $("editBtn").addEventListener("click", () => alert("수정 기능은 추후 개발 예정입니다!"));
+    $("deleteBtn").addEventListener("click", () => alert("삭제 기능은 추후 개발 예정입니다!"));
+
+    // 좋아요(프론트 임시 토글)
+    let liked = false;
+    $("likeBtn").addEventListener("click", () => {
+      const cur = Number($("likeCount").textContent || "0");
+      liked = !liked;
+      $("likeCount").textContent = liked ? (cur + 1) : Math.max(cur - 1, 0);
+    });
+
+    // 공유(주소 복사)
+    $("shareBtn").addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(location.href);
+        alert("링크가 복사되었습니다!");
+      }catch{
+        alert("복사에 실패했습니다. 주소를 직접 복사해 주세요.");
+      }
+    });
+
+    $("downloadBtn").addEventListener("click", () => alert("자료 다운로드는 추후 백엔드 연동 예정입니다!"));
+    $("goLectureBtn").addEventListener("click", () => alert("강의 보러가기는 추후 player.html로 연결 예정입니다!"));
+  </script>
+</body>
+</html>

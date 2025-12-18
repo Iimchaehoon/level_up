@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>나의 강의 | LEVEL-UP</title>
+
+<link rel="stylesheet" href="styles.css" />
+
+<style>
+/* ===== 기본 ===== */
+body{margin:0;font-family:'Noto Sans KR',sans-serif;background:#fff;color:#111}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* ===== 헤더 고정 ===== */
+.header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #e5e7eb}
+
+/* ===== 레이아웃 ===== */
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px;display:grid;grid-template-columns:220px 1fr;gap:28px}
+
+/* ===== 사이드 ===== */
+.side{border-right:1px solid #e5e7eb;padding-right:16px}
+.side h3{font-size:14px;margin-bottom:10px}
+.side a{display:block;font-size:13px;color:#374151;margin:6px 0}
+.side a.active{color:#2563eb;font-weight:700}
+
+/* ===== 강의 메인 ===== */
+.lecture-hero{
+  background:#f3f4f6;
+  border-radius:14px;
+  padding:20px;
+  display:grid;
+  grid-template-columns:1fr 260px;
+  gap:20px;
+}
+
+.lecture-hero img{border-radius:12px}
+
+/* ===== 강사 정보 ===== */
+.teacher-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:18px 0;
+}
+
+.teacher{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.teacher img{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+}
+
+.stars{color:#fbbf24;font-weight:700}
+
+/* ===== 커리큘럼 ===== */
+.curriculum{margin-top:18px}
+.item{
+  display:flex;
+  gap:16px;
+  background:#f9fafb;
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+.item img{width:140px;border-radius:8px}
+
+/* ===== 푸터 ===== */
+.footer {
+  background: #0c1224;
+  color: #c7cee1;
+  padding: 32px 24px 50px;
+}
+.footer__links {
+  max-width: 1200px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+.footer h4 {color:#fff;margin-bottom:8px}
+.footer a {display:block;font-size:14px;margin:4px 0}
+.footer__copy {text-align:center;font-size:13px;color:#9ca6c7}
+</style>
+</head>
+
+<body>
+
+<!-- ===== 헤더 ===== -->
+<header class="header">
+  <!-- 네가 기존에 쓰던 헤더 그대로 유지 -->
+</header>
+
+<main class="wrap">
+
+<!-- ===== 사이드 ===== -->
+<aside class="side">
+  <h3>마이페이지</h3>
+  <a class="active">· 나의 강의</a>
+  <a>· 대시보드</a>
+</aside>
+
+<!-- ===== 메인 ===== -->
+<section>
+
+  <!-- 강의 상단 -->
+  <div class="lecture-hero">
+    <div>
+      <h2>AI 기초 이해 & 수업 설계</h2>
+      <p>1강. 오프닝 & AI 수업계획서 개념잡기</p>
+    </div>
+    <img src="./my_lec/mylect_my.png" alt="">
+  </div>
+
+  <!-- 강사 -->
+  <div class="teacher-row">
+    <div class="teacher">
+      <img src="./my_lec/mylect_my.png">
+      <strong>강사님 나의미 김강사</strong>
+    </div>
+    <div>
+      <span class="stars">★★★★★</span>
+      <span>문의하기</span>
+    </div>
+  </div>
+
+  <!-- 커리큘럼 -->
+  <div class="curriculum">
+    <div class="item">
+      <img src="./my_lec/Group 42732280.png">
+      <div>
+        <strong>1. 도입(10분)</strong>
+        <p>AI 리터러시 개념</p>
+      </div>
+    </div>
+
+    <div class="item">
+      <img src="./my_lec/Group 42732371.png">
+      <div>
+        <strong>2. 생성형 AI 활용</strong>
+        <p>ChatGPT 활용</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+</main>
+
+<!-- ===== 푸터 ===== -->
+<footer class="footer">
+  <div class="footer__links">
+    <div>
+      <h4>회사</h4>
+      <a href="#">회사소개</a>
+      <a href="#">채용</a>
+      <a href="#">제휴 문의</a>
+    </div>
+    <div>
+      <h4>서비스</h4>
+      <a href="#">강의찾기</a>
+      <a href="#">커뮤니티</a>
+      <a href="#">이벤트</a>
+    </div>
+    <div>
+      <h4>정책</h4>
+      <a href="#">이용약관</a>
+      <a href="#">개인정보처리방침</a>
+    </div>
+    <div>
+      <h4>고객센터</h4>
+      <a href="tel:1544-9044">1544-9044</a>
+      <a href="#">월-금 10:00~18:00</a>
+    </div>
+  </div>
+  <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

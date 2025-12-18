@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>나의 강의 | LEVEL-UP</title>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root{
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --black:#111827; --primary:#2563eb;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#fff; color:var(--black); }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    button{ font-family:inherit; }
+
+    /* ───────── 상단 공지 ───────── */
+    .topbar{ background:#111827; color:#e5e7eb; font-size:12px; text-align:center; padding:6px 16px; }
+    .topbar strong{ color:#facc15; font-weight:600; }
+
+    /* ───────── 헤더(고정 + 드롭다운 동작 보장) ───────── */
+    .header{ background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:0; z-index:999; }
+    .header{ position:sticky; top:0; }
+    .header{ /* 드롭다운 absolute 기준 */ position:sticky; }
+    .header-top{
+      display:flex; align-items:center; justify-content:space-between;
+      max-width:1100px; margin:0 auto; padding:8px 16px 4px;
+    }
+    .brand{ font-size:22px; font-weight:800; letter-spacing:-0.06em; cursor:pointer; }
+    .brand__e{
+      display:inline-block;
+      background:linear-gradient(120deg,#7b5cff,#ff4bff);
+      -webkit-background-clip:text; color:transparent;
+    }
+    .header-top__right{ display:flex; align-items:center; gap:14px; font-size:13px; }
+    .nav-util{ color:var(--gray-600); cursor:pointer; }
+    .profile-avatar{
+      width:28px; height:28px; border-radius:8px; object-fit:cover; border:1px solid var(--gray-200);
+    }
+
+    .header-bottom{
+      display:grid;
+      grid-template-columns:auto minmax(260px,1fr) auto;
+      align-items:center; gap:16px;
+      max-width:1100px; margin:0 auto;
+      padding:4px 16px 10px;
+      border-top:1px solid rgba(148,163,184,.35);
+      position:relative;
+    }
+    .header-bottom__left{ display:flex; align-items:center; gap:16px; }
+    .menu-title{
+      background:none; border:none; padding:6px 0; font:inherit;
+      font-weight:600; display:inline-flex; align-items:center; gap:4px;
+      cursor:pointer;
+    }
+    .menu-title:hover{ color:var(--primary); }
+
+    .header-bottom__center{ display:flex; justify-content:center; }
+    .header-bottom__right{ display:flex; justify-content:flex-end; }
+
+    .nav__search{ position:relative; max-width:620px; width:100%; }
+    .nav__search input{
+      width:100%;
+      padding:11px 14px 11px 34px;
+      border-radius:999px;
+      border:1px solid var(--gray-200);
+      background:var(--gray-100);
+      font-size:14px;
+      outline:none;
+    }
+    .icon-search{
+      position:absolute; left:10px; top:50%; transform:translateY(-50%);
+      font-size:16px; color:var(--gray-600);
+      cursor:default;
+    }
+
+    .menu-toggle-icon{
+      width:18px; height:18px;
+      background-image:url("./assets/Button_1.png");
+      background-size:contain; background-repeat:no-repeat; background-position:center;
+      transform:rotate(0deg);
+      transform-origin:center;
+      transition:transform .15s ease;
+    }
+    .menu-toggle-icon.open{ transform:rotate(90deg); }
+
+    .btn{
+      border-radius:12px;
+      border:1px solid transparent;
+      padding:10px 16px;
+      font-weight:600;
+      cursor:pointer;
+      background:#fff;
+      color:var(--black);
+      transition:all .2s ease;
+    }
+    .btn.mypage-btn{
+      border-radius:999px;
+      background:#000;
+      color:#fff;
+      padding:9px 22px;
+      font-size:14px;
+      border:1px solid #000;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+      transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .btn.mypage-btn:hover{
+      background: rgba(0,0,0,0.86);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      transform: translateY(-1px);
+    }
+    .btn.mypage-btn:active{
+      background: rgba(0,0,0,0.78);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+      transform: translateY(1px);
+    }
+
+    /* 드롭다운 */
+    .nav-dropdown{
+      display:none;
+      position:absolute;
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 20px 40px rgba(15,23,42,.18);
+      padding:10px 0;
+      min-width:260px;
+      z-index:2000;
+    }
+    .nav-dropdown__list{ list-style:none; margin:0; padding:0; }
+    .nav-dropdown__item{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 16px; font-size:14px; white-space:nowrap;
+      cursor:pointer;
+    }
+    .nav-dropdown__item + .nav-dropdown__item{ border-top:1px solid var(--gray-200); }
+    .nav-dropdown__item:hover{ background:var(--gray-50); }
+    .nav-dropdown__icon{ width:22px; height:22px; object-fit:contain; }
+
+    /* ───────── 페이지 레이아웃(피그마 느낌) ───────── */
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 80px;
+      display:grid;
+      grid-template-columns:220px 1fr;
+      gap:26px;
+    }
+
+    /* 좌측 메뉴 */
+    .side{ border-right:1px solid var(--gray-200); padding-right:18px; }
+    .side__title{ font-size:14px; font-weight:900; margin:6px 0 14px; }
+    .side__group{ margin-bottom:18px; }
+    .side__group h4{ margin:0 0 8px; font-size:12px; font-weight:900; color:var(--black); }
+    .side__links{ display:flex; flex-direction:column; gap:8px; font-size:12px; }
+    .side__links a{ color:var(--gray-700); cursor:pointer; }
+    .side__links a.active{ color:var(--primary); font-weight:900; }
+
+    /* 메인 상단 breadcrumb */
+    .main__crumb{ font-size:11px; color:var(--gray-500); text-align:right; margin:0 0 8px; }
+
+    /* 상단 히어로 카드 */
+    .hero-card{
+      height: 430px;
+      background:url(./my_lec/Group_427322280.png);
+      background-size:cover;
+      border-radius:16px;
+      padding:22px 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+    }
+    .hero-title{ margin:0; font-size:22px; font-weight:900; }
+    .hero-sub{ margin:10px 0 0; font-size:14px; color:var(--gray-700); font-weight:600; }
+    .hero-figure{
+      width:260px; height:170px;
+      border-radius:12px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .hero-figure img{ width:100%; height:100%; object-fit:contain; }
+
+    /* 강사/별점/문의하기 라인 */
+    .teacher-row{
+      margin:16px 0 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:6px 2px;
+    }
+    .teacher-left{
+      display:flex; align-items:center; gap:10px;
+      font-size:13px; font-weight:800;
+    }
+    .teacher-avatar{
+      width:28px; height:28px; border-radius:999px;
+      object-fit:cover; border:1px solid var(--gray-200);
+      background:#fff;
+    }
+    .teacher-right{
+      display:flex; align-items:center; gap:10px;
+      font-size:13px; font-weight:800;
+    }
+    .stars{
+      color:#fbbf24;
+      letter-spacing:1px;
+      font-size:14px;
+    }
+    .ask{
+      display:inline-flex; align-items:center; gap:6px;
+      color:var(--black);
+      cursor:pointer;
+    }
+    .ask .icon{
+      width:16px; height:16px;
+      border:1px solid var(--gray-300);
+      border-radius:4px;
+      display:inline-block;
+      position:relative;
+      background:#fff;
+    }
+    .ask .icon:after{
+      content:"";
+      position:absolute;
+      left:4px; top:4px;
+      width:8px; height:6px;
+      border:1px solid var(--gray-400);
+      border-radius:2px;
+    }
+
+    /* 오프닝/커리큘럼 카드 */
+    .unit-card{
+      background:#fff;
+      border:1px solid var(--gray-200);
+      border-radius:14px;
+      padding:14px;
+      margin-top:10px;
+    }
+
+    /* 썸네일: "배경(Group) + 필름(Rectangle)" 합성 */
+    .thumb-composite{
+      width:180px;
+      height:100px;
+      border-radius:10px;
+      overflow:hidden;
+      background:#e5e7eb;
+      position:relative;
+      flex:0 0 auto;
+    }
+    .thumb-composite .bg{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+    }
+    .thumb-composite .film{
+      position:absolute;
+      right:-6px;
+      bottom:-6px;
+      width:58%;
+      height:auto;
+      object-fit:contain;
+      pointer-events:none;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,.18));
+    }
+    .thumb-composite .playerbar{
+      position:absolute;
+      left:8px;
+      bottom:8px;
+      width:65%;
+      height:auto;
+      object-fit:contain;
+      pointer-events:none;
+      opacity:.95;
+    }
+
+    .unit-row{
+      display:flex;
+      gap:16px;
+      align-items:flex-start;
+    }
+    .unit-body{
+      flex:1;
+    }
+    .unit-title{
+      margin:0 0 8px;
+      font-size:14px;
+      font-weight:900;
+    }
+    .unit-list{
+      margin:0;
+      padding-left:16px;
+      font-size:12px;
+      color:var(--gray-700);
+      line-height:1.55;
+      font-weight:600;
+    }
+
+    /* 아코디언 (2~6주차) */
+    .accordion{
+      margin-top:12px;
+      border-radius:14px;
+    }
+    .acc-item{ margin:6px 0; }
+    .acc-btn{
+      width:100%;
+      background:transparent;
+      border:none;
+      padding:10px 0;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:13px;
+      font-weight:900;
+      cursor:pointer;
+      color:var(--black);
+      text-align:left;
+    }
+    .acc-arrow{
+      width:16px;
+      display:inline-block;
+      transform:rotate(0deg);
+      transition:transform .18s ease;
+      color:var(--black);
+    }
+    .acc-item.open .acc-arrow{ transform:rotate(90deg); }
+
+    .acc-panel{
+      max-height:0;
+      overflow:hidden;
+      transition:max-height .22s ease;
+      padding-left:26px;
+    }
+    .acc-inner{
+      padding:8px 0 12px;
+      color:var(--gray-700);
+      font-size:12px;
+      line-height:1.6;
+      font-weight:600;
+    }
+
+    /* 푸터(너가 준 그대로) */
+    .footer {
+      background: #0c1224;
+      color: #c7cee1;
+      padding: 32px 24px 50px;
+    }
+    .footer__links {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .footer h4 {
+      margin: 0 0 8px;
+      color: #ffffff;
+    }
+    .footer a {
+      display: block;
+      margin: 4px 0;
+      font-size: 14px;
+      cursor:pointer;
+    }
+    .footer__copy {
+      margin: 0;
+      text-align: center;
+      font-size: 13px;
+      color: #9ca6c7;
+    }
+
+    @media (max-width:980px){
+      .page{ grid-template-columns:1fr; }
+      .side{ border-right:none; padding-right:0; }
+      .hero-figure{ width:200px; height:140px; }
+      .thumb-composite{ width:150px; height:90px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    선착순 <strong>지금 회원가입하고 무료 자료집 다운로드</strong> 하기 &gt;
+  </div>
+
+  <!-- ✅ 헤더 -->
+  <header class="header" id="headerRoot">
+    <div class="header-top">
+      <div class="header-top__left">
+        <a href="index.html" class="brand">LEV<span class="brand__e">E</span>L-UP</a>
+      </div>
+      <div class="header-top__right header-top__right--authed">
+        <span class="nav-util">고객센터</span>
+        <span class="nav-util">로그아웃</span>
+        <img class="profile-avatar" src="./assets/ddd_thumbnail.png" alt="프로필" />
+      </div>
+    </div>
+
+    <div class="header-bottom">
+      <div class="header-bottom__left">
+        <button class="menu-title has-dropdown" id="allLecturesBtn" type="button">
+          <span>모든 강의</span>
+          <span class="menu-toggle-icon" id="menuToggleIcon" aria-hidden="true"></span>
+        </button>
+        <a class="menu-title" href="course.html">자료실</a>
+      </div>
+
+      <div class="header-bottom__center">
+        <div class="nav__search">
+          <span class="icon-search">🔍</span>
+          <input type="text" placeholder="어떤 강의를 찾고 있나요?" />
+        </div>
+      </div>
+
+      <div class="header-bottom__right">
+        <button class="btn mypage-btn" type="button" data-nav="mypage">마이페이지</button>
+      </div>
+    </div>
+
+    <!-- 드롭다운 -->
+    <div class="nav-dropdown" id="navDropdown">
+      <ul class="nav-dropdown__list">
+        <li class="nav-dropdown__item js-go-ai-basic">
+          <img src="./assets/9342101 1.png" alt="" class="nav-dropdown__icon" />
+          <span>AI 기초 이해 · 리터러시</span>
+        </li>
+        <li class="nav-dropdown__item"><img src="./assets/9a04e59f-39b9-42de-9d05-d933becf10b4 1.png" alt="" class="nav-dropdown__icon" /><span>업무 효율 향상</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/son-eul-jabgo-huinsaeg-baegyeong-3d-geulim-e-keullibbodeue-chekeuliseuteu-sincheongseo-munseo-jagseong (1) 1.png" alt="" class="nav-dropdown__icon" /><span>교육 자료 제작</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9731562 1.png" alt="" class="nav-dropdown__icon" /><span>원생 관리</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/10316159 1.png" alt="" class="nav-dropdown__icon" /><span>상담 업무</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/63624731-5ef5-4ba4-8c7f-82a551538336 1.png" alt="" class="nav-dropdown__icon" /><span>강의 기획 · 교육 설계</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/9d016f34-375d-4ba7-8c87-c7b0c5c7740b 1.png" alt="" class="nav-dropdown__icon" /><span>강의 홍보 · 피드백</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/04f8dee7-4018-491e-96a9-dbf9a50d942b 1.png" alt="" class="nav-dropdown__icon" /><span>자료 · 로고 디자인</span></li>
+        <li class="nav-dropdown__item"><img src="./assets/11591525 1.png" alt="" class="nav-dropdown__icon" /><span>창업 · 수익화</span></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- 좌측 -->
+    <aside class="side">
+      <div class="side__title">마이페이지</div>
+      <div class="side__group">
+        <div class="side__links">
+          <a class="active" href="my_lecture.html">· 나의 강의</a>
+          <a href="#">· 대시보드</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 우측 -->
+    <section class="main">
+      <div class="main__crumb">홈 &gt; 마이페이지 &gt; 수강 강의 &gt; 나의 강의</div>
+
+      <!-- 상단 카드 -->
+      <div class="hero-card">
+       
+      </div>
+
+      <!-- 강사 라인 -->
+      <div class="teacher-row">
+        <div class="teacher-left">
+          <img class="teacher-avatar" src="./my_lec/Rectangle_3468940.png" alt="강사 프로필">
+          <span>강사님 나의미 김강사 &nbsp;›</span>
+        </div>
+        <div class="teacher-right">
+          <span class="stars">★★★★☆</span>
+          <span class="ask"><span class="icon" aria-hidden="true"></span>문의하기</span>
+        </div>
+      </div>
+
+      <!-- 1~4 카드(피그마 스타일: 썸네일 합성 + 리스트) -->
+      <div class="unit-card">
+        <div class="unit-row">
+          <div class="thumb-composite">
+            <img class="bg" src="./my_lec/Group_427322280.png" alt="오프닝 썸네일"
+                 onerror="this.onerror=null; this.src='./my_lec/Group_42732280.png';" />
+            <img class="playerbar" src="./my_lec/Group_427322371.png" alt="플레이어바"
+                 onerror="this.onerror=null; this.style.display='none';" />
+            <img class="film" src="./my_lec/Rectangle_3468940.png" alt="필름 오버레이"
+                 onerror="this.onerror=null; this.style.display='none';" />
+          </div>
+          <div class="unit-body">
+            <p class="unit-title">1. 도입(10분)</p>
+            <ul class="unit-list">
+              <li>강의 목표 소개</li>
+              <li>AI 리터러시가 중요한 이유</li>
+              <li>우리 주변의 AI 사례(일상/업무에서 이미 사용 중인 AI)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-row">
+          <div class="thumb-composite">
+            <img class="bg" src="./my_lec/Group_427322280.png" alt="">
+            <img class="playerbar" src="./my_lec/Group_427322371.png" alt="">
+            <img class="film" src="./my_lec/Rectangle_3468940.png" alt="">
+          </div>
+          <div class="unit-body">
+            <p class="unit-title">2. 생성형 AI 개념 개요(5분)</p>
+            <ul class="unit-list">
+              <li>AI: 머신러닝 · 딥러닝의 간단 설명</li>
+              <li>생성형 AI(Generative AI)가 무엇인지</li>
+              <li>ChatGPT 같은 LLM이 만들어진 “생성” 개념</li>
+              <li>이미지 생성형 AI가 사용되는 원리 개괄</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-row">
+          <div class="thumb-composite">
+            <img class="bg" src="./my_lec/Group_427322280.png" alt="">
+            <img class="playerbar" src="./my_lec/Group_427322371.png" alt="">
+            <img class="film" src="./my_lec/Rectangle_3468940.png" alt="">
+          </div>
+          <div class="unit-body">
+            <p class="unit-title">3. 생성형 AI가 학습하는 법 vs 이해하는 법(10분)</p>
+            <ul class="unit-list">
+              <li>생성형 AI의 장점</li>
+              <li>패턴 학습과 생성</li>
+              <li>다양한 입력 형태(텍스트-이미지-오디오 등)</li>
+              <li>환각과 윤리 문제</li>
+              <li>개인정보·저작권 이슈</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-row">
+          <div class="thumb-composite">
+            <img class="bg" src="./my_lec/Group_427322280.png" alt="">
+            <img class="playerbar" src="./my_lec/Group_427322371.png" alt="">
+            <img class="film" src="./my_lec/Rectangle_3468940.png" alt="">
+          </div>
+          <div class="unit-body">
+            <p class="unit-title">4. 실습(5분)</p>
+            <ul class="unit-list">
+              <li>“생성형 AI가 나만의 강사가 되려면?”</li>
+              <li>ChatGPT 또는 Claude 사용</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2~6주차 아코디언 -->
+      <div class="accordion" id="accordion">
+        <div class="acc-item">
+          <button class="acc-btn" type="button">
+            <span class="acc-arrow">▶</span>
+            2주차 ChatGPT로 “수업 개요” 자동 생성하기(30분)
+          </button>
+          <div class="acc-panel">
+            <div class="acc-inner">
+              - 수업 목표/대상/시간 입력<br/>
+              - 개요/차시 구성 자동 생성<br/>
+              - 출력물 검토 및 수정 팁
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button">
+            <span class="acc-arrow">▶</span>
+            3주차 AI로 “세부 강의 흐름(타임라인)” 자동 구성(30분)
+          </button>
+          <div class="acc-panel">
+            <div class="acc-inner">
+              - 도입/전개/정리 타임라인<br/>
+              - 활동/퀴즈/피드백 삽입<br/>
+              - 난이도 조절 방식
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button">
+            <span class="acc-arrow">▶</span>
+            4주차 “수업 자료 + 활동지” AI로 자동 생성(30분)
+          </button>
+          <div class="acc-panel">
+            <div class="acc-inner">
+              - 학습지 문항 생성<br/>
+              - 예시/정답/채점 기준 만들기<br/>
+              - PDF/문서로 정리 팁
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button">
+            <span class="acc-arrow">▶</span>
+            5주차 평가/피드백/활동 결과 정리 자동화(30분)
+          </button>
+          <div class="acc-panel">
+            <div class="acc-inner">
+              - 루브릭/평가 기준 작성<br/>
+              - 피드백 문구 자동 생성<br/>
+              - 결과 요약 템플릿
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" type="button">
+            <span class="acc-arrow">▶</span>
+            6주차 완성형 수업 계획서 만들기(실습 스텝)(30분)
+          </button>
+          <div class="acc-panel">
+            <div class="acc-inner">
+              - 전체 수업계획서 합치기<br/>
+              - 최종 검수 체크리스트<br/>
+              - 제출용 포맷 정리
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ✅ 푸터(너가 준 그대로) -->
+  <footer class="footer">
+    <div class="footer__links">
+      <div>
+        <h4>회사</h4>
+        <a href="#">회사소개</a>
+        <a href="#">채용</a>
+        <a href="#">제휴 문의</a>
+      </div>
+      <div>
+        <h4>서비스</h4>
+        <a href="#">강의찾기</a>
+        <a href="#">커뮤니티</a>
+        <a href="#">이벤트</a>
+      </div>
+      <div>
+        <h4>정책</h4>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+      </div>
+      <div>
+        <h4>고객센터</h4>
+        <a href="tel:1544-9044">1544-9044</a>
+        <a href="#">월-금 10:00~18:00</a>
+      </div>
+    </div>
+    <p class="footer__copy">© 2025 LEVEL-UP. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* ✅ 마이페이지 버튼 공통 이동 */
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest('[data-nav="mypage"]');
+      if (!btn) return;
+      window.location.href = "mypage.html";
+    });
+
+    /* ✅ 드롭다운 토글 (이 페이지 단독으로도 무조건 동작) */
+    const headerRoot = document.getElementById("headerRoot");
+    const allLecturesBtn = document.getElementById("allLecturesBtn");
+    const navDropdown = document.getElementById("navDropdown");
+    const menuToggleIcon = document.getElementById("menuToggleIcon");
+    let open = false;
+
+    function closeDropdown(){
+      open = false;
+      navDropdown.style.display = "none";
+      menuToggleIcon.classList.remove("open");
+    }
+
+    allLecturesBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      open = !open;
+
+      if(!open){ closeDropdown(); return; }
+
+      navDropdown.style.display = "block";
+      menuToggleIcon.classList.add("open");
+
+      // 버튼 아래에 정확히 위치
+      const btnRect = allLecturesBtn.getBoundingClientRect();
+      navDropdown.style.top = (btnRect.bottom + window.scrollY + 8) + "px";
+      navDropdown.style.left = (btnRect.left + window.scrollX) + "px";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!open) return;
+      if (!navDropdown.contains(e.target) && !allLecturesBtn.contains(e.target)) closeDropdown();
+    });
+
+    /* ✅ 드롭다운 메뉴 이동 */
+    document.querySelectorAll(".js-go-ai-basic").forEach((el) => {
+      el.addEventListener("click", () => {
+        window.location.href = "lecture_ai_basic.html";
+      });
+    });
+
+    /* ✅ 아코디언 */
+    document.querySelectorAll(".acc-item").forEach((item) => {
+      const btn = item.querySelector(".acc-btn");
+      const panel = item.querySelector(".acc-panel");
+
+      btn.addEventListener("click", () => {
+        const isOpen = item.classList.contains("open");
+
+        // 한 번에 하나만 열고 싶으면 아래 주석 해제
+        // document.querySelectorAll(".acc-item.open").forEach((o) => {
+        //   if(o !== item){
+        //     o.classList.remove("open");
+        //     o.querySelector(".acc-panel").style.maxHeight = 0;
+        //   }
+        // });
+
+        if(isOpen){
+          item.classList.remove("open");
+          panel.style.maxHeight = 0;
+        }else{
+          item.classList.add("open");
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
